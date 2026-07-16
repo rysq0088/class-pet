@@ -1,0 +1,954 @@
+{
+  "scannedAt": "2026-07-12T02:38:40.729Z",
+  "dir": ".",
+  "backendFile": "server.js",
+  "pages": [
+    {
+      "file": "auth.html",
+      "title": "登录 · 班级宠物管理系统",
+      "buttons": [
+        "进入管理后台 →",
+        "退出登录",
+        "发送验证码",
+        "登录",
+        "密码登录 →",
+        "发送验证码",
+        "注册",
+        "登录",
+        "验证码登录 →"
+      ],
+      "buttonCount": 9,
+      "inputs": [
+        {
+          "type": "tel",
+          "name": "",
+          "placeholder": "请输入手机号"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "请输入验证码"
+        },
+        {
+          "type": "tel",
+          "name": "",
+          "placeholder": "请输入手机号"
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "设置登录密码"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "请输入验证码"
+        },
+        {
+          "type": "tel",
+          "name": "",
+          "placeholder": "请输入手机号"
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "请输入密码"
+        }
+      ],
+      "inputCount": 7,
+      "textareas": [],
+      "textareaCount": 0,
+      "selects": [],
+      "selectCount": 0,
+      "fetches": [],
+      "fetchCount": 0,
+      "fetchPosts": [],
+      "fetchPostCount": 0,
+      "onclickFuncs": [
+        "location.href=",
+        "logout()",
+        "switchTab(",
+        "switchTab(",
+        "sendCode(",
+        "location.href=",
+        "sendCode(",
+        "location.href="
+      ],
+      "onclickCount": 8,
+      "links": [
+        "auth.html"
+      ],
+      "linkCount": 1
+    },
+    {
+      "file": "display.html",
+      "title": "班级宠物 - 大屏展示",
+      "buttons": [
+        "⛶ 全屏",
+        "🔙 切换班级"
+      ],
+      "buttonCount": 2,
+      "inputs": [],
+      "inputCount": 0,
+      "textareas": [],
+      "textareaCount": 0,
+      "selects": [],
+      "selectCount": 0,
+      "fetches": [
+        "${API}/classes",
+        "${API}/classes",
+        "${API}/display/${classId}",
+        "${API}/classes/${classId}/premium"
+      ],
+      "fetchCount": 4,
+      "fetchPosts": [],
+      "fetchPostCount": 0,
+      "onclickFuncs": [
+        "toggleFullscreen()",
+        "goSelectClass()",
+        "startDisplay(${cls.id})",
+        "startDisplay(${cls.id})"
+      ],
+      "onclickCount": 4,
+      "links": [],
+      "linkCount": 0
+    },
+    {
+      "file": "index.html",
+      "title": "馃惥 鐝骇瀹犵墿绠＄悊绯荤粺",
+      "buttons": [
+        "鉂?甯姪",
+        "脳",
+        "馃惐",
+        "馃惗",
+        "馃惏",
+        "馃惣",
+        "馃悏",
+        "馃",
+        "鍙栨秷",
+        "馃捑 淇濆瓨",
+        "脳",
+        "鍙栨秷",
+        "鉃?娣诲姞",
+        "脳",
+        "+",
+        "鍙栨秷",
+        "鉁?纭娣诲姞",
+        "脳",
+        "脳",
+        "娣诲姞",
+        "瀹屾垚",
+        "脳",
+        "脳",
+        "脳",
+        "馃搨 鎵撳紑",
+        "馃搵 澶嶅埗",
+        "馃攧 閲嶈瘯",
+        "馃摵 澶у睆",
+        "馃搳 缁熻",
+        "鈿欙笍 琛屼负",
+        "馃搵 鎵归噺",
+        "馃摜 瀵煎嚭",
+        "馃敀 瀵煎嚭",
+        "鉁忥笍 缂栬緫",
+        "馃攧 閲嶇疆",
+        "馃棏锔?鍒犻櫎",
+        "鉃?瀛︾敓",
+        "楼9.9 绔嬪嵆鍗囩骇",
+        "馃摐 璁板綍",
+        "鉃?鎵归噺鍔犲垎",
+        "鉃?鎵归噺鎵ｅ垎",
+        "鉁?鍙栨秷閫夋嫨",
+        "馃惥",
+        "馃崠",
+        "鉁忥笍",
+        "鍏抽棴",
+        "${a}",
+        "+",
+        "脳"
+      ],
+      "buttonCount": 49,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "濡傦細涓夊勾绾т竴鐝? maxlength="
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "杈撳叆瀛︾敓濮撳悕"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "榛樿锛氬鐢熷鍚?鐨勫疇鐗? maxlength="
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "瀛︾敓濮撳悕"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "鏂拌涓哄悕绉帮紝濡傦細涓诲姩鎻愰棶"
+        },
+        {
+          "type": "number",
+          "name": "",
+          "placeholder": ""
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "杈撳叆瑙ｉ攣鐮? maxlength="
+        },
+        {
+          "type": "number",
+          "name": "",
+          "placeholder": ""
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "瀛︾敓濮撳悕"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "瀛︾敓濮撳悕"
+        }
+      ],
+      "inputCount": 10,
+      "textareas": [],
+      "textareaCount": 0,
+      "selects": [],
+      "selectCount": 0,
+      "fetches": [
+        "/auth/me",
+        "/auth/logout",
+        "${API}/classes",
+        "${API}/classes/${id}/duplicate",
+        "${API}/classes/${id}",
+        "${API}/classes/${id}/premium",
+        "${API}/stats/${classId}",
+        "${API}/classes/${currentClassId}/students/points/batch",
+        "${API}/classes/${currentClassId}/students/${studentId}/points",
+        "${API}/classes/${currentClassId}/students/${studentId}/feed",
+        "${API}/classes/${currentClassId}/students/${s.id}/history",
+        "${API}/classes/${editingClassId}",
+        "${API}/classes",
+        "${API}/classes/${currentClassId}",
+        "${API}/classes/${currentClassId}/reset",
+        "${API}/classes/${currentClassId}/students",
+        "${API}/classes/${currentClassId}/students/${currentStudentId}",
+        "${API}/classes/${currentClassId}/students/${studentId}",
+        "${API}/classes/${currentClassId}/students/batch",
+        "${API}/classes/${currentClassId}/behaviors",
+        "${API}/classes/${currentClassId}/behaviors/${behaviorId}",
+        "${API}/stats/${classId}",
+        "${API}/classes/${_unlockClassId}/unlock",
+        "${API}/classes/${classId}/lock"
+      ],
+      "fetchCount": 24,
+      "fetchPosts": [
+        "/auth/logout",
+        "${API}/classes/${id}/duplicate",
+        "${API}/classes/${currentClassId}/students/points/batch",
+        "${API}/classes/${currentClassId}/students/${studentId}/points",
+        "${API}/classes/${currentClassId}/students/${studentId}/feed",
+        "${API}/classes",
+        "${API}/classes/${currentClassId}/reset",
+        "${API}/classes/${currentClassId}/students",
+        "${API}/classes/${currentClassId}/students/batch",
+        "${API}/classes/${currentClassId}/behaviors",
+        "${API}/classes/${_unlockClassId}/unlock",
+        "${API}/classes/${classId}/lock"
+      ],
+      "fetchPostCount": 12,
+      "onclickFuncs": [
+        "openModal(",
+        "closeModal(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "closeModal(",
+        "saveClass()",
+        "closeModal(",
+        "closeModal(",
+        "saveStudent()",
+        "closeModal(",
+        "addBatchRow()",
+        "closeModal(",
+        "saveBatchStudents()",
+        "closeModal(",
+        "closeModal(",
+        "addBehavior()",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "doUnlock()",
+        "showDashboard()",
+        "switchClass(${cls.id})",
+        "openClassModal()",
+        "openClassModal()",
+        "switchClass(${cls.id})",
+        "event.stopPropagation(); switchClass(${cls.id})",
+        "event.stopPropagation(); duplicateClass(${cls.id})",
+        "openClassModal()",
+        "switchClass(${id})",
+        "switchDetailTab(",
+        "switchDetailTab(",
+        "openDisplay(${cls.id})",
+        "switchDetailTab(",
+        "openBehaviorModal()",
+        "openBatchModal()",
+        "exportCSV()",
+        "openUnlockModal(${cls.id})",
+        "openClassModal(${cls.id})",
+        "confirmResetClass()",
+        "confirmDeleteClass()",
+        "openStudentModal()",
+        "openUnlockModal(${cls.id})",
+        "lockPremium(${cls.id})",
+        "lockPremium(${cls.id})",
+        "openUnlockModal(${cls.id})",
+        "batchAddPoints(${b.points}, ",
+        "batchAddPoints(-5, ",
+        "batchAddPoints(-10, ",
+        "openHistoryModal()",
+        "toolbarAdd()",
+        "toolbarMinus()",
+        "clearSelection()",
+        "toggleSelectStudent(${s.id})",
+        "event.stopPropagation(); toggleSelectStudent(${s.id})",
+        "event.stopPropagation(); singleAddPoints(${s.id}, 5)",
+        "event.stopPropagation()",
+        "event.stopPropagation(); openPetDetail(${s.id})",
+        "event.stopPropagation(); feedPet(${s.id})",
+        "event.stopPropagation(); openEditStudent(${s.id})",
+        "event.stopPropagation(); confirmDeleteStudent(${s.id})",
+        "clearSelection();return false",
+        "switchPetTab(",
+        "switchPetTab(",
+        "feedPet(${studentId}); closeModal(",
+        "singleAddPoints(${studentId}, 5); closeModal(",
+        "closeModal(",
+        "selectAvatar(",
+        "addBatchRow()",
+        "this.parentElement.remove();updateBatchPreview()",
+        "deleteBehavior(${b.id})",
+        "openUnlockModal("
+      ],
+      "onclickCount": 77,
+      "links": [
+        "display.html",
+        "auth.html",
+        "auth.html",
+        "auth.html",
+        "auth.html"
+      ],
+      "linkCount": 5
+    },
+    {
+      "file": "parent.html",
+      "title": "萌宠成长 - 家长端",
+      "buttons": [
+        "登录",
+        "创建家长账号"
+      ],
+      "buttonCount": 2,
+      "inputs": [
+        {
+          "type": "tel",
+          "name": "",
+          "placeholder": "请输入手机号"
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "请输入密码"
+        },
+        {
+          "type": "tel",
+          "name": "",
+          "placeholder": "请输入手机号"
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "设置登录密码"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "向老师获取邀请码"
+        }
+      ],
+      "inputCount": 5,
+      "textareas": [],
+      "textareaCount": 0,
+      "selects": [],
+      "selectCount": 0,
+      "fetches": [
+        "${API}/auth/me",
+        "/auth/parent/login",
+        "/auth/parent/register",
+        "${API}/parent/children",
+        "${API}/parent/children/${studentId}"
+      ],
+      "fetchCount": 5,
+      "fetchPosts": [
+        "/auth/parent/login",
+        "/auth/parent/register"
+      ],
+      "fetchPostCount": 2,
+      "onclickFuncs": [
+        "logout()",
+        "switchTab(",
+        "switchTab(",
+        "doLogin()",
+        "doRegister()",
+        "closeModal(event)",
+        "event.stopPropagation()",
+        "openDetail("
+      ],
+      "onclickCount": 8,
+      "links": [],
+      "linkCount": 0
+    },
+    {
+      "file": "_index_fetched.html",
+      "title": "🐾 班级宠物管理系统",
+      "buttons": [
+        "❓ 帮助",
+        "×",
+        "🐱",
+        "🐶",
+        "🐰",
+        "🐼",
+        "🐉",
+        "🦄",
+        "取消",
+        "💾 保存",
+        "×",
+        "取消",
+        "➕ 添加",
+        "×",
+        "+",
+        "取消",
+        "✅ 确认添加",
+        "×",
+        "×",
+        "添加",
+        "完成",
+        "×",
+        "×",
+        "知道了",
+        "×",
+        "激活",
+        "📂 打开",
+        "📋 复制",
+        "🔄 重试",
+        "📺 大屏",
+        "📊 统计",
+        "⚙️ 行为",
+        "📋 批量",
+        "📥 导出",
+        "🔒 导出",
+        "✏️ 编辑",
+        "🔄 重置",
+        "🗑️ 删除",
+        "➕ 学生",
+        "¥9.9 立即升级",
+        "续费激活",
+        "📜 记录",
+        "➕ 批量加分",
+        "➖ 批量扣分",
+        "✖ 取消选择",
+        "🐾",
+        "🍖",
+        "✏️",
+        "🗑️",
+        "🍖 喂养（+20生命）",
+        "⭐ +5分",
+        "关闭",
+        "${a}",
+        "+",
+        "×",
+        "🗑️"
+      ],
+      "buttonCount": 56,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "如：三年级一班"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "输入学生姓名"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "默认：学生姓名+的宠物"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "学生姓名"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "新行为名称，如：主动提问"
+        },
+        {
+          "type": "number",
+          "name": "",
+          "placeholder": ""
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "输入解锁码"
+        },
+        {
+          "type": "number",
+          "name": "",
+          "placeholder": ""
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "学生姓名"
+        },
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "学生姓名"
+        }
+      ],
+      "inputCount": 10,
+      "textareas": [],
+      "textareaCount": 0,
+      "selects": [],
+      "selectCount": 0,
+      "fetches": [
+        "${API}/classes",
+        "${API}/classes/${id}/duplicate",
+        "${API}/classes/${id}",
+        "${API}/classes/${id}/premium",
+        "${API}/stats/${classId}",
+        "${API}/classes/${currentClassId}/students/points/batch",
+        "${API}/classes/${currentClassId}/students/${studentId}/points",
+        "${API}/classes/${currentClassId}/students/${studentId}/feed",
+        "${API}/classes/${currentClassId}/students/${s.id}/history",
+        "${API}/classes/${editingClassId}",
+        "${API}/classes",
+        "${API}/classes/${currentClassId}",
+        "${API}/classes/${currentClassId}/reset",
+        "${API}/classes/${currentClassId}/students",
+        "${API}/classes/${currentClassId}/students/${currentStudentId}",
+        "${API}/classes/${currentClassId}/students/${studentId}",
+        "${API}/classes/${currentClassId}/students/batch",
+        "${API}/classes/${currentClassId}/behaviors",
+        "${API}/classes/${currentClassId}/behaviors/${behaviorId}",
+        "${API}/stats/${classId}",
+        "${API}/classes/${_unlockClassId}/unlock",
+        "${API}/classes/${classId}/lock"
+      ],
+      "fetchCount": 22,
+      "fetchPosts": [
+        "${API}/classes/${id}/duplicate",
+        "${API}/classes/${currentClassId}/students/points/batch",
+        "${API}/classes/${currentClassId}/students/${studentId}/points",
+        "${API}/classes/${currentClassId}/students/${studentId}/feed",
+        "${API}/classes",
+        "${API}/classes/${currentClassId}/reset",
+        "${API}/classes/${currentClassId}/students",
+        "${API}/classes/${currentClassId}/students/batch",
+        "${API}/classes/${currentClassId}/behaviors",
+        "${API}/classes/${_unlockClassId}/unlock",
+        "${API}/classes/${classId}/lock"
+      ],
+      "fetchPostCount": 11,
+      "onclickFuncs": [
+        "openModal(",
+        "closeModal(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "selectPetType(",
+        "closeModal(",
+        "saveClass()",
+        "closeModal(",
+        "closeModal(",
+        "saveStudent()",
+        "closeModal(",
+        "addBatchRow()",
+        "closeModal(",
+        "saveBatchStudents()",
+        "closeModal(",
+        "closeModal(",
+        "addBehavior()",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "closeModal(",
+        "doUnlock()",
+        "showDashboard()",
+        "switchClass(${cls.id})",
+        "openClassModal()",
+        "openClassModal()",
+        "switchClass(${cls.id})",
+        "event.stopPropagation(); switchClass(${cls.id})",
+        "event.stopPropagation(); duplicateClass(${cls.id})",
+        "openClassModal()",
+        "switchClass(${id})",
+        "switchDetailTab(",
+        "switchDetailTab(",
+        "openDisplay(${cls.id})",
+        "switchDetailTab(",
+        "openBehaviorModal()",
+        "openBatchModal()",
+        "exportCSV()",
+        "openUnlockModal(${cls.id})",
+        "openClassModal(${cls.id})",
+        "confirmResetClass()",
+        "confirmDeleteClass()",
+        "openStudentModal()",
+        "openUnlockModal(${cls.id})",
+        "lockPremium(${cls.id})",
+        "lockPremium(${cls.id})",
+        "openUnlockModal(${cls.id})",
+        "batchAddPoints(${b.points}, ",
+        "batchAddPoints(-5, ",
+        "batchAddPoints(-10, ",
+        "openHistoryModal()",
+        "toolbarAdd()",
+        "toolbarMinus()",
+        "clearSelection()",
+        "toggleSelectStudent(${s.id})",
+        "event.stopPropagation(); toggleSelectStudent(${s.id})",
+        "event.stopPropagation(); singleAddPoints(${s.id}, 5)",
+        "event.stopPropagation()",
+        "event.stopPropagation(); openPetDetail(${s.id})",
+        "event.stopPropagation(); feedPet(${s.id})",
+        "event.stopPropagation(); openEditStudent(${s.id})",
+        "event.stopPropagation(); confirmDeleteStudent(${s.id})",
+        "clearSelection();return false",
+        "switchPetTab(",
+        "switchPetTab(",
+        "feedPet(${studentId}); closeModal(",
+        "singleAddPoints(${studentId}, 5); closeModal(",
+        "closeModal(",
+        "selectAvatar(",
+        "addBatchRow()",
+        "this.parentElement.remove();updateBatchPreview()",
+        "deleteBehavior(${b.id})",
+        "openUnlockModal("
+      ],
+      "onclickCount": 77,
+      "links": [
+        "display.html"
+      ],
+      "linkCount": 1
+    }
+  ],
+  "apis": [],
+  "errors": [],
+  "backend": {
+    "file": "server.js",
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/api/health"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:id"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/classes/:id"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/classes/:id"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/reset"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/duplicate"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/backup"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:id/backup"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/restore/:backupId"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/students"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/students/batch"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/classes/:classId/students/:studentId"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/classes/:classId/students/:studentId"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:classId/students/:studentId/points"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:classId/students/points/batch"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:classId/students/:studentId/feed"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:classId/students/:studentId/history"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/behaviors"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/classes/:id/behaviors/:behaviorId"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:id/premium"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/unlock"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/lock"
+      },
+      {
+        "method": "GET",
+        "path": "/api/display/:classId"
+      },
+      {
+        "method": "GET",
+        "path": "/api/stats/:classId"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:id/export"
+      },
+      {
+        "method": "GET",
+        "path": "/api/parent/preview/:code"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/parent/register"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/parent/login"
+      },
+      {
+        "method": "GET",
+        "path": "/api/parent/children"
+      },
+      {
+        "method": "GET",
+        "path": "/api/parent/children/:studentId"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/parent-code"
+      },
+      {
+        "method": "GET",
+        "path": "/api/classes/:id/parent-code"
+      },
+      {
+        "method": "POST",
+        "path": "/api/classes/:id/students/:studentId/link-parent"
+      },
+      {
+        "method": "GET",
+        "path": "*"
+      }
+    ],
+    "routeCount": 36,
+    "routerRoutes": [],
+    "routerRouteCount": 0,
+    "mounts": [
+      "/auth",
+      "/pets"
+    ],
+    "middleware": [
+      {
+        "type": "use",
+        "path": "/auth"
+      },
+      {
+        "type": "use",
+        "path": "/pets"
+      }
+    ],
+    "funcs": [
+      "escapeHtml",
+      "checkPointRateLimit",
+      "ensureBackupDir",
+      "loadData",
+      "saveData",
+      "loadSubscriptions",
+      "saveSubscriptions",
+      "generateCode",
+      "parseUnlockCode",
+      "parts",
+      "getSubscriptionStatus",
+      "isClassPremium",
+      "getVisibleStudents",
+      "getAvailablePetTypes",
+      "getStudentLimit",
+      "isPetTypeAllowed",
+      "canCreateClass",
+      "getFreeClassSlotsUsed",
+      "getPetEmoji",
+      "calcPetStage",
+      "checkEvolution",
+      "sanitizeClass",
+      "sanitizeStudentForFree",
+      "resolvedPetType",
+      "recentHistory"
+    ],
+    "funcCount": 25,
+    "configs": [
+      {
+        "name": "PREMIUM_CONFIG",
+        "value": "{"
+      }
+    ],
+    "tables": [],
+    "tableCount": 0,
+    "dataFiles": []
+  },
+  "dataFiles": [
+    {
+      "file": "accept.json",
+      "keys": [
+        "apiBase",
+        "projectRoot",
+        "testPhone",
+        "testCode"
+      ],
+      "recordCount": 4
+    },
+    {
+      "file": "login.json",
+      "keys": [
+        "phone",
+        "code"
+      ],
+      "recordCount": 2
+    },
+    {
+      "file": "parent-reg.json",
+      "keys": [
+        "phone",
+        "password",
+        "code"
+      ],
+      "recordCount": 3
+    },
+    {
+      "file": "scan-result.json",
+      "keys": [
+        "scannedAt",
+        "dir",
+        "backendFile",
+        "pages",
+        "apis",
+        "errors",
+        "backend",
+        "dataFiles",
+        "package"
+      ],
+      "recordCount": 9
+    },
+    {
+      "file": "test-body.json",
+      "keys": [
+        "names"
+      ],
+      "recordCount": 1
+    },
+    {
+      "file": "_all_classes.json",
+      "keys": [
+        "0",
+        "1"
+      ],
+      "recordCount": 2
+    }
+  ],
+  "package": {
+    "name": "class-pet",
+    "version": "1.0.0",
+    "dependencies": [
+      "bcrypt",
+      "bcryptjs",
+      "better-sqlite3",
+      "canvas-confetti",
+      "cookie-parser",
+      "cors",
+      "express",
+      "helmet",
+      "jsonwebtoken"
+    ],
+    "scripts": [
+      "start",
+      "dev"
+    ],
+    "port": "3000"
+  }
+}

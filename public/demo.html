@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>演示 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0fdf4;min-height:100vh}
+.top{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;padding:20px 24px;text-align:center}
+.top h1{font-size:20px;margin-bottom:4px}
+.top .sub{font-size:12px;opacity:.85}
+.top .cta{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-cta{display:inline-block;padding:10px 24px;border-radius:22px;font-size:14px;font-weight:700;text-decoration:none;transition:.2s}
+.btn-white{background:#fff;color:#2e7d32}
+.btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)}
+.main{padding:20px 16px;max-width:700px;margin:0 auto}
+
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card h3{font-size:16px;color:#333;margin-bottom:12px}
+
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.pet-chip{text-align:center;padding:10px 6px;background:#f9fdf9;border-radius:14px}
+.pet-chip .emoji{font-size:32px}
+.pet-chip .name{font-size:12px;font-weight:700;margin-top:4px}
+.pet-chip .score{font-size:10px;color:#2e7d32;margin-top:2px}
+.pet-chip .lvl{font-size:10px;color:#999}
+
+.screen-preview{background:#1a1a2e;border-radius:16px;padding:20px;text-align:center;color:#fff;position:relative;overflow:hidden;min-height:200px}
+.screen-preview .scene{position:relative;height:140px}
+.screen-preview .pet-ani{position:absolute;font-size:40px;animation:float 3s ease-in-out infinite}
+.screen-preview .pet-ani:nth-child(1){left:5%;bottom:20px;animation-delay:0s}
+.screen-preview .pet-ani:nth-child(2){left:20%;bottom:60px;animation-delay:.5s;font-size:30px}
+.screen-preview .pet-ani:nth-child(3){left:40%;bottom:10px;animation-delay:1s;font-size:44px}
+.screen-preview .pet-ani:nth-child(4){left:55%;bottom:50px;animation-delay:1.5s;font-size:36px}
+.screen-preview .pet-ani:nth-child(5){left:75%;bottom:30px;animation-delay:2s}
+.screen-preview .pet-ani:nth-child(6){left:88%;bottom:70px;animation-delay:2.5s;font-size:28px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.screen-preview .ground{position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#4caf50,rgba(76,175,80,.2))}
+.screen-preview .label{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:11px;opacity:.5}
+
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
+.shop-item{text-align:center;padding:10px 6px;background:#f5f5f5;border-radius:12px;font-size:11px}
+.shop-item .emoji{font-size:24px;margin-bottom:4px}
+.shop-item .cost{color:#f57c00;font-size:10px}
+
+.qr-demo{text-align:center;padding:10px}
+.qr-demo img{width:120px;height:120px;background:#f5f5f5;border-radius:12px}
+
+.footer-cta{text-align:center;padding:30px 16px 50px}
+.footer-cta p{font-size:13px;color:#999;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>👀 演示模式</h1>
+  <div class="sub">小二班 · 10 个小朋友 · 张老师</div>
+  <div class="cta">
+    <a href="/login" class="btn-cta btn-white">🚀 免费注册</a>
+    <a href="/admin" class="btn-cta btn-outline">管理后台 →</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <h3>🖥 教室大屏效果</h3>
+    <div class="screen-preview">
+      <div class="label">实时宠物花园</div>
+      <div class="scene">
+        <div class="pet-ani">🐱</div><div class="pet-ani">🐶</div><div class="pet-ani">🐼</div>
+        <div class="pet-ani">🐰</div><div class="pet-ani">🐤</div><div class="pet-ani">🦊</div>
+      </div>
+      <div class="ground"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>👶 小朋友们</h3>
+    <div class="pets">
+      <div class="pet-chip"><div class="emoji">🐱</div><div class="name">小明</div><div class="score">⭐36分</div><div class="lvl">🌱 幼年</div></div>
+      <div class="pet-chip"><div class="emoji">🐰</div><div class="name">小红</div><div class="score">⭐2分</div><div class="lvl">🥚 宝宝</div></div>
+      <div class="pet-chip"><div class="emoji">🐶</div><div class="name">小刚</div><div class="score">⭐6分</div><div class="lvl">🥚 宝宝</div></div>
+      <div class="pet-chip"><div class="emoji">🐼</div><div class="name">小丽</div><div class="score">⭐1分</div><div class="lvl">🥚 宝宝</div></div>
+      <div class="pet-chip"><div class="emoji">🐤</div><div class="name">小宇</div><div class="score">⭐2分</div><div class="lvl">🥚 宝宝</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🛍️ 积分商店（家长端）</h3>
+    <div class="shop-grid">
+      <div class="shop-item"><div class="emoji">🍎</div>苹果<div class="cost">💰2分</div></div>
+      <div class="shop-item"><div class="emoji">🍰</div>蛋糕<div class="cost">💰5分</div></div>
+      <div class="shop-item"><div class="emoji">⚽</div>皮球<div class="cost">💰10分</div></div>
+      <div class="shop-item"><div class="emoji">🎀</div>蝴蝶结<div class="cost">💰25分</div></div>
+      <div class="shop-item"><div class="emoji">👑</div>皇冠<div class="cost">💰100分</div></div>
+      <div class="shop-item"><div class="emoji">🏠</div>小房子<div class="cost">💰50分</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📱 家长扫码入口</h3>
+    <p style="font-size:13px;color:#666;margin-bottom:12px">老师打印以下格式的卡片发给家长，家长微信扫码即可看到孩子的专属宠物、积分和商店。</p>
+    <div class="qr-demo">
+      <div style="display:inline-block;border:2px dashed #c8e6c9;border-radius:16px;padding:16px;background:#f9fdf9">
+        <div style="width:100px;height:100px;background:#e0e0e0;border-radius:8px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:40px">📱</div>
+        <div style="font-size:11px;font-weight:700;color:#333">小明的宠物</div>
+        <div style="font-size:10px;color:#999">微信扫码查看</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-cta">
+  <p>这是演示数据，注册后可以创建你自己的班级</p>
+  <a href="/login" class="btn-cta btn-white" style="padding:14px 36px;font-size:16px">🚀 开始使用，永久免费</a>
+</div>
+</body>
+</html>

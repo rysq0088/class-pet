@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClassPet — 让好习惯在教室里"活"起来</title>
+<meta name="description" content="幼儿园老师最好的帮手：宠物养成+课堂积分，每天2分钟，让小朋友的好习惯看得见。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden;color:#333}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 40%,#a5d6a7 100%);padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:60px;background:#f5f7fa;border-radius:50% 50% 0 0}
+.hero h1{font-size:36px;font-weight:900;color:#1b5e20;margin-bottom:16px;line-height:1.3}
+.hero h1 span{background:linear-gradient(135deg,#ffd600,#ff6d00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{font-size:18px;color:#4caf50;margin-bottom:32px;line-height:1.6}
+.hero .pets{font-size:48px;letter-spacing:8px;margin-bottom:32px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.1))}
+.btn-hero{display:inline-block;background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;padding:14px 36px;border-radius:28px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(46,125,50,.3);transition:.3s;border:none;cursor:pointer;margin:4px}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(46,125,50,.4)}
+.btn-hero.outline{background:#fff;color:#2e7d32;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+
+/* How it works */
+.section{padding:60px 24px;max-width:900px;margin:0 auto}
+.section h2{font-size:26px;font-weight:800;text-align:center;margin-bottom:40px;color:#1b5e20}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+.step{text-align:center;padding:24px 16px;background:#fff;border-radius:20px;box-shadow:0 2px 16px rgba(0,0,0,.04)}
+.step .emoji{font-size:48px;margin-bottom:12px}
+.step h3{font-size:17px;margin-bottom:8px;color:#2e7d32}
+.step p{font-size:13px;color:#666;line-height:1.6}
+
+/* Timeline */
+.timeline{background:#fff;padding:0 0 40px}
+.timeline h2{font-size:26px;font-weight:800;text-align:center;margin-bottom:40px;color:#1b5e20}
+.tl-day{max-width:700px;margin:0 auto 24px;padding:20px;border-radius:16px;background:#f9fdf9;border-left:4px solid #4caf50}
+.tl-day h3{font-size:16px;color:#333;margin-bottom:8px}
+.tl-day p{font-size:13px;color:#666;line-height:1.6}
+
+/* Features */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.ft{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center}
+.ft .emoji{font-size:36px;margin-bottom:10px}
+.ft h3{font-size:15px;color:#333;margin-bottom:6px}
+.ft p{font-size:12px;color:#999;line-height:1.5}
+
+/* Pricing */
+.pricing{background:#f5f7fa}
+.pricing h2{text-align:center;font-size:26px;font-weight:800;margin-bottom:40px;color:#1b5e20}
+.price-cards{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.price-card{background:#fff;border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.04);flex:1;min-width:240px;max-width:320px}
+.price-card.best{border:3px solid #ffd600;position:relative}
+.price-card.best::before{content:'推荐';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#ffd600;color:#333;padding:4px 16px;border-radius:12px;font-size:12px;font-weight:700}
+.price-card .p-name{font-size:18px;font-weight:700;margin-bottom:12px}
+.price-card .p-price{font-size:36px;font-weight:900;color:#2e7d32;margin-bottom:4px}
+.price-card .p-price small{font-size:14px;font-weight:400;color:#999}
+.price-card .p-desc{font-size:13px;color:#666;margin-bottom:16px;line-height:1.6}
+.price-card ul{list-style:none;text-align:left;font-size:12px;color:#666}
+.price-card li{margin-bottom:6px}
+.price-card li::before{content:'✅ '}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;text-align:center;padding:60px 24px}
+.cta h2{font-size:28px;font-weight:800;margin-bottom:16px}
+.cta p{font-size:15px;opacity:.9;margin-bottom:28px;line-height:1.6}
+.cta .btn-hero{background:#fff;color:#2e7d32;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.cta .btn-hero:hover{box-shadow:0 6px 28px rgba(0,0,0,.3)}
+
+/* Footer */
+.footer{background:#1b5e20;color:rgba(255,255,255,.7);text-align:center;padding:30px 24px;font-size:12px}
+.footer a{color:rgba(255,255,255,.9)}
+
+/* Responsive */
+@media(max-width:600px){
+  .hero h1{font-size:26px}
+  .hero .sub{font-size:15px}
+  .section{padding:40px 16px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="pets">🐱🐶🐰🐼🐤🐢🦊</div>
+  <h1>让好习惯<br>在教室里<span>"活"</span>起来</h1>
+  <p class="sub">不用下载 App，每天 2 分钟<br>用宠物养成让小朋友爱上好习惯</p>
+  <a href="/demo" class="btn-hero">👀 先看看演示</a>
+  <a href="/login" class="btn-hero outline">开始使用 →</a>
+</section>
+
+<section class="section">
+  <h2>📱 三分钟上手</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="emoji">👩‍🏫</div>
+      <h3>老师注册</h3>
+      <p>手机号 + 密码即可创建班级，1 分钟搞定</p>
+    </div>
+    <div class="step">
+      <div class="emoji">🐱</div>
+      <h3>添加小朋友</h3>
+      <p>输入名字，每人选一只宠物，自带 10 种可选</p>
+    </div>
+    <div class="step">
+      <div class="emoji">⭐</div>
+      <h3>每天 3 次加分</h3>
+      <p>午饭后、午睡后、放学前，选中+点击+1分，10秒一批</p>
+    </div>
+    <div class="step">
+      <div class="emoji">🖥</div>
+      <h3>教室大屏展示</h3>
+      <p>打开大屏页面，宠物花园实时显示，积分变了宠物会跳</p>
+    </div>
+  </div>
+</section>
+
+<section class="timeline section">
+  <h2>⏰ 幼儿园的一天</h2>
+  <div class="tl-day"><h3>🥣 午饭后（12:00）</h3><p>"吃得干净的小朋友坐姿端正"→ 选中 5 个孩子，+1 分，10 秒搞定</p></div>
+  <div class="tl-day"><h3>😴 午睡后（14:30）</h3><p>"第一个自己穿好衣服的举手"→ 批量 +2 分</p></div>
+  <div class="tl-day"><h3>🏠 放学前（16:00）</h3><p>"今天帮老师收玩具的表扬"→ 批量加分，宠物升级</p></div>
+  <div class="tl-day"><h3>🏡 回家后</h3><p>家长扫实体卡片上的二维码，和孩子一起看宠物、逛商店、花积分——不推送、不打扰，是亲子仪式</p></div>
+</section>
+
+<section class="section" style="background:#f5f7fa">
+  <h2>✨ 为什么老师喜欢</h2>
+  <div class="features">
+    <div class="ft"><div class="emoji">⚡</div><h3>不打断课堂</h3><p>每天 3 次批量加分，总共 2-3 分钟，不占上课时间</p></div>
+    <div class="ft"><div class="emoji">🔒</div><h3>不拍孩子照片</h3><p>只记录行为不记录人脸，比同类 App 更注重隐私</p></div>
+    <div class="ft"><div class="emoji">🎮</div><h3>宠物养成激励</h3><p>积分→经验→宠物从🥚长成⭐，小朋友自己会"追着要"好表现</p></div>
+    <div class="ft"><div class="emoji">📊</div><h3>管理后台洞察</h3><p>谁最近积分停滞了？谁进步最大？一张表格看全</p></div>
+    <div class="ft"><div class="emoji">🖨️</div><h3>可打印二维码</h3><p>每个小朋友一张实体卡片，家长扫码看孩子的专属宠物</p></div>
+    <div class="ft"><div class="emoji">💰</div><h3>基础免费</h3><p>1 个班 10 人永久免费，高级版 19.9 元/月无限人数+数据导出</p></div>
+  </div>
+</section>
+
+<section class="pricing section">
+  <h2>💳 价格透明</h2>
+  <div class="price-cards">
+    <div class="price-card">
+      <div class="p-name">🆓 基础版</div>
+      <div class="p-price">免费</div>
+      <div class="p-desc">永远免费</div>
+      <ul>
+        <li>1 个班级</li>
+        <li>10 个小朋友</li>
+        <li>手机端 + 大屏 + 家长端</li>
+        <li>宠物成长系统</li>
+        <li>积分商店</li>
+      </ul>
+    </div>
+    <div class="price-card best">
+      <div class="p-name">⭐ 高级版</div>
+      <div class="p-price">¥19.9<small>/月</small></div>
+      <div class="p-desc">或 ¥199/年（省 ¥40）</div>
+      <ul>
+        <li>不限制班级数量</li>
+        <li>不限制学生人数</li>
+        <li>全部功能</li>
+        <li>数据导出 Excel</li>
+        <li>积分历史永久保留</li>
+        <li>优先客服支持</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>准备好让你的班级多一只宠物了吗？</h2>
+  <p>免费注册，2 分钟创建你的第一只班级宠物</p>
+  <a href="/login" class="btn-hero">🚀 免费开始使用</a>
+</section>
+
+<footer class="footer">
+  <p>ClassPet · 让好习惯在教室里"活"起来</p>
+  <p style="margin-top:8px">不拍照片 · 不监控 · 不做排名 · 只做正向激励</p>
+</footer>
+
+</body>
+</html>

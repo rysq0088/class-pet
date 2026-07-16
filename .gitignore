@@ -1,0 +1,102 @@
+# ClassPet .gitignore
+node_modules/
+data/
+backup/
+deploy/
+
+# Logs
+*.log
+*.err
+
+# Test / debug files
+test*.js
+test*.ps1
+test*.json
+*_test*.js
+debug*.js
+debug*.ps1
+check-*.js
+check-*.ps1
+verify-*.js
+scan*.js
+quick-test.js
+
+# Old versions
+server-new.js
+server-old.js
+auth.js
+auth-old.js
+auth.html
+payment.js
+sms-service.js
+set-pro.js
+fix_server.js
+fix_server.py
+fix-encoding.js
+fix-encoding.ps1
+write_server.py
+gen-*.js
+
+# Dead pages (B2B era, root only)
+/institution.html
+/parent.html
+/pay.html
+/privacy.html
+/display.html
+/index.html
+
+# Dead specs/docs
+PRODUCT-SPEC.md
+PRODUCT-V2.md
+PRODUCT-LOGIC.md
+ACCEPTANCE-REPORT.md
+acceptance-report.json
+acceptance-test.js
+accept.json
+LAUNCH-READINESS-REVIEW.md
+defect-map.md
+logic-manual.md
+DEPLOY.md
+test-plan.md
+
+# Reports / logs
+class-pet-nightloop-report_*.md
+cron-test-run-*.md
+
+# Seed scripts (not part of production)
+seed*.js
+seed*.ps1
+
+# Old deployment
+deploy.js
+deploy2.js
+deploy.ps1
+do-all.ps1
+go.bat
+go.ps1
+start.js
+pkg-all.sh
+*_all_classes.json
+_*.js
+_*.html
+
+# Cookie / test data files
+cookies.txt
+cookie*.txt
+parent-cookies.txt
+parent-reg.json
+login.json
+body.json
+test-body.json
+test-cookies.txt
+test_nl.txt
+
+# Misc
+temp/
+tmp/
+.cursor/
+.vscode/
+.idea/
+*.bak
+*~
+.DS_Store

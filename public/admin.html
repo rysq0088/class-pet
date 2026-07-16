@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>管理后台 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fa;min-height:100vh}
+.top{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;padding:20px 24px}
+.top h1{font-size:20px;margin-bottom:4px}
+.top .sub{font-size:13px;opacity:.85}
+.top .nav{display:flex;gap:4px;margin-top:16px}
+.nav-btn{padding:8px 18px;border-radius:20px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:rgba(255,255,255,.15);color:#fff}
+.nav-btn.active{background:#fff;color:#2e7d32}
+.nav-btn:active{transform:scale(.96)}
+.main{padding:20px 24px;max-width:1100px;margin:0 auto}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.stat-card .val{font-size:28px;font-weight:800;color:#2e7d32}
+.stat-card .lbl{font-size:12px;color:#999;margin-top:4px}
+
+/* Table */
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:200px;padding:10px 16px;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;outline:none}
+.search-input:focus{border-color:#66bb6a}
+.btn{font-size:13px;padding:9px 18px;border-radius:12px;border:none;font-weight:600;cursor:pointer;transition:.2s}
+.btn:active{transform:scale(.96)}
+.btn-green{background:#e8f5e9;color:#2e7d32}
+.btn-blue{background:#e3f2fd;color:#1565c0}
+.btn-orange{background:#fff3e0;color:#e65100}
+.btn-red{background:#ffebee;color:#c62828}
+.btn-primary{background:#2e7d32;color:#fff}
+.btn-primary:hover{background:#43a047}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+th{background:#f5f7fa;padding:12px 14px;text-align:left;font-size:12px;color:#666;font-weight:600;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{background:#e8eaed}
+th .sort-arrow{font-size:10px;margin-left:4px;opacity:.4}
+th.sorted .sort-arrow{opacity:1}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+tr:hover td{background:#f9fdf9}
+td .pet-icon{font-size:20px;margin-right:4px;vertical-align:middle}
+td .name{font-weight:600;color:#333}
+td .score{font-weight:700;color:#2e7d32}
+td .exp{font-size:11px;color:#999}
+td .lvl-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.lvl1{background:#fff3e0;color:#e65100}
+.lvl2{background:#f1f8e9;color:#558b2f}
+.lvl3{background:#e8f5e9;color:#2e7d32}
+.lvl4{background:#e3f2fd;color:#1565c0}
+.lvl5{background:#fce4ec;color:#c62828}
+
+.actions-cell{display:flex;gap:6px}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:20px;padding:24px;width:92%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:17px;margin-bottom:16px;color:#333}
+.modal .close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:#999}
+.modal .input{width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:10px;outline:none}
+.modal .input:focus{border-color:#66bb6a}
+
+/* Export */
+.export-area{background:#fff;border-radius:14px;padding:18px;margin-top:16px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.export-area h3{font-size:15px;margin-bottom:12px}
+.csv-preview{background:#f5f5f5;border-radius:10px;padding:14px;font-family:monospace;font-size:11px;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+.empty{text-align:center;padding:40px;color:#999}
+.empty .icon{font-size:48px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>🐾 ClassPet 管理后台</h1>
+  <div class="sub" id="greeting">加载中...</div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchView('dashboard')">📊 总览</button>
+    <button class="nav-btn" onclick="switchView('students')">👶 学生</button>
+    <button class="nav-btn" onclick="switchView('history')">📋 积分史</button>
+    <button class="nav-btn" onclick="switchView('export')">💾 导出</button>
+    <button class="nav-btn" onclick="switchView('settings')">⚙️ 班级</button>
+  </div>
+</div>
+<div class="main" id="mainView"></div>
+
+<!-- Edit Student Modal -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('editModal')">✕</button>
+    <h3>✏️ 编辑学生</h3>
+    <input class="input" id="editName" placeholder="名字">
+    <p style="font-size:12px;color:#999;margin-bottom:8px">宠物：</p>
+    <div id="petPicker" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+    <button class="btn btn-primary" onclick="doEditSave()" style="width:100%;padding:12px">保存</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PETS={cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'};
+const PET_KEYS=Object.keys(PETS);
+let state={teacher:null,classes:[],currentClass:null,students:[],history:[],view:'dashboard',sort:'score',sortDir:-1,filter:'',editId:null,editPet:null};
+
+function pLvl(e){if(e>=250)return{name:'传说',em:'⭐',lv:5};if(e>=100)return{name:'成年',em:'🌳',lv:4};if(e>=40)return{name:'成长',em:'🌿',lv:3};if(e>=10)return{name:'幼年',em:'🌱',lv:2};return{name:'宝宝',em:'🥚',lv:1}}
+
+async function init(){
+  try{
+    const r=await fetch('/api/me');
+    const d=await r.json();
+    if(!d.teacher){location.href='/login';return}
+    state.teacher=d.teacher;
+    document.getElementById('greeting').textContent='👋 '+d.teacher.name+'老师 · '+new Date().toLocaleDateString('zh-CN',{weekday:'long'});
+    const cr=await fetch('/api/classes');
+    const cd=await cr.json();
+    state.classes=cd.classes||[];
+    if(state.classes.length>0){state.currentClass=state.classes[0];await refresh()}
+    else document.getElementById('mainView').innerHTML='<div class="empty"><div class="icon">🏫</div><p>还没有班级</p></div>';
+  }catch(e){location.href='/login'}
+}
+async function refresh(){await loadStudents();await loadHistory();renderView()}
+async function loadStudents(){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students');
+  state.students=(await r.json()).students||[];
+}
+async function loadHistory(){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/history');
+  state.history=(await r.json()).history||[];
+}
+
+function switchView(v){state.view=v;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(getTabName(v))));renderView()}
+function getTabName(v){return{ dashboard:'总览',students:'学生',history:'积分史',export:'导出',settings:'班级'}[v]}
+
+function renderView(){
+  const el=document.getElementById('mainView');
+  switch(state.view){
+    case 'dashboard': renderDashboard(el);break;
+    case 'students': renderStudents(el);break;
+    case 'history': renderHistory(el);break;
+    case 'export': renderExport(el);break;
+    case 'settings': renderSettings(el);break;
+  }
+}
+
+// Dashboard
+function renderDashboard(el){
+  const today=new Date().toISOString().slice(0,10);
+  const todayLogs=state.history.filter(h=>h.date===today);
+  const todayPts=todayLogs.reduce((a,b)=>a+b.points,0);
+  const todayKids=new Set(todayLogs.map(h=>h.student_id)).size;
+  const totalPts=state.students.reduce((a,b)=>a+b.score,0);
+  const avgPts=state.students.length?Math.round(totalPts/state.students.length):0;
+  const lvlDist={1:0,2:0,3:0,4:0,5:0};
+  state.students.forEach(s=>{const pl=pLvl(s.pet_exp);lvlDist[pl.lv]++});
+
+  el.innerHTML=`
+    <div class="stats">
+      <div class="stat-card"><div class="val">${state.students.length}</div><div class="lbl">小朋友总数</div></div>
+      <div class="stat-card"><div class="val">${todayPts}</div><div class="lbl">今日加分</div></div>
+      <div class="stat-card"><div class="val">${todayKids}</div><div class="lbl">今日打卡人数</div></div>
+      <div class="stat-card"><div class="val">${totalPts}</div><div class="lbl">总积分池</div></div>
+      <div class="stat-card"><div class="val">${avgPts}</div><div class="lbl">人均积分</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat-card"><div class="val">🥚 ${lvlDist[1]}</div><div class="lbl">宝宝级</div></div>
+      <div class="stat-card"><div class="val">🌱 ${lvlDist[2]}</div><div class="lbl">幼年级</div></div>
+      <div class="stat-card"><div class="val">🌿 ${lvlDist[3]}</div><div class="lbl">成长级</div></div>
+      <div class="stat-card"><div class="val">🌳 ${lvlDist[4]}</div><div class="lbl">成年级</div></div>
+      <div class="stat-card"><div class="val">⭐ ${lvlDist[5]}</div><div class="lbl">传说级</div></div>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.04)">
+      <h3 style="font-size:15px;margin-bottom:12px">🔝 积分排行 Top 5</h3>
+      ${state.students.sort((a,b)=>b.score-a.score).slice(0,5).map((s,i)=>
+        `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0">
+          <span style="font-weight:700;color:#999;min-width:20px">#${i+1}</span>
+          <span style="font-size:22px">${PETS[s.pet_type]||'🐱'}</span>
+          <span class="name">${s.name}</span>
+          <span style="flex:1"></span>
+          <span class="score">⭐${s.score}分</span>
+          <span style="font-size:11px;color:#999">${pLvl(s.pet_exp).name}</span>
+        </div>`
+      ).join('')||'<div class="empty"><p>暂无数据</p></div>'}
+    </div>
+  `;
+}
+
+// Students table
+function renderStudents(el){
+  let list=[...state.students];
+  if(state.filter){const f=state.filter.toLowerCase();list=list.filter(s=>s.name.toLowerCase().includes(f))}
+  list.sort((a,b)=>{
+    const keys={score:s=>s.score,name:s=>s.name,exp:s=>s.pet_exp,level:s=>pLvl(s.pet_exp).lv,pet:s=>s.pet_type};
+    const ka=keys[state.sort]?keys[state.sort](a):a[state.sort];
+    const kb=keys[state.sort]?keys[state.sort](b):b[state.sort];
+    if(typeof ka==='string')return ka.localeCompare(kb)*state.sortDir;
+    return (ka-kb)*state.sortDir;
+  });
+
+  const mkTh=(key,label)=>{
+    const is=state.sort===key;
+    return `<th class="${is?'sorted':''}" onclick="doSort('${key}')">${label}<span class="sort-arrow">${is?(state.sortDir>0?'↑':'↓'):'⇅'}</span></th>`;
+  };
+
+  el.innerHTML=`
+    <div class="toolbar">
+      <input class="search-input" placeholder="🔍 搜索名字..." id="searchBox" oninput="state.filter=this.value;renderView()">
+      <button class="btn btn-green" onclick="openAdd()">+ 添加</button>
+      <button class="btn btn-blue" onclick="navigator.clipboard.writeText(state.currentClass.invite_code).then(()=>toast('📋 邀请码已复制'))">📋 邀请码</button>
+    </div>
+    ${list.length===0
+      ?'<div class="empty"><div class="icon">🐣</div><p>没有匹配的小朋友</p></div>'
+      :`<table>
+        <thead><tr>
+          <th>#</th>
+          <th>头像</th>
+          ${mkTh('name','名字')}
+          ${mkTh('pet','宠物')}
+          ${mkTh('level','等级')}
+          ${mkTh('exp','经验')}
+          ${mkTh('score','积分')}
+          <th>操作</th>
+        </tr></thead>
+        <tbody>${list.map((s,i)=>{
+          const pl=pLvl(s.pet_exp);
+          const expNext=pl.lv===1?10:pl.lv===2?40:pl.lv===3?100:pl.lv===4?250:999;
+          const expPrev=pl.lv===1?0:pl.lv===2?10:pl.lv===3?40:pl.lv===4?100:250;
+          const pct=Math.min(100,Math.round((s.pet_exp-expPrev)/(expNext-expPrev)*100));
+          return`<tr>
+            <td>${i+1}</td>
+            <td><span class="pet-icon">${PETS[s.pet_type]||'🐱'}</span></td>
+            <td class="name">${s.name}</td>
+            <td>${PETS[s.pet_type]||'🐱'} ${s.pet_type}</td>
+            <td><span class="lvl-badge lvl${pl.lv}">${pl.em} ${pl.name}</span></td>
+            <td><span class="exp">${s.pet_exp}</span><br><div style="background:#eee;border-radius:4px;height:4px;width:60px"><div style="background:#66bb6a;height:4px;border-radius:4px;width:${pct}%"></div></div></td>
+            <td class="score">⭐${s.score}</td>
+            <td class="actions-cell">
+              <button class="btn btn-blue" style="padding:5px 10px;font-size:11px" onclick="openEdit(${s.id},'${s.name}','${s.pet_type}')">编辑</button>
+              <button class="btn btn-red" style="padding:5px 10px;font-size:11px" onclick="if(confirm('删除${s.name}？'))doDelete(${s.id})">删除</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`}
+  `;
+}
+
+function doSort(key){if(state.sort===key)state.sortDir*=-1;else{state.sort=key;state.sortDir=-1}renderView()}
+
+// History
+function renderHistory(el){
+  el.innerHTML=`
+    <div class="toolbar">
+      <input class="search-input" placeholder="🔍 搜索学生名字..." id="histSearch" oninput="filterHistory()">
+    </div>
+    <div id="histContent"></div>
+  `;
+  filterHistory();
+}
+function filterHistory(){
+  const f=(document.getElementById('histSearch')?.value||'').toLowerCase();
+  let list=f?state.history.filter(h=>h.student_name.toLowerCase().includes(f)):state.history;
+  document.getElementById('histContent').innerHTML=list.length===0
+    ?'<div class="empty"><p>没有匹配的记录</p></div>'
+    :`<table>
+      <thead><tr><th>时间</th><th>学生</th><th>原因</th><th>分值</th><th>日期</th></tr></thead>
+      <tbody>${list.map(h=>{
+        const d=new Date(h.created_at+'Z');
+        return`<tr>
+          <td>${d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}</td>
+          <td>${PETS[h.pet_type]||''} ${h.student_name}</td>
+          <td>${h.reason||'表现优秀'}</td>
+          <td class="score">+${h.points}</td>
+          <td style="font-size:11px;color:#999">${h.date}</td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+}
+
+// Export
+function renderExport(el){
+  let csv='名字,宠物,等级,经验,积分\n';
+  state.students.forEach(s=>{
+    const pl=pLvl(s.pet_exp);
+    csv+=`${s.name},${s.pet_type},${pl.name},${s.pet_exp},${s.score}\n`;
+  });
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  el.innerHTML=`
+    <div class="export-area">
+      <h3>📥 数据导出</h3>
+      <p style="font-size:13px;color:#999;margin-bottom:12px">导出班级 "${state.currentClass.name}" 的完整数据</p>
+      <button class="btn btn-primary" onclick="window.open('${url}')">📥 下载 CSV（Excel 可打开）</button>
+      <button class="btn btn-orange" style="margin-left:8px" onclick="downloadJSON()">📦 下载 JSON</button>
+    </div>
+    <div class="export-area" style="margin-top:12px">
+      <h3>📋 CSV 预览</h3>
+      <div class="csv-preview">${csv}</div>
+    </div>
+    <div class="export-area" style="margin-top:12px">
+      <h3>🔗 各端链接</h3>
+      <div style="font-size:13px">
+        <p><strong>教师登录：</strong> ${location.origin}/login</p>
+        <p><strong>大屏花园：</strong> ${location.origin}/screen/${state.currentClass.invite_code}</p>
+        <p><strong>家长入口列表：</strong></p>
+        ${state.students.map(s=>`<p style="margin:4px 0">&nbsp;&nbsp;${s.name}：${location.origin}/parent/${state.currentClass.invite_code}/${s.id}</p>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function downloadJSON(){
+  const data={className:state.currentClass.name,code:state.currentClass.invite_code,students:state.students,history:state.history,exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='classpet-export.json';a.click();
+}
+
+// Settings
+function renderSettings(el){
+  el.innerHTML=`
+    <div class="export-area">
+      <h3>⚙️ 班级信息</h3>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input class="input" id="classNameInput" value="${state.currentClass.name}" style="flex:1;min-width:150px;margin:0">
+        <button class="btn btn-primary" onclick="doRename()">保存</button>
+      </div>
+      <p style="font-size:12px;color:#999;margin-top:8px">邀请码：<strong>${state.currentClass.invite_code}</strong></p>
+    </div>
+    <div class="export-area" style="margin-top:12px">
+      <h3>👤 教师信息</h3>
+      <p style="font-size:14px;margin-bottom:8px">手机号：${state.teacher.phone}</p>
+      <p style="font-size:14px;margin-bottom:8px">姓名：${state.teacher.name||'未设置'}</p>
+      <div style="display:flex;gap:12px;align-items:center">
+        <input class="input" id="teacherNameInput" placeholder="修改名字" style="flex:1;min-width:120px;margin:0">
+        <button class="btn btn-primary" onclick="doUpdateTeacher()">保存</button>
+      </div>
+    </div>
+    <div class="export-area" style="margin-top:12px">
+      <h3>📱 手机打卡入口</h3>
+      <p style="font-size:13px;color:#999;margin-bottom:8px">扫码或用手机打开以下链接进入移动端快速加分页面</p>
+      <div style="background:#f5f5f5;padding:14px;border-radius:10px;font-size:13px;word-break:break-all">${location.origin}/login</div>
+    </div>
+  `;
+}
+async function doRename(){
+  const n=document.getElementById('classNameInput').value.trim();
+  if(!n)return toast('请输入名称');
+  await fetch('/api/classes/'+state.currentClass.id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
+  state.currentClass.name=n;toast('✅ 已更新');renderView();
+}
+async function doUpdateTeacher(){
+  const n=document.getElementById('teacherNameInput').value.trim();
+  if(!n)return toast('请输入名字');
+  await fetch('/api/me',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
+  state.teacher.name=n;document.getElementById('greeting').textContent='👋 '+n+'老师';toast('✅ 已更新');
+}
+
+// Edit student
+function openEdit(id,name,pet){
+  state.editId=id;state.editPet=pet;
+  document.getElementById('editName').value=name;
+  const pp=document.getElementById('petPicker');
+  pp.innerHTML=PET_KEYS.map(k=>`<button onclick="state.editPet='${k}';document.getElementById('petPicker').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.onclick.toString().includes(\\\"'${k}'\\\")))" class="btn ${k===pet?'btn-green':''}" style="font-size:22px;padding:6px 12px">${PETS[k]}</button>`).join('');
+  document.getElementById('editModal').classList.add('show');
+}
+async function doEditSave(){
+  await fetch('/api/classes/'+state.currentClass.id+'/students/'+state.editId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('editName').value.trim(),pet_type:state.editPet})});
+  closeModal('editModal');await refresh();toast('✅ 已保存');
+}
+async function doDelete(id){
+  await fetch('/api/classes/'+state.currentClass.id+'/students/'+id,{method:'DELETE'});
+  await refresh();toast('已删除');
+}
+function openAdd(){location.href='/'}
+
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2500)}
+
+init();
+</script>
+</body>
+</html>

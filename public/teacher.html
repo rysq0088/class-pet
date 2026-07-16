@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>教师端 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0fdf4;min-height:100vh;max-width:600px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 0}
+.top h1{font-size:20px;color:#2e7d32}
+.top .logout{font-size:12px;color:#999;background:none;border:1px solid #ddd;padding:6px 12px;border-radius:16px;cursor:pointer}
+.class-bar{background:#fff;margin:12px 16px;border-radius:16px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.class-bar .c-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.class-bar .c-name{font-size:17px;font-weight:700;color:#333;cursor:pointer}
+.class-bar .c-code{font-size:11px;color:#999;background:#f5f5f5;padding:4px 8px;border-radius:8px}
+.class-bar .c-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-tab{flex:1;padding:12px;border:none;background:#f5f5f5;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-tab.active{background:#e8f5e9;color:#2e7d32}
+.btn-sm{font-size:12px;padding:7px 14px;border-radius:16px;border:none;cursor:pointer;font-weight:600;transition:.2s}
+.btn-sm:active{transform:scale(.95)}
+.btn-green{background:#e8f5e9;color:#2e7d32}
+.btn-blue{background:#e3f2fd;color:#1565c0}
+.btn-orange{background:#fff3e0;color:#e65100}
+.btn-red{background:#ffebee;color:#c62828}
+.btn-primary{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;font-size:14px;padding:10px 20px;border-radius:18px;border:none;font-weight:700;cursor:pointer}
+.btn-primary:active{transform:scale(.97)}
+.btn-full{width:100%;margin-top:8px}
+
+/* Students grid */
+.panel{padding:0 16px 16px}
+.pets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px}
+.pet-card{background:#fff;border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.04);position:relative;user-select:none}
+.pet-card.selected{box-shadow:0 0 0 3px #43a047;background:#f1f8e9}
+.pet-card:active{transform:scale(.95)}
+.pet-card .pet-emoji{font-size:38px;margin-bottom:4px;transition:.2s}
+.pet-card .pet-name{font-size:13px;font-weight:700;color:#333}
+.pet-card .pet-score{font-size:10px;color:#999;margin-top:1px}
+.pet-card .pet-lvl{position:absolute;top:4px;right:4px;font-size:16px}
+.pet-card .check-mark{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#43a047;color:#fff;display:none;align-items:center;justify-content:center;font-size:10px}
+.pet-card.selected .check-mark{display:flex}
+
+.score-panel{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.04);margin-bottom:12px}
+.score-panel h3{font-size:15px;color:#333;margin-bottom:10px}
+.quick-reasons{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.reason-tag{padding:5px 10px;border-radius:12px;border:1.5px solid #e0e0e0;font-size:11px;cursor:pointer;transition:.2s;background:#fff}
+.reason-tag.on{border-color:#43a047;background:#e8f5e9;color:#2e7d32}
+.pts-row{display:flex;gap:6px}
+.pts-btn{flex:1;padding:12px 6px;border-radius:12px;border:2px solid #e0e0e0;background:#fff;font-size:16px;font-weight:700;cursor:pointer;text-align:center}
+.pts-btn:active{transform:scale(.95)}
+.pts-btn.p1{border-color:#c8e6c9;color:#43a047}
+.pts-btn.p2{border-color:#fff9c4;color:#f9a825}
+.pts-btn.p3{border-color:#ffccbc;color:#e64a19}
+.pts-btn.like{border-color:#e1bee7;color:#7b1fa2}
+
+/* History list */
+.h-list{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.h-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.h-item:last-child{border:none}
+.h-time{color:#999;font-size:11px;min-width:40px}
+.h-student{font-weight:600;min-width:60px}
+.h-reason{flex:1;color:#555}
+.h-pts{font-weight:700;color:#2e7d32;min-width:30px;text-align:right}
+
+/* Detail modal */
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:20px;padding:20px;width:92%;max-width:420px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:17px;color:#333;margin-bottom:14px}
+.modal .close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:#999}
+.modal .input{width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:8px;outline:none}
+.modal .input:focus{border-color:#66bb6a}
+
+.detail-hero{text-align:center;padding:10px 0 16px}
+.detail-hero .d-emoji{font-size:64px}
+.detail-hero .d-level{display:inline-block;background:linear-gradient(135deg,#ffd600,#ff6d00);color:#fff;padding:4px 14px;border-radius:16px;font-size:13px;font-weight:700;margin-top:6px}
+.detail-stats{display:flex;gap:8px;margin-bottom:16px}
+.d-stat{flex:1;background:#f5f5f5;border-radius:12px;padding:12px;text-align:center}
+.d-stat .num{font-size:22px;font-weight:800;color:#2e7d32}
+.d-stat .label{font-size:10px;color:#999}
+.exp-bar{background:#e0e0e0;border-radius:8px;height:8px;margin:0 0 4px;overflow:hidden}
+.exp-bar .fill{background:linear-gradient(90deg,#66bb6a,#43a047);height:100%;border-radius:8px;transition:width .5s}
+
+.detail-section{margin-bottom:16px}
+.detail-section h4{font-size:14px;color:#333;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+
+/* Edit area */
+.edit-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.edit-row .input{flex:1;min-width:80px;margin-bottom:0}
+.pet-pick{display:flex;gap:6px;flex-wrap:wrap}
+.pet-pick button{font-size:20px;padding:6px 10px;border-radius:10px;border:2px solid #e0e0e0;cursor:pointer;background:#fff}
+.pet-pick button.sel{border-color:#43a047;background:#e8f5e9}
+
+.empty{text-align:center;padding:60px 20px;color:#999}
+.empty .icon{font-size:64px;margin-bottom:12px}
+.empty p{font-size:14px;line-height:1.8}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:pre-line;text-align:center}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>🐾 ClassPet</h1>
+  <button class="logout" onclick="doLogout()">退出</button>
+</div>
+<div class="class-bar" id="classBar" style="display:none">
+  <div class="c-top">
+    <strong class="c-name" id="className" onclick="editClassName()" title="点击修改名称">⋯</strong>
+    <span class="c-code" id="classCode"></span>
+  </div>
+  <div class="c-actions">
+    <button class="btn-tab active" onclick="switchTab('students')" id="tabStudents">👶 小朋友</button>
+    <button class="btn-tab" onclick="switchTab('history')" id="tabHistory">📋 积分史</button>
+  </div>
+  <button class="btn-sm btn-green" onclick="openAddStudent()" style="margin-top:10px">+ 添加小朋友</button>
+  <button class="btn-sm btn-blue" onclick="copyInviteInfo()" style="margin-top:10px;margin-left:6px">📋 邀请信息</button>
+  <button class="btn-sm btn-orange" onclick="openScreen()" style="margin-top:10px;margin-left:6px">🖥 大屏</button>
+</div>
+
+<div class="score-panel" id="scorePanel" style="display:none">
+  <h3>🎯 给 <span id="selCount">0</span> 人加分</h3>
+  <div class="quick-reasons" id="reasonTags"></div>
+  <div class="pts-row">
+    <button class="pts-btn p1" onclick="doScore(1)">+1</button>
+    <button class="pts-btn p2" onclick="doScore(2)">+2</button>
+    <button class="pts-btn p3" onclick="doScore(3)">+3</button>
+    <button class="pts-btn like" onclick="doScore(5)">+5</button>
+  </div>
+</div>
+
+<div id="tabContent" class="panel"></div>
+
+<div class="empty" id="emptyState">
+  <div class="icon">🏫</div>
+  <p>还没有创建班级<br>点击下方按钮开始吧</p>
+  <button class="btn-primary" onclick="openCreateClass()">+ 创建新班级</button>
+</div>
+
+<!-- Create Class Modal -->
+<div class="modal-bg" id="createClassModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('createClassModal')">✕</button>
+    <h3>🏫 创建班级</h3>
+    <input class="input" id="newClassName" placeholder="班级名称，如：小二班">
+    <button class="btn-primary btn-full" onclick="doCreateClass()">创建</button>
+  </div>
+</div>
+
+<!-- Add Student Modal -->
+<div class="modal-bg" id="addStudentModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('addStudentModal')">✕</button>
+    <h3>👶 添加小朋友</h3>
+    <input class="input" id="newStudentName" placeholder="小朋友的名字">
+    <p style="font-size:13px;color:#999;margin-bottom:8px">选择宠物：</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="petSelector"></div>
+    <button class="btn-primary btn-full" onclick="doAddStudent()">添加</button>
+  </div>
+</div>
+
+<!-- Student Detail Modal -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal" id="detailContent"></div>
+</div>
+
+<!-- Class Name Edit Modal -->
+<div class="modal-bg" id="classNameModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('classNameModal')">✕</button>
+    <h3>✏️ 修改班级名称</h3>
+    <input class="input" id="editClassName">
+    <button class="btn-primary btn-full" onclick="doRenameClass()">保存</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PETS={cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'};
+const PET_KEYS=Object.keys(PETS);
+const REASONS=['举手回答','坐姿端正','帮助同学','午睡乖乖','排队整齐','认真听讲','按时完成','礼貌问好'];
+
+let state={currentClass:null,students:[],selected:new Set(),selectedPet:'cat',selectedReason:'',tab:'students',history:[]};
+
+function petLvl(exp){if(exp>=250)return{name:'传说',emoji:'⭐',next:999,level:5};if(exp>=100)return{name:'成年',emoji:'🌳',next:250,level:4};if(exp>=40)return{name:'成长',emoji:'🌿',next:100,level:3};if(exp>=10)return{name:'幼年',emoji:'🌱',next:40,level:2};return{name:'宝宝',emoji:'🥚',next:10,level:1}}
+function lvlNext(pl){let lvls=[0,10,40,100,250];return lvls[pl.level]||0}
+
+(async function init(){
+  try{
+    const r=await fetch('/api/me');
+    const d=await r.json();
+    if(!d.teacher){location.href='/login';return}
+    document.querySelector('.top h1').textContent='🐾 '+d.teacher.name;
+    const ps=document.getElementById('petSelector');
+    PET_KEYS.forEach(k=>{
+      const b=document.createElement('button');b.className='btn-sm';b.style.fontSize='26px';
+      b.textContent=PETS[k];b.title=k;
+      b.onclick=()=>{state.selectedPet=k;ps.querySelectorAll('button').forEach(b=>b.style.background='');b.style.background='#e8f5e9'};
+      if(k==='cat')b.style.background='#e8f5e9';ps.appendChild(b);
+    });
+    const rt=document.getElementById('reasonTags');
+    REASONS.forEach(r=>{
+      const t=document.createElement('button');t.className='reason-tag';t.textContent=r;
+      t.onclick=()=>{rt.querySelectorAll('button').forEach(b=>b.classList.remove('on'));t.classList.add('on');state.selectedReason=r};
+      rt.appendChild(t);
+    });
+    await loadClasses();
+  }catch(e){location.href='/login'}
+})();
+
+async function loadClasses(){
+  const r=await fetch('/api/classes');
+  const d=await r.json();
+  if(d.classes&&d.classes.length>0){
+    state.currentClass=d.classes[0];
+    document.getElementById('emptyState').style.display='none';document.getElementById('classBar').style.display='block';
+    await refreshClass();
+  }else{document.getElementById('emptyState').style.display='block';document.getElementById('classBar').style.display='none'}
+}
+async function refreshClass(){
+  if(!state.currentClass)return;
+  document.getElementById('className').textContent='🏫 '+state.currentClass.name;
+  document.getElementById('classCode').textContent='邀请码:'+state.currentClass.invite_code;
+  state.selected.clear();
+  await loadStudents();
+}
+async function loadStudents(){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students');
+  const d=await r.json();state.students=d.students||[];renderTab();
+}
+async function loadHistory(){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/history');
+  const d=await r.json();state.history=d.history||[];renderTab();
+}
+
+function switchTab(tab){
+  state.tab=tab;document.getElementById('tabStudents').classList.toggle('active',tab==='students');
+  document.getElementById('tabHistory').classList.toggle('active',tab==='history');
+  if(tab==='students')loadStudents();else loadHistory();
+}
+function renderTab(){
+  const el=document.getElementById('tabContent');
+  if(state.tab==='history')renderHistory(el);else renderStudents(el);
+}
+function renderStudents(el){
+  const panel=document.getElementById('scorePanel');
+  panel.style.display=state.selected.size>0?'block':'none';
+  document.getElementById('selCount').textContent=state.selected.size;
+  el.innerHTML='<div class="pets-grid">'+state.students.map(s=>{
+    const pl=petLvl(s.pet_exp);const isSel=state.selected.has(s.id);
+    return`<div class="pet-card${isSel?' selected':''}" onclick="toggleStudent(${s.id})" oncontextmenu="showDetail(${s.id});return false">
+      <div class="check-mark">✓</div>
+      <div class="pet-lvl">${pl.emoji}</div>
+      <div class="pet-emoji">${PETS[s.pet_type]||'🐱'}</div>
+      <div class="pet-name">${s.name}</div>
+      <div class="pet-score">⭐${s.score} · ${pl.name}</div>
+    </div>`;
+  }).join('')+'</div>';
+  // Extra row with manage buttons
+  if(state.students.length>0){
+    el.innerHTML+='<div style="text-align:center;padding:12px 0;color:#999;font-size:11px">💡 点击卡片选中加分 · 长按/右键查看详情</div>';
+  }else{
+    el.innerHTML='<div class="empty"><div class="icon">🐣</div><p>还没有小朋友<br>点击上方按钮添加吧</p></div>';
+  }
+}
+
+function renderHistory(el){
+  if(!state.history.length){el.innerHTML='<div class="empty"><div class="icon">📋</div><p>还没有积分记录</p></div>';return}
+  el.innerHTML='<div class="h-list">'+state.history.map(h=>{
+    const d=new Date(h.created_at+'Z');
+    const t=d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'});
+    return`<div class="h-item">
+      <span class="h-time">${t}</span>
+      <span class="h-student">${PETS[h.pet_type]||''} ${h.student_name}</span>
+      <span class="h-reason">${h.reason||'表现优秀'}</span>
+      <span class="h-pts">+${h.points}</span>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function toggleStudent(id){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);renderTab()}
+async function doScore(pts){
+  if(state.selected.size===0)return toast('请先选择小朋友');
+  const scores=[...state.selected].map(id=>({student_id:id,points:pts,reason:state.selectedReason||'表现优秀'}));
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scores})});
+  const d=await r.json();
+  if(d.ok){
+    const names=[...state.selected].map(id=>state.students.find(s=>s.id===id)?.name).join('、');
+    toast('✅ '+names+' 各+'+pts+'分');
+    state.selectedReason='';document.querySelectorAll('.reason-tag').forEach(b=>b.classList.remove('on'));
+    await refreshClass();
+  }else toast('❌ '+d.error);
+}
+
+// ─── Student Detail ───
+async function showDetail(sid){
+  const modal=document.getElementById('detailModal');
+  document.getElementById('detailContent').innerHTML='<div style="text-align:center;padding:30px">加载中...</div>';
+  modal.classList.add('show');
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students/'+sid+'/detail');
+  const d=await r.json();
+  if(d.error){toast(d.error);modal.classList.remove('show');return}
+  renderDetail(d,sid);
+}
+
+function renderDetail(d,sid){
+  const pl=petLvl(d.pet_exp);
+  const prev=lvlNext(pl);
+  const pct=Math.min(100,Math.round((d.pet_exp-prev)/Math.max(1,(pl.next-prev))*100));
+  const el=document.getElementById('detailContent');
+  const parentUrl=location.origin+'/parent/'+state.currentClass.invite_code+'/'+sid;
+  
+  el.innerHTML=`
+    <button class="close" onclick="closeModal('detailModal')">✕</button>
+    <div class="detail-hero">
+      <div class="d-emoji">${PETS[d.pet_type]||'🐱'}</div>
+      <div style="font-size:20px;font-weight:800;color:#333;margin:4px 0">${d.name}</div>
+      <div style="font-size:12px;color:#999">${d.pet_name}</div>
+      <div class="d-level">${pl.emoji} ${pl.name} Lv.${pl.level}</div>
+    </div>
+    <div class="detail-stats">
+      <div class="d-stat"><div class="num">⭐${d.score}</div><div class="label">可用积分</div></div>
+      <div class="d-stat"><div class="num">${d.pet_exp}</div><div class="label">宠物经验</div></div>
+    </div>
+    <div class="exp-bar"><div class="fill" style="width:${pct}%"></div></div>
+    <div style="font-size:10px;color:#999;text-align:right;margin-bottom:12px">距 ${pl.next===999?'满级':pl.name+'→传说'} 还需 ${pl.next-d.pet_exp} 经验</div>
+
+    <div class="detail-section">
+      <h4>✏️ 编辑信息</h4>
+      <div class="edit-row">
+        <input class="input" id="editName_${sid}" value="${d.name}" placeholder="名字" style="flex:1;margin-bottom:0">
+        <div class="pet-pick" id="petPick_${sid}">
+          ${PET_KEYS.map(k=>`<button class="${k===d.pet_type?'sel':''}" onclick="pickPet('${k}',${sid})">${PETS[k]}</button>`).join('')}
+        </div>
+      </div>
+      <button class="btn-sm btn-green" onclick="doEditStudent(${sid})">💾 保存</button>
+      <button class="btn-sm btn-red" onclick="doRemoveStudent(${sid})" style="margin-left:6px">🗑 移除</button>
+    </div>
+
+    <div class="detail-section">
+      <h4>🔗 家长入口 <button class="btn-sm btn-blue" onclick="copyText('${parentUrl}')">📋 复制链接</button></h4>
+      <div style="font-size:11px;color:#666;word-break:break-all;background:#f5f5f5;padding:8px;border-radius:8px">${parentUrl}</div>
+      <div style="font-size:11px;color:#999;margin-top:4px">打印成二维码卡片，发给家长扫码查看</div>
+    </div>
+
+    <div class="detail-section">
+      <h4>🛍️ 已购买 (${d.purchases?.length||0}件)</h4>
+      ${(d.purchases||[]).length?d.purchases.map(p=>
+        `<div style="font-size:12px;padding:4px 0;border-bottom:1px dashed #eee;display:flex;justify-content:space-between"><span>${p.item_name}</span><span style="color:#f57c00">-${p.cost}分</span></div>`
+      ).join(''):'<div style="font-size:12px;color:#999">还没有购买记录</div>'}
+    </div>
+
+    <div class="detail-section">
+      <h4>📊 积分历史 (${d.score_logs?.length||0}条)</h4>
+      ${(d.score_logs||[]).length?d.score_logs.map(l=>
+        `<div style="font-size:12px;padding:4px 0;border-bottom:1px dashed #eee;display:flex;justify-content:space-between"><span>${l.reason||'表现优秀'} <small style="color:#999">${l.date}</small></span><span style="color:#2e7d32;font-weight:600">+${l.points}</span></div>`
+      ).join(''):'<div style="font-size:12px;color:#999">还没有积分记录</div>'}
+    </div>
+  `;
+}
+
+function pickPet(pet,sid){
+  document.querySelectorAll('#petPick_'+sid+' button').forEach(b=>b.classList.toggle('sel',b.onclick.toString().includes("'"+pet+"'")));
+}
+
+async function doEditStudent(sid){
+  const name=document.getElementById('editName_'+sid).value.trim();
+  let petType=null;
+  document.querySelectorAll('#petPick_'+sid+' button').forEach(b=>{if(b.classList.contains('sel')){for(let[k,v]of Object.entries(PETS))if(v===b.textContent)petType=k}});
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students/'+sid,{
+    method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,pet_type:petType})
+  });
+  const d=await r.json();
+  if(d.ok){toast('✅ 已保存');closeModal('detailModal');await refreshClass()}else toast('❌ '+d.error);
+}
+
+async function doRemoveStudent(sid){
+  if(!confirm('确定移除这个小朋友吗？\n他的积分和记录都会被删除。'))return;
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students/'+sid,{method:'DELETE'});
+  const d=await r.json();
+  if(d.ok){toast('已移除');closeModal('detailModal');await refreshClass()}else toast('❌ '+d.error);
+}
+
+// ─── Class ───
+function openCreateClass(){document.getElementById('createClassModal').classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+async function doCreateClass(){
+  const n=document.getElementById('newClassName').value.trim();
+  if(!n)return toast('请输入班级名称');
+  const r=await fetch('/api/classes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
+  const d=await r.json();
+  if(d.ok){closeModal('createClassModal');document.getElementById('emptyState').style.display='none';await loadClasses()}else toast('❌ '+d.error);
+}
+function editClassName(){document.getElementById('editClassName').value=state.currentClass.name;document.getElementById('classNameModal').classList.add('show')}
+async function doRenameClass(){
+  const n=document.getElementById('editClassName').value.trim();
+  if(!n)return toast('请输入班级名称');
+  const r=await fetch('/api/classes/'+state.currentClass.id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
+  const d=await r.json();
+  if(d.ok){closeModal('classNameModal');state.currentClass.name=n;refreshClass();toast('✅ 名称已更新')}else toast('❌ '+d.error);
+}
+function openAddStudent(){document.getElementById('newStudentName').value='';document.getElementById('addStudentModal').classList.add('show')}
+async function doAddStudent(){
+  const n=document.getElementById('newStudentName').value.trim();
+  if(!n)return toast('请输入小朋友名字');
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/students',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pet_type:state.selectedPet})});
+  const d=await r.json();
+  if(d.ok){closeModal('addStudentModal');await refreshClass()}else toast('❌ '+d.error);
+}
+function copyInviteInfo(){
+  const code=state.currentClass.invite_code;
+  const url=location.origin+'/screen/'+code;
+  copyText('邀请码：'+code+'\n大屏：'+url);
+}
+function openScreen(){window.open('/screen/'+state.currentClass.invite_code,'_blank')}
+function doLogout(){fetch('/api/logout',{method:'POST'}).then(()=>location.href='/login')}
+function copyText(t){navigator.clipboard?.writeText(t).then(()=>toast('📋 已复制\n'+t.substring(0,80))).catch(()=>prompt('复制：',t))}
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2500)}
+</script>
+</body>
+</html>

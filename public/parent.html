@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>宠物乐园 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#e3f2fd 0%,#bbdefb 50%,#90caf9 100%);min-height:100vh;max-width:480px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:24px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:16px}
+.pet-hero{text-align:center;margin-bottom:20px}
+.pet-hero .pet-img{font-size:80px;display:block;margin-bottom:8px}
+.pet-hero .pet-title{font-size:14px;color:#888}
+.pet-hero .pet-name{font-size:22px;font-weight:800;color:#333}
+.pet-hero .pet-level{display:inline-block;background:linear-gradient(135deg,#ffd600,#ff6d00);color:#fff;padding:4px 16px;border-radius:20px;font-size:14px;font-weight:700;margin-top:6px}
+.stats{display:flex;gap:8px;margin-bottom:20px}
+.stat{flex:1;background:#f5f5f5;border-radius:14px;padding:14px;text-align:center}
+.stat .num{font-size:24px;font-weight:800;color:#2e7d32}
+.stat .label{font-size:11px;color:#999;margin-top:2px}
+.exp-bar{background:#e0e0e0;border-radius:10px;height:10px;margin-top:8px;overflow:hidden}
+.exp-bar .fill{background:linear-gradient(90deg,#66bb6a,#43a047);height:100%;border-radius:10px;transition:width .5s}
+.exp-label{font-size:11px;color:#999;margin-top:4px;text-align:right}
+
+/* Shop */
+.shop-title{font-size:16px;font-weight:700;color:#333;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.shop-cats{display:flex;gap:6px;margin-bottom:12px}
+.shop-cat{padding:6px 14px;border-radius:16px;border:1.5px solid #e0e0e0;font-size:13px;cursor:pointer;background:#fff;transition:.2s}
+.shop-cat.on{background:#e3f2fd;border-color:#42a5f5;color:#1565c0}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.shop-item{background:#fafafa;border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:.2s;border:2px solid transparent}
+.shop-item:hover{border-color:#90caf9}
+.shop-item.owned{background:#f5f5f5;border-color:#e0e0e0;cursor:default}
+.shop-item .item-emoji{font-size:32px;display:block;margin-bottom:4px}
+.shop-item .item-name{font-size:13px;font-weight:600;color:#333}
+.shop-item .item-cost{font-size:11px;color:#f57c00;margin-top:2px}
+
+/* History */
+.history{margin-top:8px}
+.history-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.history-item .h-icon{font-size:20px}
+.history-item .h-text{flex:1}
+.history-item .h-points{font-weight:700;color:#2e7d32}
+
+/* Purchases */
+.purchase-item{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:#666;border-bottom:1px dashed #e8e8e8}
+
+/* Loading */
+.loading{text-align:center;padding:80px 20px;font-size:48px;color:#999}
+.loading p{font-size:16px;margin-top:12px}
+
+.btn-back{font-size:13px;color:#999;background:none;border:1px solid #ddd;padding:6px 14px;border-radius:20px;cursor:pointer;margin-bottom:12px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="loading" class="loading">🐾<p>加载宠物中...</p></div>
+<div id="app" style="display:none"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const parts = location.pathname.split('/');
+const CODE = parts[2];
+const STUDENT_ID = parts[3];
+if (!CODE || !STUDENT_ID) location.href = '/login';
+
+const SHOP = {
+  food: [
+    { key: 'fish', name: '小鱼干', emoji: '🐟', cost: 2, desc: '宠物爱吃' },
+    { key: 'bone', name: '肉骨头', emoji: '🦴', cost: 3, desc: '营养丰富' },
+    { key: 'carrot', name: '胡萝卜', emoji: '🥕', cost: 2, desc: '健康美味' },
+    { key: 'apple', name: '苹果', emoji: '🍎', cost: 1, desc: '每日水果' },
+    { key: 'cake', name: '小蛋糕', emoji: '🧁', cost: 5, desc: '超多经验' },
+    { key: 'milk', name: '牛奶', emoji: '🥛', cost: 3, desc: '快快长大' },
+  ],
+  toy: [
+    { key: 'ball', name: '皮球', emoji: '⚽', cost: 10, desc: '一起玩耍' },
+    { key: 'yarn', name: '毛线团', emoji: '🧶', cost: 12, desc: '喵喵最爱' },
+    { key: 'frisbee', name: '飞盘', emoji: '🥏', cost: 15, desc: '汪汪接住' },
+    { key: 'puzzle', name: '积木', emoji: '🧩', cost: 18, desc: '益智玩具' },
+  ],
+  dress: [
+    { key: 'bow', name: '蝴蝶结', emoji: '🎀', cost: 25, desc: '漂亮可爱' },
+    { key: 'hat', name: '小帽子', emoji: '🎩', cost: 30, desc: '绅士风范' },
+    { key: 'glasses', name: '墨镜', emoji: '🕶️', cost: 35, desc: '酷酷的' },
+    { key: 'crown', name: '皇冠', emoji: '👑', cost: 50, desc: '宠物之王' },
+  ],
+  special: [
+    { key: 'house', name: '小木屋', emoji: '🏠', cost: 80, desc: '温暖的家' },
+    { key: 'castle', name: '城堡', emoji: '🏰', cost: 200, desc: '豪华宫殿' },
+    { key: 'rainbow', name: '彩虹光环', emoji: '🌈', cost: 150, desc: '专属特效' },
+    { key: 'star', name: '闪耀之星', emoji: '💫', cost: 300, desc: '传说级别' },
+  ]
+};
+const CAT_NAMES = { food:'🍎 食物', toy:'🎾 玩具', dress:'👗 装扮', special:'🌟 珍品' };
+let shopCat = 'food';
+let studentData = null;
+
+async function load() {
+  try {
+    const r = await fetch('/api/student/' + CODE + '/' + STUDENT_ID);
+    studentData = await r.json();
+    if (studentData.error) { document.getElementById('loading').innerHTML='<p style="font-size:48px">😢</p><p>小朋友不存在</p>'; return }
+    render();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+  } catch(e) { document.getElementById('loading').innerHTML='<p>加载失败，请重试</p>' }
+}
+
+function petLevel(exp) {
+  if (exp>=250) return {name:'传说',emoji:'⭐',next:9999};
+  if (exp>=100) return {name:'成年',emoji:'🌳',next:250};
+  if (exp>=40) return {name:'成长',emoji:'🌿',next:100};
+  if (exp>=10) return {name:'幼年',emoji:'🌱',next:40};
+  return {name:'宝宝',emoji:'🥚',next:10};
+}
+
+const PET_EMOJI = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'};
+
+function render() {
+  const d = studentData;
+  const pl = petLevel(d.pet_exp);
+  const petEmoji = PET_EMOJI[d.pet_type] || '🐱';
+  const prevLevel = petLevel(Math.max(0, d.pet_exp - 1));
+  const next = pl.next || 9999;
+  const pct = Math.min(100, Math.round((d.pet_exp - (pl.level===1?0:pl.level===2?10:pl.level===3?40:pl.level===4?100:250)) / (next - (pl.level===1?0:pl.level===2?10:pl.level===3?40:pl.level===4?100:250)) * 100));
+  
+  const historyHTML = (d.score_logs||[]).map(l =>
+    `<div class="history-item">
+      <span class="h-icon">+${l.points}</span>
+      <span class="h-text">${l.reason||'表现优秀'} <small style="color:#999">${l.date}</small></span>
+      <span class="h-points">⭐${l.points}</span>
+    </div>`
+  ).join('');
+
+  const purchasesHTML = (d.purchases||[]).map(p =>
+    `<div class="purchase-item">
+      <span>🛍️</span>
+      <span>${p.item_name}</span>
+      <span style="color:#f57c00">-${p.cost}分</span>
+    </div>`
+  ).join('');
+
+  const ownedKeys = new Set((d.purchases||[]).map(p => p.item_key));
+  const shopItems = SHOP[shopCat] || [];
+  const shopHTML = shopItems.map(item => {
+    const owned = ownedKeys.has(item.key);
+    const isConsumable = shopCat === 'food';
+    const canBuy = isConsumable || !owned;
+    return `<div class="shop-item${owned&&!isConsumable?' owned':''}" ${canBuy?`onclick="buy('${item.key}','${item.name}','${shopCat}',${item.cost})"`:''} style="${canBuy?'':'opacity:.5;pointer-events:none'}">
+      <span class="item-emoji">${item.emoji}</span>
+      <span class="item-name">${item.name}${owned&&!isConsumable?' ✅':''}</span>
+      <span class="item-cost">${owned&&!isConsumable?'已拥有':'💰'+item.cost+'分'}</span>
+    </div>`;
+  }).join('');
+
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <button class="btn-back" onclick="history.back()">← 返回</button>
+    
+    <div class="card">
+      <div class="pet-hero">
+        <span class="pet-img">${petEmoji}</span>
+        <div class="pet-title">${d.class_name} · ${d.name}</div>
+        <div class="pet-name">${d.pet_name||petEmoji+d.name}</div>
+        <div class="pet-level">${pl.emoji} ${pl.name} Lv.${pl.level}</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">⭐${d.score}</div><div class="label">可用积分</div></div>
+        <div class="stat"><div class="num">${d.pet_exp}</div><div class="label">宠物经验</div></div>
+      </div>
+      <div class="exp-bar"><div class="fill" style="width:${pct}%"></div></div>
+      <div class="exp-label">距下一级还需 ${next - d.pet_exp} 经验</div>
+    </div>
+
+    <div class="card">
+      <div class="shop-title">
+        <span>🛒 宠物商店</span>
+        <span style="font-size:12px;color:#999">余额：⭐${d.score}</span>
+      </div>
+      <div class="shop-cats">
+        ${Object.entries(CAT_NAMES).map(([k,v]) =>
+          `<button class="shop-cat${shopCat===k?' on':''}" onclick="switchCat('${k}')">${v}</button>`
+        ).join('')}
+      </div>
+      <div class="shop-grid">${shopHTML}</div>
+    </div>
+
+    ${purchasesHTML ? `<div class="card"><div class="shop-title">🛍️ 已拥有</div>${purchasesHTML}</div>` : ''}
+
+    <div class="card">
+      <div class="shop-title">📋 最近记录</div>
+      ${historyHTML || '<p style="color:#999;font-size:13px;text-align:center;padding:20px">还没有加分记录<br>好好表现赚积分吧！</p>'}
+    </div>
+  `;
+}
+
+function switchCat(cat) {
+  shopCat = cat;
+  render();
+}
+
+async function buy(key, name, category, cost) {
+  if (!confirm('确认购买 ' + name + '？\n花费 ⭐' + cost + ' 积分')) return;
+  try {
+    const r = await fetch('/api/student/' + CODE + '/' + STUDENT_ID + '/buy', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ item_key: key, item_name: name, category, cost })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      studentData = d.student;
+      render();
+      const msg = category==='food' ? '🍎 喂养成功！宠物获得'+(cost*2)+'经验' : '🛍️ 购买成功！';
+      toast(msg);
+    } else {
+      toast('❌ ' + d.error);
+    }
+  } catch(e) { toast('网络错误') }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+load();
+</script>
+</body>
+</html>

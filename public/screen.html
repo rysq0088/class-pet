@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>宠物花园 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes sparkle{0%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:1;transform:scale(1.5) rotate(180deg)}100%{opacity:0;transform:scale(0) rotate(360deg)}}
+@keyframes slideUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#e8f5e9 0%,#c8e6c9 30%,#81c784 60%,#4caf50 100%);min-height:100vh;overflow-x:hidden;color:#fff}
+.header{text-align:center;padding:24px 16px 8px}
+.header h1{font-size:32px;text-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:4px}
+.header .info{font-size:14px;opacity:.8}
+.garden{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:20px;max-width:1200px;margin:0 auto}
+.pet-spot{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:20px;padding:20px 16px;text-align:center;width:130px;transition:.3s;position:relative;overflow:visible}
+.pet-spot .emoji{font-size:52px;display:block;animation:float 3s ease-in-out infinite;margin-bottom:6px}
+.pet-spot .name{font-size:16px;font-weight:700;margin-bottom:2px}
+.pet-spot .stage{font-size:14px;margin-bottom:4px}
+.pet-spot .score{font-size:12px;opacity:.8;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:10px;display:inline-block}
+.pet-spot .sparkle{position:absolute;top:-10px;right:-10px;font-size:24px;animation:sparkle 1s ease-out;pointer-events:none}
+.pet-spot.bump{animation:slideUp .5s ease-out}
+
+/* Score popup */
+.score-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:72px;font-weight:900;color:#ffd600;text-shadow:0 4px 20px rgba(0,0,0,.3);animation:sparkle 1.5s ease-out forwards;pointer-events:none;z-index:100}
+
+/* Today log */
+.log-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.3);backdrop-filter:blur(10px);padding:12px 20px;display:flex;gap:12px;overflow-x:auto;white-space:nowrap}
+.log-item{font-size:13px;opacity:.9;flex-shrink:0}
+.log-item .pts{color:#ffd600;font-weight:700}
+
+.footer{text-align:center;padding:16px;font-size:12px;opacity:.6;margin-bottom:50px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌳 宠物花园</h1>
+  <div class="info" id="classInfo">加载中...</div>
+</div>
+<div class="garden" id="garden"></div>
+<div class="log-bar" id="logBar"></div>
+
+<script>
+const CODE = location.pathname.split('/screen/')[1]?.split('/')[0];
+if (!CODE) location.href = '/login';
+
+let lastScoreCount = 0;
+
+async function refresh() {
+  try {
+    const r = await fetch('/api/garden/' + CODE);
+    const d = await r.json();
+    if (!d.class) return;
+    
+    document.getElementById('classInfo').textContent = d.class.name + ' · ' + d.class.teacher_name + '老师';
+    
+    const g = document.getElementById('garden');
+    const pets = d.garden || [];
+    
+    if (pets.length > 0) {
+      const currentCount = pets.reduce((a,b) => a + b.score, 0);
+      if (currentCount > lastScoreCount) {
+        // score animation
+        showScorePop('+' + (currentCount - lastScoreCount));
+      }
+      lastScoreCount = currentCount;
+      
+      g.innerHTML = pets.map(p => {
+        const delay = (Math.random() * 3).toFixed(1);
+        const petEmoji = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'}[p.pet_type]||'🐱';
+        return `<div class="pet-spot" style="animation-delay:${delay}s">
+          <span class="emoji" style="animation-delay:${delay}s">${petEmoji}</span>
+          <div class="name">${p.name}</div>
+          <div class="stage">${p.pet_info.emoji} ${p.pet_info.name}</div>
+          <div class="score">⭐${p.score} · 今天+${p.today_points||0}</div>
+        </div>`;
+      }).join('');
+    } else {
+      g.innerHTML = '<div style="text-align:center;width:100%;padding:60px;font-size:48px">🐣<br><p style="font-size:18px;margin-top:16px">等待小朋友加入...</p></div>';
+    }
+    
+    // Today logs
+    const r2 = await fetch('/api/classes/'+d.class.id+'/today');
+    const d2 = await r2.json();
+    const lb = document.getElementById('logBar');
+    if (d2.logs && d2.logs.length > 0) {
+      lb.innerHTML = d2.logs.slice(0, 15).map(l =>
+        `<span class="log-item">🎯 <span class="pts">${l.student_name}+${l.points}</span> ${l.reason||''}</span>`
+      ).join('');
+    } else {
+      lb.innerHTML = '<span class="log-item">🌙 今天还没有加分记录</span>';
+    }
+  } catch(e) { console.log(e) }
+}
+
+let popTimeout = null;
+function showScorePop(text) {
+  const el = document.createElement('div');
+  el.className = 'score-pop';
+  el.textContent = text;
+  document.body.appendChild(el);
+  clearTimeout(popTimeout);
+  popTimeout = setTimeout(() => el.remove(), 1600);
+}
+
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

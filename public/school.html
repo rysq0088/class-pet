@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>学校管理 - ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;min-height:100vh;max-width:800px;margin:0 auto;padding:16px;color:#333}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.header h1{font-size:22px;color:#1a237e}
+.header .badge{background:#e8eaf6;color:#283593;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600}
+.header .logout{font-size:13px;color:#999;background:none;border:1px solid #ddd;padding:6px 14px;border-radius:16px;cursor:pointer}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-size:17px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:8px}
+.stat{background:#f8f9ff;border-radius:14px;padding:14px;text-align:center}
+.stat .num{font-size:28px;font-weight:800;color:#1a237e}
+.stat .label{font-size:11px;color:#999;margin-top:2px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#666;margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;outline:none;transition:.2s}
+.form-group input:focus,.form-group select:focus{border-color:#3f51b5}
+.form-row{display:flex;gap:8px}
+.form-row .form-group{flex:1}
+.btn{padding:10px 20px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-primary{background:#3f51b5;color:#fff}
+.btn-primary:hover{background:#303f9f}
+.btn-sm{font-size:12px;padding:6px 12px;border-radius:10px}
+.btn-outline{background:none;border:1.5px solid #d32f2f;color:#d32f2f}
+.btn-outline2{background:none;border:1.5px solid #e0e0e0;color:#666}
+.teacher-list,.class-list{list-style:none}
+.teacher-item,.class-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0;gap:10px}
+.teacher-item:last-child,.class-item:last-child{border-bottom:none}
+.teacher-item .info,.class-item .info{flex:1;min-width:0}
+.teacher-item .name,.class-item .name{font-size:14px;font-weight:600}
+.teacher-item .meta,.class-item .meta{font-size:12px;color:#999;margin-top:2px}
+.empty{text-align:center;padding:30px;color:#999;font-size:14px}
+.add-bar{display:flex;gap:8px;margin-bottom:12px}
+.add-bar input{flex:1;padding:10px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;outline:none}
+.add-bar input:focus{border-color:#3f51b5}
+.teacher-item .role-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.teacher-item .role-admin{background:#fff3e0;color:#e65100}
+.teacher-item .role-teacher{background:#e8f5e9;color:#2e7d32}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+@media(max-width:500px){.form-row{flex-direction:column}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><h1>🏫 <span id="schoolName">加载中...</span></h1></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="badge" id="roleBadge">校长</span>
+    <button class="logout" onclick="logout()">退出</button>
+  </div>
+</div>
+
+<!-- 数据概览 -->
+<div class="card">
+  <h2>📊 学校数据</h2>
+  <div class="stats" id="statsArea"></div>
+</div>
+
+<!-- 学校信息编辑 -->
+<div class="card">
+  <h2>📝 学校信息</h2>
+  <div class="form-row">
+    <div class="form-group"><label>学校名称 *</label><input id="iName" placeholder="如：深圳阳光幼儿园"></div>
+    <div class="form-group"><label>联系电话</label><input id="iPhone" placeholder="学校联系电话"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>省份</label><input id="iProvince" placeholder="如：广东"></div>
+    <div class="form-group"><label>城市</label><input id="iCity" placeholder="如：深圳"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>地址</label><input id="iAddress" placeholder="详细地址"></div>
+    <div class="form-group"><label>联系人</label><input id="iContact" placeholder="联系人姓名"></div>
+  </div>
+  <button class="btn btn-primary" onclick="saveInfo()">💾 保存信息</button>
+</div>
+
+<!-- 老师管理 -->
+<div class="card">
+  <h2>👩‍🏫 本校老师</h2>
+  <div class="add-bar">
+    <input id="tPhone" placeholder="输入老师注册手机号" type="tel" maxlength="11">
+    <button class="btn btn-primary btn-sm" onclick="inviteTeacher()" style="flex-shrink:0">➕ 邀请加入</button>
+  </div>
+  <ul class="teacher-list" id="teacherList"></ul>
+</div>
+
+<!-- 全校班级 -->
+<div class="card">
+  <h2>🏫 全校班级</h2>
+  <ul class="class-list" id="classList"></ul>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let inst = null, stats = null, teachers = [], classes = [], user = {};
+
+async function load() {
+  const me = await fetch('/api/me').then(r => r.json());
+  if (!me.teacher) { location.href = '/login'; return }
+  user = me.teacher;
+  if (user.role !== 'school_admin') { location.href = '/teacher'; return }
+  
+  const d = await fetch('/api/institution').then(r => r.json());
+  inst = d.institution; stats = d.stats; teachers = d.teachers || []; classes = d.classes || [];
+  
+  if (!inst) {
+    document.body.innerHTML = `<div style="text-align:center;padding:100px 20px">
+      <h2>🏫 还没有学校</h2>
+      <p style="color:#999;margin:16px 0">创建你的学校，邀请老师加入</p>
+      <input id="newSch" placeholder="学校名称" style="padding:12px;border-radius:12px;border:1.5px solid #ddd;font-size:16px;text-align:center;margin:12px 0;display:block;width:100%;max-width:300px;margin-left:auto;margin-right:auto">
+      <button class="btn btn-primary" onclick="createSchool()" style="margin-top:16px">🏫 创建学校</button>
+    </div>`;
+    return;
+  }
+  
+  render();
+}
+
+function render() {
+  document.getElementById('schoolName').textContent = inst.name;
+  document.getElementById('roleBadge').textContent = '🔑 校长';
+  
+  // Fill form
+  document.getElementById('iName').value = inst.name || '';
+  document.getElementById('iProvince').value = inst.province || '';
+  document.getElementById('iCity').value = inst.city || '';
+  document.getElementById('iAddress').value = inst.address || '';
+  document.getElementById('iContact').value = inst.contact_name || '';
+  document.getElementById('iPhone').value = inst.contact_phone || '';
+  
+  // Stats
+  document.getElementById('statsArea').innerHTML = `
+    <div class="stat"><div class="num">${stats.teacher_count}</div><div class="label">👩‍🏫 老师</div></div>
+    <div class="stat"><div class="num">${stats.class_count}</div><div class="label">🏫 班级</div></div>
+    <div class="stat"><div class="num">${stats.student_count}</div><div class="label">👶 学生</div></div>
+    <div class="stat"><div class="num">⭐${stats.today_score}</div><div class="label">今日加分</div></div>
+  `;
+  
+  // Teachers
+  const tl = document.getElementById('teacherList');
+  if (teachers.length === 0) {
+    tl.innerHTML = '<div class="empty">还没有老师，输入手机号邀请加入</div>';
+  } else {
+    tl.innerHTML = teachers.map(t => `
+      <li class="teacher-item">
+        <div class="info">
+          <span class="name">${t.name} <span class="role-badge ${t.role==='school_admin'?'role-admin':'role-teacher'}">${t.role==='school_admin'?'校长':'老师'}</span></span>
+          <div class="meta">📱 ${t.phone.substring(0,3)}****${t.phone.substring(7)}</div>
+        </div>
+        ${t.role !== 'school_admin' ? `<button class="btn btn-outline btn-sm" onclick="removeTeacher(${t.id},'${t.name}')">移除</button>` : ''}
+      </li>
+    `).join('');
+  }
+  
+  // Classes
+  const cl = document.getElementById('classList');
+  if (classes.length === 0) {
+    cl.innerHTML = '<div class="empty">还没有班级，老师们快去创建吧</div>';
+  } else {
+    cl.innerHTML = classes.map(c => `
+      <li class="class-item">
+        <div class="info">
+          <span class="name">${c.name}</span>
+          <div class="meta">👩‍🏫 ${c.teacher_name} · 👶 ${c.student_count}人 · 💬 ${c.invite_code}</div>
+        </div>
+      </li>
+    `).join('');
+  }
+}
+
+async function createSchool() {
+  const name = document.getElementById('newSch').value.trim();
+  if (!name) { t('请输入学校名称'); return }
+  await fetch('/api/institution', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})
+  }).then(r => r.json()).then(d => {
+    if (d.ok) { location.reload(); } else { t(d.error || '创建失败'); }
+  });
+}
+
+async function saveInfo() {
+  const fields = {
+    name: document.getElementById('iName').value.trim(),
+    province: document.getElementById('iProvince').value.trim(),
+    city: document.getElementById('iCity').value.trim(),
+    address: document.getElementById('iAddress').value.trim(),
+    contact_name: document.getElementById('iContact').value.trim(),
+    contact_phone: document.getElementById('iPhone').value.trim()
+  };
+  if (!fields.name) { t('学校名称必填'); return }
+  const d = await fetch('/api/institution', {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(fields)
+  }).then(r => r.json());
+  if (d.ok) { t('✅ 保存成功'); load(); } else { t('❌ ' + (d.error || '失败')); }
+}
+
+async function inviteTeacher() {
+  const phone = document.getElementById('tPhone').value.trim();
+  if (!/^1\d{10}$/.test(phone)) { t('请输入正确手机号'); return }
+  const d = await fetch('/api/institution/teachers', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone})
+  }).then(r => r.json());
+  if (d.ok) { t('✅ ' + d.teacher.name + ' 已加入学校'); load(); } else { t('❌ ' + (d.error || '失败')); }
+}
+
+async function removeTeacher(id, name) {
+  if (!confirm('确定将 ' + name + ' 从学校移除？')) return;
+  const d = await fetch('/api/institution/teachers/' + id, { method:'DELETE' }).then(r => r.json());
+  if (d.ok) { t('✅ 已移除'); load(); } else { t('❌ ' + (d.error || '失败')); }
+}
+
+function t(m) {
+  const el = document.getElementById('toast');
+  el.textContent = m; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function logout() {
+  fetch('/api/logout', {method:'POST'}).finally(() => {
+    document.cookie='cp_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    setTimeout(() => location.replace('/login?t='+Date.now()), 300);
+  });
+}
+
+load();
+</script>
+
+<div style="position:fixed;top:16px;left:16px;z-index:200">
+  <a href="/" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.2);color:#fff;text-decoration:none;font-size:18px">←</a>
+</div>
+</body>
+</html>

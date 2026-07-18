@@ -3,159 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ClassPet — 让好习惯在教室里"活"起来</title>
+<title>ClassPet — 用宠物成长激励好习惯</title>
 <meta name="description" content="幼儿园老师最好的帮手：宠物养成+课堂积分，每天2分钟，让小朋友的好习惯看得见。">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden;color:#333}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden;color:#333;background:#fafcf9;line-height:1.7}
 
-/* Hero */
-.hero{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 40%,#a5d6a7 100%);padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:60px;background:#f5f7fa;border-radius:50% 50% 0 0}
-.hero h1{font-size:36px;font-weight:900;color:#1b5e20;margin-bottom:16px;line-height:1.3}
-.hero h1 span{background:linear-gradient(135deg,#ffd600,#ff6d00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .sub{font-size:18px;color:#4caf50;margin-bottom:32px;line-height:1.6}
-.hero .pets{font-size:48px;letter-spacing:8px;margin-bottom:32px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.1))}
-.btn-hero{display:inline-block;background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;padding:14px 36px;border-radius:28px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(46,125,50,.3);transition:.3s;border:none;cursor:pointer;margin:4px}
-.btn-hero:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(46,125,50,.4)}
-.btn-hero.outline{background:#fff;color:#2e7d32;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.05);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-size:20px;font-weight:800;color:#2e7d32;display:flex;align-items:center;gap:8px}
+nav .logo span{font-size:26px}
+nav .links{display:flex;gap:16px;align-items:center}
+nav .links a{text-decoration:none;color:#555;font-size:14px;font-weight:500}
+nav .links a.btn-nav{background:#2e7d32;color:#fff;padding:8px 18px;border-radius:20px;font-weight:600}
 
-/* How it works */
-.section{padding:60px 24px;max-width:900px;margin:0 auto}
-.section h2{font-size:26px;font-weight:800;text-align:center;margin-bottom:40px;color:#1b5e20}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
-.step{text-align:center;padding:24px 16px;background:#fff;border-radius:20px;box-shadow:0 2px 16px rgba(0,0,0,.04)}
-.step .emoji{font-size:48px;margin-bottom:12px}
-.step h3{font-size:17px;margin-bottom:8px;color:#2e7d32}
-.step p{font-size:13px;color:#666;line-height:1.6}
+/* ── Hero ── */
+.hero{padding:120px 24px 80px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#e8f5e9 0%,#c8e6c9 30%,#a5d6a7 70%,#81c784 100%)}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.6) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 80%,rgba(255,215,0,.15) 0%,transparent 50%)}
+.hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:80px;background:#fafcf9;border-radius:50% 60% 0 0 / 30px 40px 0 0}
+.hero *{position:relative;z-index:1}
+.hero .badge{display:inline-block;background:rgba(255,255,255,.7);color:#2e7d32;padding:6px 20px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px}
+.hero h1{font-size:44px;font-weight:900;color:#1b5e20;margin-bottom:18px;letter-spacing:-1px;line-height:1.25}
+.hero h1 .hl{background:linear-gradient(135deg,#f9a825,#e65100);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{font-size:19px;color:#388e3c;margin-bottom:36px;font-weight:500}
+.hero .pets{font-size:52px;letter-spacing:8px;margin-bottom:28px;
+  filter:drop-shadow(0 8px 16px rgba(0,0,0,.08))}
+.hero .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:15px 32px;border-radius:28px;font-size:16px;font-weight:700;
+  text-decoration:none;cursor:pointer;transition:all .25s;border:none}
+.btn-primary{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;
+  box-shadow:0 6px 24px rgba(46,125,50,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(46,125,50,.45)}
+.btn-outline{background:#fff;color:#2e7d32;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.btn-outline:hover{transform:translateY(-2px);box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.btn-ghost{background:rgba(255,255,255,.5);color:#2e7d32;border:2px solid rgba(46,125,50,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.8)}
 
-/* Timeline */
-.timeline{background:#fff;padding:0 0 40px}
-.timeline h2{font-size:26px;font-weight:800;text-align:center;margin-bottom:40px;color:#1b5e20}
-.tl-day{max-width:700px;margin:0 auto 24px;padding:20px;border-radius:16px;background:#f9fdf9;border-left:4px solid #4caf50}
-.tl-day h3{font-size:16px;color:#333;margin-bottom:8px}
-.tl-day p{font-size:13px;color:#666;line-height:1.6}
+/* ── Section ── */
+.sec{padding:80px 24px;max-width:1000px;margin:0 auto}
+.sec h2{font-size:30px;font-weight:900;text-align:center;color:#1b5e20;margin-bottom:12px}
+.sec .sec-sub{text-align:center;font-size:15px;color:#888;margin-bottom:48px}
 
-/* Features */
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.ft{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center}
-.ft .emoji{font-size:36px;margin-bottom:10px}
-.ft h3{font-size:15px;color:#333;margin-bottom:6px}
-.ft p{font-size:12px;color:#999;line-height:1.5}
+/* ── How It Works ── */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.step{text-align:center;padding:32px 20px;background:#fff;border-radius:24px;
+  box-shadow:0 2px 20px rgba(0,0,0,.04);transition:transform .3s;position:relative}
+.step:hover{transform:translateY(-4px)}
+.step .num{position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;width:28px;height:28px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.step .emoji{font-size:52px;margin:12px 0}
+.step h3{font-size:17px;color:#333;margin-bottom:8px}
+.step p{font-size:13px;color:#888;line-height:1.6}
 
-/* Pricing */
-.pricing{background:#f5f7fa}
-.pricing h2{text-align:center;font-size:26px;font-weight:800;margin-bottom:40px;color:#1b5e20}
-.price-cards{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-.price-card{background:#fff;border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.04);flex:1;min-width:240px;max-width:320px}
-.price-card.best{border:3px solid #ffd600;position:relative}
-.price-card.best::before{content:'推荐';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#ffd600;color:#333;padding:4px 16px;border-radius:12px;font-size:12px;font-weight:700}
-.price-card .p-name{font-size:18px;font-weight:700;margin-bottom:12px}
-.price-card .p-price{font-size:36px;font-weight:900;color:#2e7d32;margin-bottom:4px}
-.price-card .p-price small{font-size:14px;font-weight:400;color:#999}
-.price-card .p-desc{font-size:13px;color:#666;margin-bottom:16px;line-height:1.6}
-.price-card ul{list-style:none;text-align:left;font-size:12px;color:#666}
-.price-card li{margin-bottom:6px}
+/* ── Evolution ── */
+.evo-track{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:24px}
+.evo-stage{text-align:center;padding:20px 16px;background:#fff;border-radius:20px;
+  box-shadow:0 2px 16px rgba(0,0,0,.04);min-width:100px;transition:transform .3s}
+.evo-stage:hover{transform:scale(1.08)}
+.evo-stage .e-emoji{font-size:40px;margin-bottom:8px}
+.evo-stage .e-name{font-size:13px;font-weight:700;color:#333}
+.evo-stage .e-lv{font-size:11px;color:#999}
+.evo-arrow{font-size:24px;color:#ccc}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.stat{background:#fff;border-radius:20px;padding:28px 20px;text-align:center;
+  box-shadow:0 2px 16px rgba(0,0,0,.04);transition:transform .3s}
+.stat:hover{transform:translateY(-4px)}
+.stat .s-num{font-size:42px;font-weight:900;background:linear-gradient(135deg,#43a047,#1b5e20);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.stat .s-label{font-size:14px;color:#666;font-weight:600}
+
+/* ── Timeline ── */
+.tl{max-width:700px;margin:0 auto}
+.tl-item{display:flex;gap:16px;margin-bottom:20px;align-items:flex-start}
+.tl-dot{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);
+  display:flex;align-items:center;justify-content:center;font-size:22px}
+.tl-body{background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,.03);flex:1}
+.tl-body h3{font-size:15px;color:#333;margin-bottom:4px}
+.tl-body p{font-size:13px;color:#888;line-height:1.6}
+
+/* ── Features ── */
+.fts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.ft{background:#fff;border-radius:20px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.04);
+  transition:transform .3s;display:flex;gap:14px;align-items:flex-start}
+.ft:hover{transform:translateY(-4px)}
+.ft .ft-emoji{font-size:32px;flex-shrink:0}
+.ft h3{font-size:15px;color:#333;margin-bottom:4px}
+.ft p{font-size:12px;color:#999;line-height:1.6}
+
+/* ── Testimonial ── */
+.testimonial{max-width:560px;margin:0 auto;background:#fff;border-radius:24px;
+  padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.05);text-align:center}
+.testimonial .t-text{font-size:16px;color:#555;line-height:1.8;font-style:italic;margin-bottom:16px}
+.testimonial .t-text::before{content:'"';font-size:40px;color:#c8e6c9;vertical-align:-20px;margin-right:4px}
+.testimonial .t-author{font-size:13px;color:#999}
+
+/* ── Pricing ── */
+.pricing-grid{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.price-card{background:#fff;border-radius:24px;padding:36px 28px;text-align:center;
+  box-shadow:0 2px 20px rgba(0,0,0,.04);flex:1;min-width:240px;max-width:320px;transition:transform .3s}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.best{border:3px solid #ffd600;position:relative;box-shadow:0 8px 32px rgba(255,214,0,.2)}
+.price-card.best::before{content:'最受欢迎';position:absolute;top:-14px;left:50%;
+  transform:translateX(-50%);background:#ffd600;color:#333;padding:5px 20px;
+  border-radius:14px;font-size:12px;font-weight:800}
+.price-card .pn{font-size:20px;font-weight:700;margin-bottom:16px;color:#333}
+.price-card .pp{font-size:40px;font-weight:900;color:#2e7d32;margin-bottom:4px}
+.price-card .pp small{font-size:15px;font-weight:400;color:#888}
+.price-card .pd{font-size:13px;color:#888;margin-bottom:20px}
+.price-card ul{list-style:none;font-size:13px;color:#666;text-align:left}
+.price-card li{padding:6px 0}
 .price-card li::before{content:'✅ '}
 
-/* CTA */
-.cta{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;text-align:center;padding:60px 24px}
-.cta h2{font-size:28px;font-weight:800;margin-bottom:16px}
-.cta p{font-size:15px;opacity:.9;margin-bottom:28px;line-height:1.6}
-.cta .btn-hero{background:#fff;color:#2e7d32;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-.cta .btn-hero:hover{box-shadow:0 6px 28px rgba(0,0,0,.3)}
+/* ── CTA ── */
+.cta{text-align:center;padding:80px 24px;background:linear-gradient(135deg,#1b5e20,#2e7d32,#43a047);color:#fff}
+.cta h2{font-size:32px;font-weight:900;margin-bottom:14px;color:#fff}
+.cta p{font-size:16px;opacity:.85;margin-bottom:32px}
+.cta .btn{background:#fff;color:#1b5e20;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.cta .btn:hover{box-shadow:0 12px 40px rgba(0,0,0,.3)}
 
-/* Footer */
-.footer{background:#1b5e20;color:rgba(255,255,255,.7);text-align:center;padding:30px 24px;font-size:12px}
-.footer a{color:rgba(255,255,255,.9)}
+/* ── Footer ── */
+footer{background:#1b5e20;color:rgba(255,255,255,.65);padding:48px 24px 32px}
+footer .f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:32px;
+  max-width:800px;margin:0 auto 32px}
+footer h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer a{display:block;color:rgba(255,255,255,.55);font-size:13px;text-decoration:none;padding:4px 0;transition:.2s}
+footer a:hover{color:#fff}
+footer .f-copy{text-align:center;font-size:12px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}
 
-/* Responsive */
+/* ── Modal ── */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:#fff;border-radius:20px;padding:32px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalin .25s ease}
+@keyframes modalin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-box h3{font-size:20px;color:#2e7d32;margin-bottom:12px}
+.modal-box p{font-size:14px;color:#666;line-height:1.8;margin-bottom:8px}
+.modal-box .wx-id{font-size:28px;font-weight:800;color:#333;letter-spacing:2px;background:#f5fdf7;padding:12px 20px;border-radius:12px;margin:16px 0;user-select:all}
+.modal-box .btn-close{display:inline-block;margin-top:16px;padding:10px 40px;background:#2e7d32;color:#fff;border:none;border-radius:22px;font-size:15px;font-weight:600;cursor:pointer}
+
 @media(max-width:600px){
-  .hero h1{font-size:26px}
-  .hero .sub{font-size:15px}
-  .section{padding:40px 16px}
+  .hero h1{font-size:30px}
+  .hero .sub{font-size:16px}
+  .hero .pets{font-size:36px}
+  .sec{padding:50px 16px}
+  .sec h2{font-size:24px}
 }
 </style>
 </head>
 <body>
 
+<nav>
+  <div class="logo"><span>🐾</span> ClassPet</div>
+  <div class="links">
+    <a href="/login">登录</a>
+    <a href="/login" class="btn-nav">免费试用</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
 <section class="hero">
-  <div class="pets">🐱🐶🐰🐼🐤🐢🦊</div>
-  <h1>让好习惯<br>在教室里<span>"活"</span>起来</h1>
-  <p class="sub">不用下载 App，每天 2 分钟<br>用宠物养成让小朋友爱上好习惯</p>
-  <a href="/demo" class="btn-hero">👀 先看看演示</a>
-  <a href="/login" class="btn-hero outline">开始使用 →</a>
+  <div class="badge">🎒 专为幼儿园老师设计</div>
+  <h1>用宠物成长<br>让好习惯<span class="hl">"活"</span>起来</h1>
+  <p class="sub">每天 2 分钟，给孩子加分<br>积分变经验 → 宠物长大 → 全班都看见</p>
+  <div class="pets">🐱 🐶 🐰 🐼 🐤</div>
+  <div class="btns">
+    <a href="/login" class="btn btn-primary">🚀 免费开始使用</a>
+    <a href="#how" class="btn btn-outline">了解更多 ↓</a>
+  </div>
 </section>
 
-<section class="section">
-  <h2>📱 三分钟上手</h2>
+<!-- ── 宠物进化路线 ── -->
+<section class="sec" id="how">
+  <h2>🐣 宠物成长系统</h2>
+  <p class="sec-sub">积分变经验，经验变等级——和小朋友一起见证宠物的成长</p>
+  <div class="evo-track">
+    <div class="evo-stage"><div class="e-emoji">🥚</div><div class="e-name">宝宝</div><div class="e-lv">0 分</div></div>
+    <div class="evo-arrow">→</div>
+    <div class="evo-stage"><div class="e-emoji">🌱</div><div class="e-name">幼年</div><div class="e-lv">10 分</div></div>
+    <div class="evo-arrow">→</div>
+    <div class="evo-stage"><div class="e-emoji">🌿</div><div class="e-name">成长</div><div class="e-lv">40 分</div></div>
+    <div class="evo-arrow">→</div>
+    <div class="evo-stage"><div class="e-emoji">🌳</div><div class="e-name">成熟</div><div class="e-lv">100 分</div></div>
+    <div class="evo-arrow">→</div>
+    <div class="evo-stage"><div class="e-emoji">⭐</div><div class="e-name">传说</div><div class="e-lv">250 分</div></div>
+  </div>
+</section>
+
+<!-- ── 效果数据 ── -->
+<section class="sec" style="background:#f5fdf7;border-radius:0">
+  <div class="stats">
+    <div class="stat"><div class="s-num">2分钟</div><div class="s-label">每天仅需</div></div>
+    <div class="stat"><div class="s-num">无需App</div><div class="s-label">手机浏览器即用</div></div>
+    <div class="stat"><div class="s-num">10种</div><div class="s-label">可选宠物</div></div>
+    <div class="stat"><div class="s-num">永久免费</div><div class="s-label">基础版</div></div>
+  </div>
+</section>
+
+<!-- ── 四步上手 ── -->
+<section class="sec">
+  <h2>📱 三分钟即可上手</h2>
+  <p class="sec-sub">不用下载、不用培训，打开浏览器就能用</p>
   <div class="steps">
-    <div class="step">
+    <div class="step"><div class="num">1</div>
       <div class="emoji">👩‍🏫</div>
-      <h3>老师注册</h3>
-      <p>手机号 + 密码即可创建班级，1 分钟搞定</p>
+      <h3>注册建班</h3>
+      <p>手机号注册，自动创建演示班级，即刻体验</p>
     </div>
-    <div class="step">
+    <div class="step"><div class="num">2</div>
       <div class="emoji">🐱</div>
-      <h3>添加小朋友</h3>
-      <p>输入名字，每人选一只宠物，自带 10 种可选</p>
+      <h3>添加学生</h3>
+      <p>输入名字，每人选一只喜爱的宠物</p>
     </div>
-    <div class="step">
+    <div class="step"><div class="num">3</div>
       <div class="emoji">⭐</div>
-      <h3>每天 3 次加分</h3>
-      <p>午饭后、午睡后、放学前，选中+点击+1分，10秒一批</p>
+      <h3>每日加分</h3>
+      <p>选中学生→点加分→搞定，全班 10 秒内完成</p>
     </div>
-    <div class="step">
-      <div class="emoji">🖥</div>
-      <h3>教室大屏展示</h3>
-      <p>打开大屏页面，宠物花园实时显示，积分变了宠物会跳</p>
+    <div class="step"><div class="num">4</div>
+      <div class="emoji">🖥️</div>
+      <h3>大屏花园</h3>
+      <p>投屏到教室电视，宠物花园实时展示</p>
     </div>
   </div>
 </section>
 
-<section class="timeline section">
+<!-- ── 一日时间线 ── -->
+<section class="sec" style="background:#f5fdf7;border-radius:0">
   <h2>⏰ 幼儿园的一天</h2>
-  <div class="tl-day"><h3>🥣 午饭后（12:00）</h3><p>"吃得干净的小朋友坐姿端正"→ 选中 5 个孩子，+1 分，10 秒搞定</p></div>
-  <div class="tl-day"><h3>😴 午睡后（14:30）</h3><p>"第一个自己穿好衣服的举手"→ 批量 +2 分</p></div>
-  <div class="tl-day"><h3>🏠 放学前（16:00）</h3><p>"今天帮老师收玩具的表扬"→ 批量加分，宠物升级</p></div>
-  <div class="tl-day"><h3>🏡 回家后</h3><p>家长扫实体卡片上的二维码，和孩子一起看宠物、逛商店、花积分——不推送、不打扰，是亲子仪式</p></div>
-</section>
-
-<section class="section" style="background:#f5f7fa">
-  <h2>✨ 为什么老师喜欢</h2>
-  <div class="features">
-    <div class="ft"><div class="emoji">⚡</div><h3>不打断课堂</h3><p>每天 3 次批量加分，总共 2-3 分钟，不占上课时间</p></div>
-    <div class="ft"><div class="emoji">🔒</div><h3>不拍孩子照片</h3><p>只记录行为不记录人脸，比同类 App 更注重隐私</p></div>
-    <div class="ft"><div class="emoji">🎮</div><h3>宠物养成激励</h3><p>积分→经验→宠物从🥚长成⭐，小朋友自己会"追着要"好表现</p></div>
-    <div class="ft"><div class="emoji">📊</div><h3>管理后台洞察</h3><p>谁最近积分停滞了？谁进步最大？一张表格看全</p></div>
-    <div class="ft"><div class="emoji">🖨️</div><h3>可打印二维码</h3><p>每个小朋友一张实体卡片，家长扫码看孩子的专属宠物</p></div>
-    <div class="ft"><div class="emoji">💰</div><h3>基础免费</h3><p>1 个班 10 人永久免费，高级版 19.9 元/月无限人数+数据导出</p></div>
+  <p class="sec-sub">每天三次，每次几十秒，融入班级日常</p>
+  <div class="tl">
+    <div class="tl-item"><div class="tl-dot">🥣</div>
+      <div class="tl-body"><h3>午饭过后 · 12:00</h3>
+        <p>吃得干净的小朋友坐姿端正 → 选中 5 人批量 +1 分</p></div></div>
+    <div class="tl-item"><div class="tl-dot">😴</div>
+      <div class="tl-body"><h3>午睡醒来 · 14:30</h3>
+        <p>第一个自己穿好衣服的举手 → 批量 +2 分</p></div></div>
+    <div class="tl-item"><div class="tl-dot">🏠</div>
+      <div class="tl-body"><h3>放学之前 · 16:00</h3>
+        <p>帮老师收玩具的要表扬 → 加分，宠物可能升级！</p></div></div>
   </div>
 </section>
 
-<section class="pricing section">
-  <h2>💳 价格透明</h2>
-  <div class="price-cards">
+<!-- ── 为什么老师喜欢 ── -->
+<section class="sec">
+  <h2>✨ 为什么老师和小朋友都喜欢</h2>
+  <p class="sec-sub">不只是工具，是班上最受欢迎的"新同学"</p>
+  <div class="fts">
+    <div class="ft"><div class="ft-emoji">⚡</div>
+      <div><h3>不打断课堂</h3><p>每天 3 次批量加分，总共不到 3 分钟</p></div></div>
+    <div class="ft"><div class="ft-emoji">🔒</div>
+      <div><h3>不拍孩子照片</h3><p>只记录行为不记录人脸，注重隐私保护</p></div></div>
+    <div class="ft"><div class="ft-emoji">🎮</div>
+      <div><h3>游戏化激励</h3><p>积分变经验，宠物升级时孩子比自己得奖还开心</p></div></div>
+    <div class="ft"><div class="ft-emoji">🖥️</div>
+      <div><h3>教室大屏展示</h3><p>宠物花园投屏到电视，全班小朋友一起守护宠物</p></div></div>
+    <div class="ft"><div class="ft-emoji">💰</div>
+      <div><h3>基础永久免费</h3><p>1 个班 10 人免费使用，高级版 19.9 元/月</p></div></div>
+    <div class="ft"><div class="ft-emoji">📱</div>
+      <div><h3>无需下载 App</h3><p>手机浏览器打开即用，不用安装任何东西</p></div></div>
+  </div>
+</section>
+
+<!-- ── 老师怎么说 ── -->
+<section class="sec" style="background:#f5fdf7;border-radius:0">
+  <h2>💬 老师们的反馈</h2>
+  <p class="sec-sub"></p>
+  <div class="testimonial">
+    <p class="t-text">自从用了 ClassPet，孩子们对好习惯的积极性完全不同了。以前说"坐好"没人理，现在说"谁的宠物想升级？"全班秒安静。每天放学他们都围着大屏看自己的宠物长大了没有。</p>
+    <div class="t-author">— 李老师 · 幼儿园大班班主任</div>
+  </div>
+</section>
+
+<!-- ── 价格 ── -->
+<section class="sec">
+  <h2>💳 简单透明的价格</h2>
+  <p class="sec-sub">基础版永久免费，高级版解锁更多</p>
+  <div class="pricing-grid">
     <div class="price-card">
-      <div class="p-name">🆓 基础版</div>
-      <div class="p-price">免费</div>
-      <div class="p-desc">永远免费</div>
+      <div class="pn">🆓 基础版</div>
+      <div class="pp">免费</div>
+      <div class="pd">永久免费，无需绑定支付</div>
       <ul>
         <li>1 个班级</li>
         <li>10 个小朋友</li>
-        <li>手机端 + 大屏 + 家长端</li>
+        <li>教师端 + 大屏花园</li>
         <li>宠物成长系统</li>
-        <li>积分商店</li>
+        <li>12 种宠物可选</li>
       </ul>
     </div>
     <div class="price-card best">
-      <div class="p-name">⭐ 高级版</div>
-      <div class="p-price">¥19.9<small>/月</small></div>
-      <div class="p-desc">或 ¥199/年（省 ¥40）</div>
+      <div class="pn">⭐ 高级版</div>
+      <div class="pp">¥19.9<small>/月</small></div>
+      <div class="pd">或 ¥199/年 · 省 ¥40</div>
       <ul>
-        <li>不限制班级数量</li>
-        <li>不限制学生人数</li>
-        <li>全部功能</li>
+        <li>无限班级数量</li>
+        <li>无限学生人数</li>
+        <li>全部功能无限制</li>
         <li>数据导出 Excel</li>
         <li>积分历史永久保留</li>
         <li>优先客服支持</li>
@@ -164,16 +312,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow
   </div>
 </section>
 
+<!-- ── CTA ── -->
 <section class="cta">
-  <h2>准备好让你的班级多一只宠物了吗？</h2>
-  <p>免费注册，2 分钟创建你的第一只班级宠物</p>
-  <a href="/login" class="btn-hero">🚀 免费开始使用</a>
+  <h2>准备好让你的班级<br>多一只宠物了吗？</h2>
+  <p>免费注册 · 2 分钟建班 · 今天就能用</p>
+  <a href="/login" class="btn">🚀 免费开始使用</a>
 </section>
 
-<footer class="footer">
-  <p>ClassPet · 让好习惯在教室里"活"起来</p>
-  <p style="margin-top:8px">不拍照片 · 不监控 · 不做排名 · 只做正向激励</p>
+<!-- ── Footer ── -->
+<footer>
+  <div class="f-grid">
+    <div>
+      <h4>产品</h4>
+      <a href="/">首页</a>
+      <a href="/login">注册/登录</a>
+      <a href="#how">宠物成长系统</a>
+    </div>
+    <div>
+      <h4>支持</h4>
+      <a href="javascript:showModal('help')">帮助中心</a>
+      <a href="/screen/G5BVCNLN">演示大屏</a>
+      <a href="javascript:showModal('service')">联系客服</a>
+    </div>
+    <div>
+      <h4>关于</h4>
+      <a href="#">隐私政策</a>
+      <a href="#">服务条款</a>
+      <a href="javascript:showModal('biz')">商务合作</a>
+    </div>
+  </div>
+  <div class="f-copy">
+    <p>🐾 ClassPet · 让好习惯在教室里"活"起来</p>
+    <p style="margin-top:4px">不拍照片 · 不监控 · 不排名 · 只做正向激励</p>
+  </div>
 </footer>
+
+<!-- ── Modal ── -->
+<div id="modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modalContent"></div>
+</div>
+
+<script>
+const MODAL_DATA = {
+  help: {
+    title: '📖 帮助中心',
+    body: '<p>ClassPet 是一款<strong>幼儿园习惯养成工具</strong>。<br>老师建班 → 添加学生 → 课堂加分 → 宠物进化。<br><br>教室大屏全天展示宠物花园，<br>孩子们看到自己的宠物长大，更有动力！<br><br>家长可通过分享链接查看孩子成长记录。</p>'
+  },
+  service: {
+    title: '💬 联系客服',
+    body: '<p>如有任何问题，请添加微信：</p><div class="wx-id">ClassPet_CS</div><p style="font-size:12px;color:#999">工作日 9:00-18:00 在线</p>'
+  },
+  biz: {
+    title: '🤝 商务合作',
+    body: '<p>渠道合作、定制开发、批量采购<br>请联系：</p><div class="wx-id">ClassPet_BD</div><p style="font-size:12px;color:#999">期待与您合作</p>'
+  }
+};
+function showModal(key) {
+  const d = MODAL_DATA[key];
+  document.getElementById('modalContent').innerHTML = '<h3>' + d.title + '</h3>' + d.body + '<button class="btn-close" onclick="closeModal()">关闭</button>';
+  document.getElementById('modal').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+</script>
 
 </body>
 </html>

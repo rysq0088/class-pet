@@ -284,11 +284,11 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
 .pet-card.lv5{border-color:#FFD700;box-shadow:0 0 28px rgba(255,215,0,.35),0 6px 24px rgba(0,0,0,.08)}
 
 /* Reaction state — golden pulse + themed animation override */
-.pet-card.react-eat .pet-emoji{animation:petEat 1.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
-.pet-card.react-play .pet-emoji{animation:petPlay 1.8s cubic-bezier(0.4,0,0.6,1) forwards}
-.pet-card.react-happy .pet-emoji{animation:petHappy 2s cubic-bezier(0.34,1.56,0.64,1) forwards}
-.pet-card.react-sleep .pet-emoji{animation:petSleep 2.2s cubic-bezier(0.4,0,0.6,1) forwards}
-.pet-card.react-dress .pet-emoji{animation:petDress 2s cubic-bezier(0.4,0,0.6,1) forwards}
+.pet-card.react-eat .pet-emoji{animation:petEat 1.5s cubic-bezier(0.34,1.56,0.64,1) forwards !important}
+.pet-card.react-play .pet-emoji{animation:petPlay 1.8s cubic-bezier(0.4,0,0.6,1) forwards !important}
+.pet-card.react-happy .pet-emoji{animation:petHappy 2s cubic-bezier(0.34,1.56,0.64,1) forwards !important}
+.pet-card.react-sleep .pet-emoji{animation:petSleep 2.2s cubic-bezier(0.4,0,0.6,1) forwards !important}
+.pet-card.react-dress .pet-emoji{animation:petDress 2s cubic-bezier(0.4,0,0.6,1) forwards !important}
 .pet-card.react-eat,.pet-card.react-play,.pet-card.react-happy,.pet-card.react-sleep,.pet-card.react-dress{
   animation:reactPulse 1.5s ease-out forwards}
 
@@ -399,6 +399,17 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
 .empty p{margin-top:14px;font-size:18px;font-weight:700;line-height:1.6}
 .empty .hint{font-size:13px;opacity:.65;margin-top:4px}
 
+/* ═══ IDLE "ALIVE" + SCORE POP + CONFETTI ═══ */
+.pet-deco{position:absolute;inset:0;pointer-events:none;z-index:1}
+@keyframes cardHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes cardWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.pet-card.alive-hop{animation:cardHop .6s cubic-bezier(0.34,1.56,0.64,1)}
+.pet-card.alive-wiggle{animation:cardWiggle .7s ease-in-out}
+@keyframes petScorePop{0%{opacity:0;transform:translate(-50%,0) scale(.6)}20%{opacity:1;transform:translate(-50%,-12px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-72px) scale(1)}}
+.pet-score-pop{position:fixed;z-index:320;font-size:30px;font-weight:900;color:#FFD600;text-shadow:0 0 16px rgba(255,183,0,.7),0 2px 8px rgba(0,0,0,.3);pointer-events:none;animation:petScorePop 1.4s cubic-bezier(0.4,0,0.6,1) forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(106vh) rotate(720deg);opacity:.85}}
+.confetti{position:fixed;top:-20px;z-index:505;pointer-events:none;animation:confettiFall var(--cdur,3s) linear forwards}
+
 /* ═══ EVOLUTION CELEBRATION ═══ */
 /* Full-screen overlay when a pet levels up */
 @keyframes evolveFlash{
@@ -488,6 +499,15 @@ let CLASS_NAME = '';
 const PET_EMOJI = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊',frog:'🐸',monkey:'🐵',bear:'🐻',penguin:'🐧'};
 const DELAYS = ['d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3'];
 
+// Mood → CSS class mapping (shared by render + garden)
+const MOOD_MAP = {
+  excited: { label: '🤩 开心爆了', cls: 'mood-excited' },
+  happy:    { label: '😊 今天很棒', cls: 'mood-happy' },
+  calm:     { label: '🙂 平静', cls: '' },
+  bored:    { label: '🥱 有点无聊', cls: 'mood-bored' },
+  sad:      { label: '😢 想念老师', cls: 'mood-sad' },
+};
+
 // ═══ SOUND SYSTEM ═══
 let audioCtx=null, soundOn=false;
 function initAudio(){ if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;} } if(audioCtx.state==='suspended')audioCtx.resume(); }
@@ -576,7 +596,7 @@ function spawnSparkles(cx, cy, count) {
 }
 
 // ═══ TRIGGER REACTION on a specific pet ═══
-function triggerReaction(petId, reason, petName) {
+function triggerReaction(petId, reason, petName, delta) {
   playScoreSound();
   const card = document.getElementById('pet' + petId);
   if (!card) return;
@@ -594,10 +614,19 @@ function triggerReaction(petId, reason, petName) {
   const cy = rect.top + 30;
   spawnParticles(cx, cy, r.emojis, 8);
 
+  // Floating "+N" on the pet itself
+  const pop = document.createElement('div');
+  pop.className = 'pet-score-pop';
+  pop.textContent = '+' + (delta > 0 ? delta : 1);
+  pop.style.left = cx + 'px';
+  pop.style.top = (cy - 10) + 'px';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 1400);
+
   // Show toast
   const toast = document.createElement('div');
   toast.className = 'react-toast';
-  toast.textContent = r.label + ' ' + petName + ' +' + (reason ? '' : '分');
+  toast.textContent = r.label + ' ' + petName;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3200);
 }
@@ -617,6 +646,7 @@ function showEvolution(name, oldLv, newLv, emoji) {
   const overlay = document.createElement('div');
   overlay.className = 'evolve-overlay';
   document.body.appendChild(overlay);
+  spawnConfetti();
 
   const beam = document.createElement('div');
   beam.className = 'evolve-beam';
@@ -634,6 +664,74 @@ function showEvolution(name, oldLv, newLv, emoji) {
 
   // Cleanup after animation
   setTimeout(() => { overlay.remove(); beam.remove(); e.remove(); t.remove(); }, 4000);
+}
+
+// ═══ GARDEN RENDER (in-place, preserves emoji idle animation) ═══
+function buildDeco(p, lv) {
+  let h = '';
+  if (lv >= 5) h += '<span class="crown-badge">👑</span>';
+  if (lv >= 4) h += '<div class="star-orbit"><span class="s sa">✨</span><span class="s sb">💫</span><span class="s sc">🌟</span></div>';
+  if (p.feeding) h += '<div class="feed-bubble">🍖 ' + p.feeding.item_name + '</div>';
+  if (p.mood === 'excited') h += '<div class="yawn-bubble" style="top:-8px;right:6px;font-size:22px">🎉</div>';
+  else if (p.mood === 'bored') h += '<div class="yawn-bubble">💤</div>';
+  return h;
+}
+
+function renderGarden(pets) {
+  const g = document.getElementById('garden');
+  const seen = new Set();
+  pets.forEach((p) => {
+    seen.add(p.id);
+    const emoji = PET_EMOJI[p.pet_type] || '🐱';
+    const lv = p.pet_info?.level || 1;
+    const exp = p.pet_exp || 0;
+    const next = p.pet_info?.next || 10;
+    const pct = Math.min(100, Math.round(exp / Math.max(1, next) * 100));
+    const mood = MOOD_MAP[p.mood] || MOOD_MAP.calm;
+    const delayClass = DELAYS[p.id % DELAYS.length];
+    let card = document.getElementById('pet' + p.id);
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'pet' + p.id;
+      card.innerHTML = '<span class="pet-emoji"></span><div class="pet-name"></div><div class="pet-stage"></div><div class="exp-wrap"><div class="exp-fill"></div></div><div class="pet-score"></div><div class="pet-deco"></div>';
+      g.appendChild(card);
+    }
+    const emojiEl = card.querySelector('.pet-emoji');
+    if (emojiEl.textContent !== emoji) emojiEl.textContent = emoji;
+    if (emojiEl.className !== 'pet-emoji ' + delayClass) emojiEl.className = 'pet-emoji ' + delayClass;
+    card.querySelector('.pet-name').textContent = p.name;
+    card.querySelector('.pet-stage').textContent = (p.pet_info.emoji || '') + ' ' + (p.pet_info.name || '');
+    card.querySelector('.exp-fill').style.width = pct + '%';
+    card.querySelector('.pet-score').textContent = '⭐' + p.score + ' · 今天+' + (p.today_points || 0);
+    const deco = card.querySelector('.pet-deco');
+    const newDeco = buildDeco(p, lv);
+    if (deco.innerHTML !== newDeco) deco.innerHTML = newDeco;
+    // Preserve transient reaction / idle classes so animations aren't cut by polling
+    const keep = (card.className.match(/react-\w+|alive-\w+/g) || []).join(' ');
+    let cls = 'pet-card lv' + lv + (mood.cls ? (' ' + mood.cls) : '') + (p.feeding ? ' mood-feeding' : '');
+    if (keep) cls += ' ' + keep;
+    if (card.className !== cls) card.className = cls;
+  });
+  // Remove cards for students no longer in the class
+  Array.from(g.children).forEach((c) => {
+    const id = parseInt((c.id || '').replace('pet', ''), 10);
+    if (!seen.has(id)) c.remove();
+  });
+}
+
+function spawnConfetti() {
+  const emojis = ['🎉','✨','🌟','💖','🎊','🌈','⭐','💛','💚','💙','🎀','🌸'];
+  for (let i = 0; i < 70; i++) {
+    const c = document.createElement('span');
+    c.className = 'confetti';
+    c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    c.style.left = (Math.random() * 100) + 'vw';
+    c.style.fontSize = (14 + Math.random() * 18) + 'px';
+    c.style.setProperty('--cdur', (2.2 + Math.random() * 1.8) + 's');
+    c.style.animationDelay = (Math.random() * 0.6) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4200);
+  }
 }
 
 // ═══ MAIN REFRESH ═══
@@ -678,7 +776,8 @@ async function refresh() {
       if (p.id in lastScores && p.score > lastScores[p.id] && CLASS_MODE !== 'quiet') {
         hadChange = true;
         const reason = p.latest_reason || '';
-        triggerReaction(p.id, reason, p.name);
+        const delta = p.score - lastScores[p.id];
+        triggerReaction(p.id, reason, p.name, delta);
         setTimeout(() => {
           const card = document.getElementById('pet' + p.id);
           if (card) {
@@ -703,39 +802,8 @@ async function refresh() {
     }
     if (fastPolls > 0) { fastPolls--; if (fastPolls === 0) pollMs = 5000; }
 
-    // ═══ RENDER GARDEN ═══
-    const MOOD_MAP = {
-      excited: { label: '🤩 开心爆了', cls: 'mood-excited' },
-      happy:    { label: '😊 今天很棒', cls: 'mood-happy' },
-      calm:     { label: '🙂 平静', cls: '' },
-      bored:    { label: '🥱 有点无聊', cls: 'mood-bored' },
-      sad:      { label: '😢 想念老师', cls: 'mood-sad' },
-    };
-    g.innerHTML = pets.map((p, idx) => {
-      const emoji = PET_EMOJI[p.pet_type] || '🐱';
-      const lv = p.pet_info?.level || 1;
-      const exp = p.pet_exp || 0;
-      const next = p.pet_info?.next || 10;
-      const pct = Math.min(100, Math.round(exp / Math.max(1, next) * 100));
-      const delayClass = DELAYS[idx % DELAYS.length];
-      const mood = MOOD_MAP[p.mood] || MOOD_MAP.calm;
-
-      let crownHTML = '', starHTML = '';
-      if (lv >= 5) crownHTML = '<span class="crown-badge">👑</span>';
-      if (lv >= 4) starHTML = '<div class="star-orbit"><span class="s sa">✨</span><span class="s sb">💫</span><span class="s sc">🌟</span></div>';
-
-      return '<div class="pet-card lv' + lv + ' ' + mood.cls + (p.feeding?' mood-feeding':'') + '" id="pet' + p.id + '">'
-        + crownHTML + starHTML
-        + (p.feeding ? '<div class="feed-bubble">🍖 ' + p.feeding.item_name + '</div>' : '')
-        + (p.mood === 'excited' ? '<div class="yawn-bubble" style="top:-8px;right:6px;font-size:22px">🎉</div>' : '')
-        + (p.mood === 'bored' ? '<div class="yawn-bubble">💤</div>' : '')
-        + '<span class="pet-emoji ' + delayClass + '">' + emoji + '</span>'
-        + '<div class="pet-name">' + p.name + '</div>'
-        + '<div class="pet-stage">' + (p.pet_info.emoji||'') + ' ' + (p.pet_info.name||'') + '</div>'
-        + '<div class="exp-wrap"><div class="exp-fill" style="width:' + pct + '%"></div></div>'
-        + '<div class="pet-score">⭐' + p.score + ' · 今天+' + (p.today_points||0) + '</div>'
-        + '</div>';
-    }).join('');
+    // ═══ RENDER GARDEN (in-place, preserves emoji idle animation) ═══
+    renderGarden(pets);
 
     // ═══ TICKER ═══
     const logs = d.today_logs || [];
@@ -767,6 +835,17 @@ setInterval(() => {
     spawnSparkles(rect.left + rect.width/2, rect.top + rect.height/2, 3);
   }
 }, 15000);
+
+// Idle "alive" micro-actions — pets randomly hop/wiggle so the garden feels living
+setInterval(() => {
+  if (CLASS_MODE === 'quiet') return;
+  const cards = Array.from(document.querySelectorAll('.pet-card:not([class*="react-"]):not([class*="alive-"])'));
+  if (cards.length === 0) return;
+  const card = cards[Math.floor(Math.random() * cards.length)];
+  const act = Math.random() < 0.6 ? 'alive-hop' : 'alive-wiggle';
+  card.classList.add(act);
+  setTimeout(() => card.classList.remove(act), 700);
+}, 2500);
 </script>
 </body>
 </html>

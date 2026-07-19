@@ -5,107 +5,768 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>宠物花园 - ClassPet</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes sparkle{0%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:1;transform:scale(1.5) rotate(180deg)}100%{opacity:0;transform:scale(0) rotate(360deg)}}
-@keyframes slideUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#e8f5e9 0%,#c8e6c9 30%,#81c784 60%,#4caf50 100%);min-height:100vh;overflow-x:hidden;color:#fff}
-.header{text-align:center;padding:24px 16px 8px}
-.header h1{font-size:32px;text-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:4px}
-.header .info{font-size:14px;opacity:.8}
-.garden{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:20px;max-width:1200px;margin:0 auto}
-.pet-spot{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:20px;padding:20px 16px;text-align:center;width:130px;transition:.3s;position:relative;overflow:visible}
-.pet-spot .emoji{font-size:52px;display:block;animation:float 3s ease-in-out infinite;margin-bottom:6px}
-.pet-spot .name{font-size:16px;font-weight:700;margin-bottom:2px}
-.pet-spot .stage{font-size:14px;margin-bottom:4px}
-.pet-spot .score{font-size:12px;opacity:.8;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:10px;display:inline-block}
-.pet-spot .sparkle{position:absolute;top:-10px;right:-10px;font-size:24px;animation:sparkle 1s ease-out;pointer-events:none}
-.pet-spot.bump{animation:slideUp .5s ease-out}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ═══ ANIMATION SYSTEM ═══ */
+/* Pet idle — gentle breathing */
+@keyframes petIdle{
+  0%{transform:translateY(0) scale(1)}
+  12%{transform:translateY(-3px) scale(1.02)}
+  25%{transform:translateY(-5px) scale(1.04)}
+  37%{transform:translateY(-3px) scale(1.02)}
+  50%{transform:translateY(0) scale(1)}
+  62%{transform:translateY(2px) scale(0.98)}
+  75%{transform:translateY(3px) scale(0.97)}
+  87%{transform:translateY(2px) scale(0.98)}
+  100%{transform:translateY(0) scale(1)}
+}
+
+/* King pet — cheerful bounce */
+/* King pet — cheerful bounce */
+@keyframes petKing{
+  0%{transform:translateY(0) scale(1.15)}
+  10%{transform:translateY(-8px) scale(1.18)}
+  20%{transform:translateY(-4px) scale(1.16)}
+  30%{transform:translateY(-10px) scale(1.2)}
+  40%{transform:translateY(-3px) scale(1.15)}
+  50%{transform:translateY(0) scale(1.12)}
+  60%{transform:translateY(4px) scale(1.14)}
+  70%{transform:translateY(1px) scale(1.13)}
+  80%{transform:translateY(6px) scale(1.16)}
+  90%{transform:translateY(2px) scale(1.14)}
+  100%{transform:translateY(0) scale(1.15)}
+}
+
+/* ═══ REACTION ANIMATIONS — Pet responds to rewards! ═══ */
+
+/* Eat — rapid happy munching (food rewards) */
+@keyframes petEat{
+  0%{transform:translateY(0) scale(1)}
+  18%{transform:translateY(-16px) scale(1.35)}
+  28%{transform:translateY(-5px) scale(1.12)}
+  38%{transform:translateY(-13px) scale(1.28)}
+  48%{transform:translateY(-3px) scale(1.08)}
+  58%{transform:translateY(-10px) scale(1.2)}
+  75%{transform:translateY(-2px) scale(1.04)}
+  100%{transform:translateY(0) scale(1)}
+}
+
+/* Play — spin and bounce (toys/sports) */
+@keyframes petPlay{
+  0%{transform:translateY(0) scale(1) rotate(0deg)}
+  22%{transform:translateY(-14px) scale(1.2) rotate(0deg)}
+  44%{transform:translateY(0) scale(1) rotate(360deg)}
+  66%{transform:translateY(-8px) scale(1.12) rotate(360deg)}
+  100%{transform:translateY(0) scale(1) rotate(360deg)}
+}
+
+/* Happy — joyful dance (good behavior) */
+@keyframes petHappy{
+  0%{transform:translateY(0) rotate(0deg)}
+  12%{transform:translateY(-20px) rotate(-8deg)}
+  25%{transform:translateY(-5px) rotate(5deg)}
+  37%{transform:translateY(-16px) rotate(-4deg)}
+  50%{transform:translateY(-3px) rotate(3deg)}
+  62%{transform:translateY(-10px) rotate(-1deg)}
+  75%{transform:translateY(-4px) rotate(2deg)}
+  100%{transform:translateY(0) rotate(0deg)}
+}
+
+/* Sleep — gentle side-to-side (nap rewards) */
+@keyframes petSleep{
+  0%{transform:rotate(0deg) scale(1)}
+  12%{transform:rotate(-14deg) scale(0.92)}
+  25%{transform:rotate(-9deg) scale(0.95)}
+  37%{transform:rotate(-13deg) scale(0.9)}
+  50%{transform:rotate(-5deg) scale(0.94)}
+  62%{transform:rotate(-11deg) scale(0.91)}
+  75%{transform:rotate(-3deg) scale(0.96)}
+  100%{transform:rotate(0deg) scale(1)}
+}
+
+/* Dress — twirl with confidence (clothing) */
+@keyframes petDress{
+  0%{transform:translateY(0) scale(1) rotateY(0deg)}
+  22%{transform:translateY(-8px) scale(1.14) rotateY(0deg)}
+  44%{transform:translateY(0) scale(1) rotateY(180deg)}
+  66%{transform:translateY(-6px) scale(1.1) rotateY(180deg)}
+  88%{transform:translateY(0) scale(1) rotateY(360deg)}
+  100%{transform:translateY(0) scale(1) rotateY(360deg)}
+}
+
+/* Reward sparkle burst */
+@keyframes sparkleBurst{
+  0%{opacity:1;transform:translate(0,0) scale(0) rotate(0deg)}
+  40%{opacity:1;transform:translate(var(--sx),var(--sy)) scale(1.4) rotate(180deg)}
+  100%{opacity:0;transform:translate(var(--ex),var(--ey)) scale(0) rotate(360deg)}
+}
+
+/* Reaction particle float upward */
+@keyframes reactFloat{
+  0%{opacity:0;transform:translateY(0) scale(0)}
+  25%{opacity:1;transform:translateY(var(--ry)) scale(1.3)}
+  60%{opacity:.8;transform:translateY(var(--my)) scale(1)}
+  100%{opacity:0;transform:translateY(var(--ey)) scale(.3)}
+}
+
+/* Reaction pulse ring around the pet card */
+@keyframes reactPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,215,0,.7), 0 6px 20px rgba(0,0,0,.06)}
+  60%{box-shadow:0 0 0 24px rgba(255,215,0,0), 0 6px 20px rgba(0,0,0,.06)}
+  100%{box-shadow:0 0 0 0 rgba(255,215,0,0), 0 6px 20px rgba(0,0,0,.06)}
+}
+
+/* Toast in/out */
+@keyframes reactToastIn{from{opacity:0;transform:translateX(-50%) translateY(12px) scale(.5)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+@keyframes reactToastOut{to{opacity:0;transform:translateX(-50%) translateY(-24px) scale(.7)}}
+
+/* Crown float */
+@keyframes crownFloat{
+  0%{transform:translateX(-50%) translateY(0)}
+  20%{transform:translateX(-50%) translateY(-5px)}
+  40%{transform:translateX(-50%) translateY(-2px)}
+  60%{transform:translateX(-50%) translateY(-7px)}
+  80%{transform:translateX(-50%) translateY(-3px)}
+  100%{transform:translateX(-50%) translateY(0)}
+}
+
+/* Sun pulse */
+@keyframes sunGlow{
+  0%{box-shadow:0 0 60px #FFE082,0 0 140px rgba(255,213,79,.35)}
+  30%{box-shadow:0 0 80px #FFE082,0 0 180px rgba(255,213,79,.55)}
+  60%{box-shadow:0 0 70px #FFE082,0 0 150px rgba(255,213,79,.4)}
+  100%{box-shadow:0 0 60px #FFE082,0 0 140px rgba(255,213,79,.35)}
+}
+
+/* Cloud drift */
+@keyframes cloudDrift{from{transform:translateX(-200px)}to{transform:translateX(calc(100vw + 200px))}}
+
+/* Flower sway */
+@keyframes flowerSway{
+  0%{transform:rotate(-3deg)}
+  25%{transform:rotate(0deg)}
+  50%{transform:rotate(4deg)}
+  75%{transform:rotate(1deg)}
+  100%{transform:rotate(-3deg)}
+}
+
+/* Tree leaves */
+@keyframes leafRustle{
+  0%{transform:rotate(-1deg)}
+  33%{transform:rotate(2deg)}
+  66%{transform:rotate(-2deg)}
+  100%{transform:rotate(-1deg)}
+}
 
 /* Score popup */
-.score-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:72px;font-weight:900;color:#ffd600;text-shadow:0 4px 20px rgba(0,0,0,.3);animation:sparkle 1.5s ease-out forwards;pointer-events:none;z-index:100}
+@keyframes scorePop{
+  0%{opacity:0;transform:translate(-50%,-40%) scale(.2)}
+  15%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}
+  30%{transform:translate(-50%,-55%) scale(1)}
+  60%{opacity:1;transform:translate(-50%,-65%) scale(.9)}
+  100%{opacity:0;transform:translate(-50%,-80%) scale(.4)}
+}
 
-/* Today log */
-.log-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.3);backdrop-filter:blur(10px);padding:12px 20px;display:flex;gap:12px;overflow-x:auto;white-space:nowrap}
-.log-item{font-size:13px;opacity:.9;flex-shrink:0}
-.log-item .pts{color:#ffd600;font-weight:700}
+/* Egg idle */
+@keyframes eggRest{
+  0%{transform:translateY(0) rotate(0deg)}
+  25%{transform:translateY(-4px) rotate(-3deg)}
+  50%{transform:translateY(-1px) rotate(0deg)}
+  75%{transform:translateY(3px) rotate(3deg)}
+  100%{transform:translateY(0) rotate(0deg)}
+}
 
-.footer{text-align:center;padding:16px;font-size:12px;opacity:.6;margin-bottom:50px}
+/* Star orbit spin */
+@keyframes spinAround{from{transform:rotate(0deg) translateX(65px)}to{transform:rotate(360deg) translateX(65px)}}
+
+/* Ticker scroll */
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ═══ SCENE ═══ */
+body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
+  min-height:100vh;overflow-x:hidden;color:#fff;
+  background:linear-gradient(180deg,
+    #89CFF0 0%,#A8DEF0 8%,#C5E8F7 18%,#E3F2FD 28%,
+    #C8E6C9 50%,#A5D6A7 70%,#81C784 85%,#4CAF50 95%,#388E3C 100%);
+  position:relative}
+
+/* Sky */
+.sun{position:fixed;top:24px;right:48px;width:90px;height:90px;
+  background:radial-gradient(circle at 40% 40%,#FFF9C4,#FFE082 40%,#FFB300 100%);
+  border-radius:50%;z-index:1;animation:sunGlow 5s cubic-bezier(0.4,0,0.6,1) infinite;will-change:box-shadow}
+.sun::before{content:'';position:absolute;inset:-15px;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 8deg,rgba(255,235,59,.15) 12deg,transparent 16deg,
+    transparent 28deg,rgba(255,235,59,.1) 32deg,transparent 36deg,
+    transparent 48deg,rgba(255,235,59,.15) 52deg,transparent 56deg,
+    transparent 68deg,rgba(255,235,59,.1) 72deg,transparent 76deg,
+    transparent 88deg,rgba(255,235,59,.15) 92deg,transparent 96deg);
+  animation:sunGlow 5s cubic-bezier(0.4,0,0.6,1) infinite}
+
+/* Clouds */
+.cloud{position:fixed;background:rgba(255,255,255,.88);border-radius:50%;z-index:1}
+.cloud::before,.cloud::after{content:'';position:absolute;background:inherit;border-radius:50%}
+.c1{top:50px;animation:cloudDrift 35s linear infinite;width:120px;height:50px}
+.c1::before{width:60px;height:55px;top:-28px;left:22px}
+.c1::after{width:70px;height:45px;top:-18px;left:52px}
+.c2{top:95px;animation:cloudDrift 42s linear 14s infinite;width:95px;height:38px}
+.c2::before{width:48px;height:42px;top:-20px;left:18px}
+.c2::after{width:55px;height:35px;top:-12px;left:42px}
+.c3{top:30px;animation:cloudDrift 28s linear 22s infinite;width:105px;height:42px}
+.c3::before{width:52px;height:48px;top:-24px;left:20px}
+.c3::after{width:58px;height:38px;top:-14px;left:48px}
+
+/* Rainbow */
+.rainbow{position:fixed;top:15px;left:30px;width:140px;height:80px;z-index:1;opacity:.35;
+  background:radial-gradient(ellipse at 50% 100%,
+    transparent 40%,#FF000020 42%,#FF000020 45%,transparent 45%,
+    transparent 47%,#FF7F0020 49%,#FF7F0020 52%,transparent 52%,
+    transparent 54%,#FFFF0020 56%,#FFFF0020 59%,transparent 59%,
+    transparent 61%,#00FF0020 63%,#00FF0020 66%,transparent 66%,
+    transparent 68%,#0000FF20 70%,#0000FF20 73%,transparent 73%,
+    transparent 75%,#4B008220 77%,#4B008220 80%,transparent 80%,
+    transparent 82%,#8F00FF20 84%,#8F00FF20 87%,transparent 87%);pointer-events:none}
+
+/* Ground */
+.ground{position:fixed;bottom:0;left:0;right:0;height:80px;z-index:1;
+  background:linear-gradient(180deg,rgba(129,199,132,.7),#4CAF50 30%,#388E3C);
+  border-radius:50% 60% 0 0 / 20px 30px 0 0}
+.ground::after{content:'';position:absolute;top:-12px;left:0;right:0;height:24px;
+  background:repeating-linear-gradient(85deg,transparent,transparent 18px,#66BB6A 18px,#66BB6A 19px,transparent 19px,transparent 35px,transparent,transparent 36px,#81C784 36px,#81C784 37px,transparent 37px),
+             repeating-linear-gradient(95deg,transparent,transparent 24px,#4CAF50 24px,#4CAF50 25px,transparent 25px,transparent 42px,transparent,transparent 43px,#66BB6A 43px,#66BB6A 44px,transparent 44px)}
+
+/* Trees */
+.tree{position:fixed;z-index:2;pointer-events:none}
+.tree::before{content:'';position:absolute;border-radius:50%}
+.trunk{position:absolute;background:#795548;border-radius:4px}
+.t1{left:3%;bottom:55px}.t1 .trunk{width:12px;height:50px;bottom:0;left:22px}
+.t1::before{width:60px;height:60px;background:radial-gradient(circle,#66BB6A,#388E3C);top:-20px;left:-4px;animation:leafRustle 6s cubic-bezier(0.4,0,0.6,1) infinite}
+.t2{right:5%;bottom:50px}.t2 .trunk{width:10px;height:44px;bottom:0;left:18px}
+.t2::before{width:50px;height:55px;background:radial-gradient(circle,#81C784,#43A047);top:-18px;left:-6px;animation:leafRustle 7s cubic-bezier(0.4,0,0.6,1) 1.5s infinite}
+
+/* Mushrooms */
+.mushroom{position:fixed;z-index:2;pointer-events:none;font-size:22px}
+.m1{left:18%;bottom:58px;animation:flowerSway 5s cubic-bezier(0.4,0,0.6,1) 2s infinite}
+.m2{right:22%;bottom:56px;font-size:18px;animation:flowerSway 6s cubic-bezier(0.4,0,0.6,1) .5s infinite}
+.m3{left:42%;bottom:54px;font-size:20px;animation:flowerSway 5.5s cubic-bezier(0.4,0,0.6,1) 3s infinite}
+
+/* Flowers */
+.flower{position:fixed;bottom:50px;z-index:2;pointer-events:none;font-size:26px}
+.f1{left:6%;bottom:58px;animation:flowerSway 4.5s cubic-bezier(0.4,0,0.6,1) 0s infinite;font-size:24px}
+.f2{left:14%;bottom:55px;animation:flowerSway 5s cubic-bezier(0.4,0,0.6,1) .7s infinite;font-size:22px}
+.f3{left:26%;bottom:57px;animation:flowerSway 4s cubic-bezier(0.4,0,0.6,1) 1.4s infinite}
+.f4{left:35%;bottom:54px;animation:flowerSway 5.5s cubic-bezier(0.4,0,0.6,1) .3s infinite;font-size:20px}
+.f5{right:30%;bottom:56px;animation:flowerSway 4.8s cubic-bezier(0.4,0,0.6,1) 1s infinite;font-size:22px}
+.f6{right:18%;bottom:55px;animation:flowerSway 5.2s cubic-bezier(0.4,0,0.6,1) 1.8s infinite}
+.f7{right:8%;bottom:58px;animation:flowerSway 4.2s cubic-bezier(0.4,0,0.6,1) .6s infinite;font-size:24px}
+
+/* ═══ HEADER ═══ */
+.header{position:relative;z-index:5;text-align:center;padding:24px 16px 10px}
+.header h1{font-size:38px;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.15);letter-spacing:3px}
+.header .sub{font-size:15px;opacity:.88;margin-top:4px;font-weight:600}
+.header .sub span{color:#FFF9C4}
+
+/* ═══ GARDEN GRID ═══ */
+.garden{position:relative;z-index:5;display:flex;flex-wrap:wrap;justify-content:center;
+  gap:14px;padding:6px 10px 90px;max-width:1400px;margin:0 auto}
+
+/* Pet Card */
+.pet-card{width:148px;background:rgba(255,255,255,.2);backdrop-filter:blur(16px);
+  border-radius:22px;padding:14px 10px 12px;text-align:center;position:relative;overflow:visible;
+  border:2px solid rgba(255,255,255,.25);box-shadow:0 6px 20px rgba(0,0,0,.06);
+  transition:transform .4s cubic-bezier(0.25,0.8,0.25,1.2);will-change:transform}
+.pet-card:hover{transform:translateY(-6px) scale(1.04)}
+
+/* Level glows */
+.pet-card.lv1{border-color:rgba(129,199,132,.5)}
+.pet-card.lv2{border-color:rgba(165,214,167,.6)}
+.pet-card.lv3{border-color:rgba(102,187,106,.7);box-shadow:0 6px 20px rgba(102,187,106,.15)}
+.pet-card.lv4{border-color:rgba(255,183,77,.8);box-shadow:0 0 20px rgba(255,152,0,.2),0 6px 20px rgba(0,0,0,.06)}
+.pet-card.lv5{border-color:#FFD700;box-shadow:0 0 28px rgba(255,215,0,.35),0 6px 24px rgba(0,0,0,.08)}
+
+/* Reaction state — golden pulse + themed animation override */
+.pet-card.react-eat .pet-emoji{animation:petEat 1.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.pet-card.react-play .pet-emoji{animation:petPlay 1.8s cubic-bezier(0.4,0,0.6,1) forwards}
+.pet-card.react-happy .pet-emoji{animation:petHappy 2s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.pet-card.react-sleep .pet-emoji{animation:petSleep 2.2s cubic-bezier(0.4,0,0.6,1) forwards}
+.pet-card.react-dress .pet-emoji{animation:petDress 2s cubic-bezier(0.4,0,0.6,1) forwards}
+.pet-card.react-eat,.pet-card.react-play,.pet-card.react-happy,.pet-card.react-sleep,.pet-card.react-dress{
+  animation:reactPulse 1.5s ease-out forwards}
+
+/* ═══ MOOD SYSTEM ═══ */
+/* Excited — just scored, big bouncy glow */
+@keyframes moodExcited{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(-14px) scale(1.12)}30%{transform:translateY(0) scale(1)}45%{transform:translateY(-8px) scale(1.06)}60%{transform:translateY(0) scale(1)}75%{transform:translateY(-4px) scale(1.03)}}
+.pet-card.mood-excited{border-color:rgba(255,215,0,.8) !important;box-shadow:0 0 30px rgba(255,215,0,.35),0 6px 20px rgba(0,0,0,.08) !important}
+.pet-card.mood-excited .pet-emoji{animation:moodExcited 1.2s cubic-bezier(0.34,1.56,0.64,1)}
+.pet-card.mood-excited .mood-marks{display:block}
+/* Happy — gentle bounce + sparkly */
+@keyframes moodHappy{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.pet-card.mood-happy{border-color:rgba(102,187,106,.7)}
+.pet-card.mood-happy .pet-emoji{animation:moodHappy 2.5s cubic-bezier(0.4,0,0.6,1) infinite}
+.pet-card.mood-happy .mood-marks{display:block}
+/* Calm — default idle breathing */
+/* (petIdle handles this, no extra class needed) */
+/* Bored — slow droop + yawn */
+@keyframes moodBored{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(3px) scale(.96)}}
+@keyframes moodYawn{0%,90%,100%{transform:scale(1);opacity:0}92%{transform:scale(1.4);opacity:1}}
+.pet-card.mood-bored{opacity:.8}
+.pet-card.mood-bored .pet-emoji{animation:moodBored 4s cubic-bezier(0.4,0,0.6,1) infinite}
+.pet-card.mood-bored .yawn-bubble{display:block;animation:moodYawn 6s cubic-bezier(0.4,0,0.6,1) infinite}
+/* Sad — dimmed + droopy */
+@keyframes moodSad{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(3px) scale(.94)}}
+.pet-card.mood-sad{opacity:.65;filter:grayscale(.25)}
+.pet-card.mood-sad .pet-emoji{animation:moodSad 3s cubic-bezier(0.4,0,0.6,1) infinite}
+.pet-card.mood-sad .mood-marks{display:block}
+
+/* Feeding — parent bought food, pet nomms it */
+@keyframes feedBounce{0%{transform:translateY(0) scale(1)}15%{transform:translateY(-12px) scale(1.15)}30%{transform:translateY(0) scale(1)}45%{transform:translateY(-6px) scale(1.08)}60%{transform:translateY(0) scale(1)}100%{transform:translateY(0) scale(1)}}
+@keyframes feedBubble{0%{opacity:0;transform:translateY(0) scale(.3)}15%{opacity:1;transform:translateY(-38px) scale(1.1)}50%{opacity:1;transform:translateY(-42px) scale(1)}85%{opacity:0;transform:translateY(-60px) scale(.7)}100%{opacity:0}}
+.pet-card.mood-feeding{border-color:rgba(255,152,0,.8) !important;box-shadow:0 0 24px rgba(255,152,0,.3),0 6px 20px rgba(0,0,0,.08) !important}
+.pet-card.mood-feeding .pet-emoji{animation:feedBounce 1.2s cubic-bezier(0.34,1.56,0.64,1)}
+.pet-card.mood-feeding .feed-bubble{display:block}
+.feed-bubble{display:none;position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:rgba(255,152,0,.9);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap;pointer-events:none;z-index:10;animation:feedBubble 3s ease-out forwards;box-shadow:0 4px 12px rgba(255,152,0,.3)}
+
+/* Mood indicators */
+.mood-marks{display:none;font-size:11px;margin-top:2px;letter-spacing:1px}
+.yawn-bubble{display:none;position:absolute;top:-2px;right:8px;font-size:16px;pointer-events:none}
+
+/* Pet emoji */
+.pet-emoji{font-size:58px;display:block;line-height:1.15;margin-bottom:4px;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.12));user-select:none;
+  animation:petIdle 3.5s cubic-bezier(0.4,0,0.6,1) infinite;will-change:transform}
+.pet-emoji.d2{animation-delay:.4s}.pet-emoji.d3{animation-delay:.8s}
+.pet-emoji.d4{animation-delay:1.2s}.pet-emoji.d5{animation-delay:1.6s}
+.pet-emoji.d6{animation-delay:2s}.pet-emoji.d7{animation-delay:2.4s}
+
+/* King */
+.pet-card.lv5 .pet-emoji{animation:petKing 3s cubic-bezier(0.4,0,0.6,1) infinite;font-size:68px}
+.pet-card.lv5 .crown-badge{position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  font-size:26px;animation:crownFloat 4s cubic-bezier(0.4,0,0.6,1) infinite;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))}
+
+/* Star orbit for lv4+ */
+.star-orbit{position:absolute;inset:-15px;pointer-events:none;z-index:0}
+.star-orbit .s{position:absolute;font-size:12px;opacity:.7}
+.sa{top:-5px;left:50%;animation:spinAround 4s linear infinite}
+.sb{top:30%;right:-8px;animation:spinAround 4s linear 1.3s infinite}
+.sc{bottom:-5px;left:50%;animation:spinAround 4s linear 2.6s infinite}
+
+.pet-name{font-size:15px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:2px}
+.pet-stage{font-size:12px;font-weight:600;opacity:.85;margin-bottom:4px}
+
+/* Exp bar */
+.exp-wrap{background:rgba(0,0,0,.12);border-radius:8px;height:9px;margin:4px 4px;overflow:hidden}
+.exp-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#FFD54F 0%,#FFA000 60%,#FF6D00 100%);
+  transition:width .8s cubic-bezier(0.4,0,0.2,1);position:relative}
+.exp-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:16px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4))}
+.exp-txt{font-size:10px;opacity:.65;margin-top:2px}
+
+.pet-score{font-size:13px;font-weight:700;display:inline-block;
+  background:rgba(255,255,255,.2);padding:3px 12px;border-radius:12px;margin-top:2px}
+
+/* ═══ SCORE POPUP ═══ */
+.score-pop{position:fixed;top:38%;left:50%;font-size:76px;font-weight:900;
+  color:#FFD600;text-shadow:0 0 40px rgba(255,183,0,.6),0 4px 24px rgba(0,0,0,.25);
+  pointer-events:none;z-index:200;animation:scorePop 2s cubic-bezier(0.4,0,0.6,1) forwards}
+
+/* ═══ SPARKLE PARTICLES ═══ */
+.spark{position:absolute;pointer-events:none;font-size:16px;z-index:50;
+  animation:sparkleBurst 1.2s cubic-bezier(0.4,0,0.6,1) forwards}
+
+/* ═══ REACTION PARTICLES ═══ */
+.react-particle{position:fixed;pointer-events:none;z-index:250;font-size:26px;
+  animation:reactFloat var(--dur,1.2s) cubic-bezier(0.4,0,0.6,1) forwards}
+
+/* ═══ REACTION TOAST ═══ */
+.react-toast{position:fixed;top:14%;left:50%;transform:translateX(-50%);z-index:300;
+  font-size:22px;font-weight:900;color:#fff;
+  text-shadow:0 0 20px rgba(255,215,0,.7),0 2px 10px rgba(0,0,0,.3);
+  pointer-events:none;white-space:nowrap;
+  animation:reactToastIn .4s cubic-bezier(0.34,1.56,0.64,1),reactToastOut .6s 2.6s ease forwards}
+
+/* ═══ TICKER ═══ */
+.ticker{position:fixed;bottom:80px;left:0;right:0;z-index:5;overflow:hidden;
+  padding:9px 0;background:rgba(0,0,0,.3);backdrop-filter:blur(14px)}
+.ticker-inner{display:flex;gap:28px;padding:0 16px;white-space:nowrap;will-change:transform;
+  animation:tickerScroll 50s linear infinite;width:max-content}
+.ticker-item{font-size:13px;font-weight:600;flex-shrink:0;display:inline-flex;align-items:center;gap:4px}
+.ticker .pts{color:#FFD600;font-weight:900;text-shadow:0 0 8px rgba(255,215,0,.35)}
+.ticker .why{font-size:11px;opacity:.7;margin-left:2px}
+
+/* ═══ EMPTY ═══ */
+.empty{position:relative;z-index:5;text-align:center;padding:80px 20px;width:100%}
+.empty .egg{font-size:90px;display:block;animation:eggRest 3s cubic-bezier(0.4,0,0.6,1) infinite;will-change:transform}
+.empty p{margin-top:14px;font-size:18px;font-weight:700;line-height:1.6}
+.empty .hint{font-size:13px;opacity:.65;margin-top:4px}
+
+/* ═══ EVOLUTION CELEBRATION ═══ */
+/* Full-screen overlay when a pet levels up */
+@keyframes evolveFlash{
+  0%{opacity:0} 30%{opacity:1} 60%{opacity:1} 100%{opacity:0}}
+@keyframes evolveBeam{
+  0%{transform:scaleY(0);opacity:0} 30%{transform:scaleY(1);opacity:.6} 100%{transform:scaleY(1);opacity:0}}
+@keyframes evolveEmoji{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(-20deg)}
+  25%{transform:translate(-50%,-50%) scale(2.5) rotate(10deg)}
+  50%{transform:translate(-50%,-50%) scale(2) rotate(-5deg)}
+  70%{transform:translate(-50%,-50%) scale(2.2) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) scale(0.3) rotate(0deg);opacity:0}}
+@keyframes evolveText{
+  0%{opacity:0;transform:translate(-50%,30px) scale(.5)}
+  30%{opacity:1;transform:translate(-50%,0) scale(1.15)}
+  50%{transform:translate(-50%,0) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-20px) scale(.9)}}
+.evolve-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,.35),rgba(0,0,0,.6));
+  animation:evolveFlash 3.5s ease forwards}
+.evolve-beam{position:fixed;top:0;left:50%;width:200px;height:100vh;z-index:501;
+  background:linear-gradient(180deg,transparent 0%,rgba(255,255,255,.7) 40%,rgba(255,215,0,.5) 60%,transparent 100%);
+  transform-origin:top center;animation:evolveBeam 3.5s ease forwards;pointer-events:none}
+.evolve-emoji{position:fixed;top:40%;left:50%;z-index:502;font-size:140px;pointer-events:none;
+  animation:evolveEmoji 3.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.evolve-text{position:fixed;top:60%;left:50%;z-index:502;pointer-events:none;
+  font-size:28px;font-weight:900;color:#FFD700;white-space:nowrap;
+  text-shadow:0 0 20px rgba(255,215,0,.8),0 2px 8px rgba(0,0,0,.4);
+  animation:evolveText 3.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
+
+/* ═══ FOOTER ═══ */
+.footer{position:fixed;bottom:40px;right:20px;z-index:10;font-size:11px;opacity:.45;text-align:right}
+.footer div{line-height:1.6}
+
+.back-btn{position:fixed;top:16px;left:16px;z-index:200;
+  width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.25);
+  border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;transition:.2s;text-decoration:none}
+.back-btn:hover{background:rgba(0,0,0,.4)}
+.sound-btn{position:fixed;top:16px;right:64px;z-index:200;background:rgba(0,0,0,.25);border:none;color:#fff;font-size:13px;padding:8px 14px;border-radius:18px;cursor:pointer;transition:.2s}
+.sound-btn:hover{background:rgba(0,0,0,.4)}
 </style>
 </head>
 <body>
+<!-- ═══ SCENE ═══ -->
+<div class="sun"></div>
+<div class="rainbow"></div>
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+
+<div class="tree t1"><div class="trunk"></div></div>
+<div class="tree t2"><div class="trunk"></div></div>
+
+<span class="mushroom m1">🍄</span>
+<span class="mushroom m2">🍄</span>
+<span class="mushroom m3">🍄</span>
+
+<span class="flower f1">🌻</span>
+<span class="flower f2">🌸</span>
+<span class="flower f3">🌼</span>
+<span class="flower f4">🌷</span>
+<span class="flower f5">🌺</span>
+<span class="flower f6">🌸</span>
+<span class="flower f7">🌻</span>
+
+<div class="ground"></div>
+
+<!-- ═══ UI ═══ -->
 <div class="header">
   <h1>🌳 宠物花园</h1>
-  <div class="info" id="classInfo">加载中...</div>
+  <div class="sub" id="classInfo">加载中…</div>
 </div>
 <div class="garden" id="garden"></div>
-<div class="log-bar" id="logBar"></div>
+<div class="ticker"><div class="ticker-inner" id="tickerInner">🌙 今天还没有加分记录 — 老师快快行动吧！</div></div>
+<div>
+  <div id="modeBadge" class="mode-indicator">🟢 自由模式</div>
+  <a href="/" class="back-btn" title="返回首页">←</a>
+  <button id="soundBtn" class="sound-btn" title="开启/关闭声音">🔇 声音关</button>
+  <div class="footer"><div id="clock">--</div><div>自动刷新中</div></div>
+</div>
 
 <script>
 const CODE = location.pathname.split('/screen/')[1]?.split('/')[0];
-if (!CODE) location.href = '/login';
+if (!CODE) location.href = '/';
+let CLASS_MODE = 'active'; // 'active' | 'quiet'
+let CLASS_NAME = '';
 
-let lastScoreCount = 0;
+const PET_EMOJI = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊',frog:'🐸',monkey:'🐵',bear:'🐻',penguin:'🐧'};
+const DELAYS = ['d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3'];
 
-async function refresh() {
-  try {
-    const r = await fetch('/api/garden/' + CODE);
-    const d = await r.json();
-    if (!d.class) return;
-    
-    document.getElementById('classInfo').textContent = d.class.name + ' · ' + d.class.teacher_name + '老师';
-    
-    const g = document.getElementById('garden');
-    const pets = d.garden || [];
-    
-    if (pets.length > 0) {
-      const currentCount = pets.reduce((a,b) => a + b.score, 0);
-      if (currentCount > lastScoreCount) {
-        // score animation
-        showScorePop('+' + (currentCount - lastScoreCount));
-      }
-      lastScoreCount = currentCount;
-      
-      g.innerHTML = pets.map(p => {
-        const delay = (Math.random() * 3).toFixed(1);
-        const petEmoji = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'}[p.pet_type]||'🐱';
-        return `<div class="pet-spot" style="animation-delay:${delay}s">
-          <span class="emoji" style="animation-delay:${delay}s">${petEmoji}</span>
-          <div class="name">${p.name}</div>
-          <div class="stage">${p.pet_info.emoji} ${p.pet_info.name}</div>
-          <div class="score">⭐${p.score} · 今天+${p.today_points||0}</div>
-        </div>`;
-      }).join('');
-    } else {
-      g.innerHTML = '<div style="text-align:center;width:100%;padding:60px;font-size:48px">🐣<br><p style="font-size:18px;margin-top:16px">等待小朋友加入...</p></div>';
-    }
-    
-    // Today logs
-    const r2 = await fetch('/api/classes/'+d.class.id+'/today');
-    const d2 = await r2.json();
-    const lb = document.getElementById('logBar');
-    if (d2.logs && d2.logs.length > 0) {
-      lb.innerHTML = d2.logs.slice(0, 15).map(l =>
-        `<span class="log-item">🎯 <span class="pts">${l.student_name}+${l.points}</span> ${l.reason||''}</span>`
-      ).join('');
-    } else {
-      lb.innerHTML = '<span class="log-item">🌙 今天还没有加分记录</span>';
-    }
-  } catch(e) { console.log(e) }
+// ═══ SOUND SYSTEM ═══
+let audioCtx=null, soundOn=false;
+function initAudio(){ if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;} } if(audioCtx.state==='suspended')audioCtx.resume(); }
+function beep(freq,dur,type,vol,when){ if(!audioCtx||!soundOn)return; const t=audioCtx.currentTime+(when||0); const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type=type||'sine'; o.frequency.value=freq; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol||.2,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur); o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+dur); }
+function playScoreSound(){ beep(880,.14,'sine',.18,0); beep(1175,.14,'sine',.13,.07); }
+function playEvolveSound(){ [523,659,784,1047,1319].forEach((f,i)=>beep(f,.3,'triangle',.2,i*.1)); }
+document.addEventListener('click',initAudio,{once:true});
+const soundBtn=document.getElementById('soundBtn');
+if(soundBtn){ soundBtn.onclick=()=>{ initAudio(); soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊 声音开':'🔇 声音关'; if(soundOn)playScoreSound(); }; }
+
+// ═══ REWARD CLASSIFIER ═══
+// Maps reward reasons to animation type + reaction particles
+function classifyReason(reason) {
+  const s = (reason||'').toLowerCase();
+  // Food / eating
+  if (/吃|饭|餐|食|点心|水果|牛奶|面包|饼干|糖果|零食|午饭|早饭|晚饭|午餐|早餐|晚餐/.test(s) || /🍎|🍞|🥛|🍪|🍕|🍜|🍰/.test(s))
+    return { type:'eat', label:'🍴 好吃！', emojis:['🍎','🍞','🥛','🍪','🍕','🧁','🍓','🍌','🍖','🍬'] };
+  // Sleep / nap
+  if (/睡|午觉|床|安静|休息|困|打盹/.test(s) || /💤|😴/.test(s))
+    return { type:'sleep', label:'💤 睡得香~', emojis:['💤','😴','🌙','💤','😴','✨'] };
+  // Play / sports
+  if (/玩|游戏|运动|跑步|跳|球|跑|踢|游|比赛/.test(s) || /⚽|🎾|🏀|🎮|🏃/.test(s))
+    return { type:'play', label:'⚽ 玩得好！', emojis:['⚽','🎾','🏀','🎮','🏃','🤸','🎯','⭐'] };
+  // Dress / clothing
+  if (/衣|穿|打扮|漂亮|整齐|整洁|干净|装扮|裙子/.test(s) || /👗|👔|✨/.test(s))
+    return { type:'dress', label:'✨ 真漂亮！', emojis:['✨','💫','👗','👔','🎀','💎','🌟','💖'] };
+  // Good behavior (default happy)
+  if (/举手|听话|帮助|礼貌|分享|勇敢|认真|努力|加油|棒|表扬|干净|整理/.test(s) || /👍|❤️/.test(s))
+    return { type:'happy', label:'🌟 真棒！', emojis:['❤️','👍','🌟','🎉','💖','⭐','👏','🌟'] };
+  // Generic / unknown
+  return { type:'happy', label:'🌟 奖励！', emojis:['⭐','✨','💫','🌟','🎉','💝','🔥','⭐'] };
 }
 
-let popTimeout = null;
+// Keep track of per-student scores for change detection
+let lastScores = {};
+let lastTotal = 0;
+let lastLevels = {};  // track pet levels for evolution detection
+let pollMs = 5000;    // adaptive polling: speed up after score changes
+let fastPolls = 0;
+
+// Clock
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}, 1000);
+
+// ═══ PARTICLE SPAWN ═══
+function spawnParticles(cx, cy, emojis, count) {
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const p = document.createElement('span');
+      p.className = 'react-particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const sx = (Math.random() - .5) * 60;
+      const dur = .8 + Math.random() * .8;
+      p.style.cssText = `
+        left:${cx + sx}px;top:${cy - 20}px;font-size:${20 + Math.random() * 14}px;
+        --ry:${-20 - Math.random() * 30}px;--my:${-40 - Math.random() * 40}px;
+        --ey:${-70 - Math.random() * 50}px;--dur:${dur}s;
+        position:fixed;z-index:300;pointer-events:none;
+        animation:reactFloat ${dur}s cubic-bezier(0.4,0,0.6,1) forwards;
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), dur * 1000 + 200);
+    }, i * 60);
+  }
+}
+
+function spawnSparkles(cx, cy, count) {
+  const emojis = ['✨','💫','⭐','🌟','💖','🎉','💝'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const s = document.createElement('span');
+      s.className = 'spark';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.cssText = `
+        left:${cx}px;top:${cy}px;font-size:${14+Math.random()*10}px;
+        --sx:${(Math.random()-.5)*40}px;--sy:${(Math.random()-.5)*40}px;
+        --ex:${(Math.random()-.5)*80}px;--ey:${(Math.random()-.5)*80-20}px;
+        position:fixed;z-index:300;pointer-events:none;
+        animation:sparkleBurst ${.8+Math.random()*.6}s cubic-bezier(0.4,0,0.6,1) forwards;
+      `;
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1500);
+    }, i * 50);
+  }
+}
+
+// ═══ TRIGGER REACTION on a specific pet ═══
+function triggerReaction(petId, reason, petName) {
+  playScoreSound();
+  const card = document.getElementById('pet' + petId);
+  if (!card) return;
+  const r = classifyReason(reason);
+
+  // Add reaction class (triggers CSS animation on .pet-emoji + golden pulse)
+  card.classList.add('react-' + r.type);
+
+  // Remove after animation duration
+  setTimeout(() => card.classList.remove('react-' + r.type), 2200);
+
+  // Spawn themed particles around the pet
+  const rect = card.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + 30;
+  spawnParticles(cx, cy, r.emojis, 8);
+
+  // Show toast
+  const toast = document.createElement('div');
+  toast.className = 'react-toast';
+  toast.textContent = r.label + ' ' + petName + ' +' + (reason ? '' : '分');
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
 function showScorePop(text) {
   const el = document.createElement('div');
   el.className = 'score-pop';
   el.textContent = text;
   document.body.appendChild(el);
-  clearTimeout(popTimeout);
-  popTimeout = setTimeout(() => el.remove(), 1600);
+  setTimeout(() => el.remove(), 2200);
 }
 
-refresh();
-setInterval(refresh, 5000);
+// ═══ EVOLUTION CELEBRATION ═══
+function showEvolution(name, oldLv, newLv, emoji) {
+  playEvolveSound();
+  const stageNames = ['','宝宝','幼年','成长','成熟','传说'];
+  const overlay = document.createElement('div');
+  overlay.className = 'evolve-overlay';
+  document.body.appendChild(overlay);
+
+  const beam = document.createElement('div');
+  beam.className = 'evolve-beam';
+  document.body.appendChild(beam);
+
+  const e = document.createElement('div');
+  e.className = 'evolve-emoji';
+  e.textContent = emoji;
+  document.body.appendChild(e);
+
+  const t = document.createElement('div');
+  t.className = 'evolve-text';
+  t.textContent = '🎉 ' + name + '的' + emoji + ' 进化了！';
+  document.body.appendChild(t);
+
+  // Cleanup after animation
+  setTimeout(() => { overlay.remove(); beam.remove(); e.remove(); t.remove(); }, 4000);
+}
+
+// ═══ MAIN REFRESH ═══
+async function refresh() {
+  try {
+    const r = await fetch('/api/garden/' + CODE);
+    const d = await r.json();
+    if (!d.class) return;
+
+    const tname = (d.class.teacher_name||'').endsWith('老师') ? d.class.teacher_name : d.class.teacher_name + '老师';
+    CLASS_NAME = d.class.name;
+    CLASS_MODE = d.mode || 'active';
+    const badge = document.getElementById('modeBadge');
+    if (CLASS_MODE === 'quiet') { badge.textContent = '🔵 课堂安静中'; badge.className = 'mode-indicator quiet'; }
+    else { badge.textContent = '🟢 自由模式'; badge.className = 'mode-indicator'; }
+    document.getElementById('classInfo').innerHTML = d.class.name + ' · <span>' + (d.class.institution_name||'') + '</span> · ' + tname;
+
+    const pets = d.garden || [];
+    const g = document.getElementById('garden');
+
+    if (pets.length === 0) {
+      g.innerHTML = '<div class="empty"><span class="egg">🥚</span><p>等待小朋友加入…</p><p class="hint">老师添加学生后，宠物就会出现在这里啦！</p></div>';
+      return;
+    }
+
+    // ═══ DETECT SCORE CHANGES + EVOLUTION ═══
+    let hadChange = false;
+    const total = pets.reduce((a,b) => a + b.score, 0);
+    if (lastTotal > 0 && total > lastTotal) {
+      showScorePop('+' + (total - lastTotal));
+      hadChange = true;
+    }
+    lastTotal = total;
+
+    // In quiet mode, suppress animations
+    if (CLASS_MODE === 'quiet') {
+      const cards = document.querySelectorAll('.pet-card[class*="react-"]');
+      cards.forEach(c => { c.className = c.className.replace(/react-\w+/g,''); });
+    }
+    // Per-student detection
+    pets.forEach(p => {
+      if (p.id in lastScores && p.score > lastScores[p.id] && CLASS_MODE !== 'quiet') {
+        hadChange = true;
+        const reason = p.latest_reason || '';
+        triggerReaction(p.id, reason, p.name);
+        setTimeout(() => {
+          const card = document.getElementById('pet' + p.id);
+          if (card) {
+            const rect = card.getBoundingClientRect();
+            spawnSparkles(rect.left + rect.width/2, rect.top + rect.height/2, 5);
+          }
+        }, 400);
+      }
+      // Evolution detection (show even in quiet mode — this is special)
+      if (p.id in lastLevels && p.pet_info.level > lastLevels[p.id]) {
+        hadChange = true;
+        const emoji = PET_EMOJI[p.pet_type] || '🐱';
+        showEvolution(p.name, lastLevels[p.id], p.pet_info.level, emoji);
+      }
+      lastScores[p.id] = p.score;
+      lastLevels[p.id] = p.pet_info.level;
+    });
+
+    // Adaptive polling: speed up when changes detected
+    if (hadChange && fastPolls === 0) {
+      pollMs = 1500; fastPolls = 4; // 4 fast polls @1.5s
+    }
+    if (fastPolls > 0) { fastPolls--; if (fastPolls === 0) pollMs = 5000; }
+
+    // ═══ RENDER GARDEN ═══
+    const MOOD_MAP = {
+      excited: { label: '🤩 开心爆了', cls: 'mood-excited' },
+      happy:    { label: '😊 今天很棒', cls: 'mood-happy' },
+      calm:     { label: '🙂 平静', cls: '' },
+      bored:    { label: '🥱 有点无聊', cls: 'mood-bored' },
+      sad:      { label: '😢 想念老师', cls: 'mood-sad' },
+    };
+    g.innerHTML = pets.map((p, idx) => {
+      const emoji = PET_EMOJI[p.pet_type] || '🐱';
+      const lv = p.pet_info?.level || 1;
+      const exp = p.pet_exp || 0;
+      const next = p.pet_info?.next || 10;
+      const pct = Math.min(100, Math.round(exp / Math.max(1, next) * 100));
+      const delayClass = DELAYS[idx % DELAYS.length];
+      const mood = MOOD_MAP[p.mood] || MOOD_MAP.calm;
+
+      let crownHTML = '', starHTML = '';
+      if (lv >= 5) crownHTML = '<span class="crown-badge">👑</span>';
+      if (lv >= 4) starHTML = '<div class="star-orbit"><span class="s sa">✨</span><span class="s sb">💫</span><span class="s sc">🌟</span></div>';
+
+      return '<div class="pet-card lv' + lv + ' ' + mood.cls + (p.feeding?' mood-feeding':'') + '" id="pet' + p.id + '">'
+        + crownHTML + starHTML
+        + (p.feeding ? '<div class="feed-bubble">🍖 ' + p.feeding.item_name + '</div>' : '')
+        + (p.mood === 'excited' ? '<div class="yawn-bubble" style="top:-8px;right:6px;font-size:22px">🎉</div>' : '')
+        + (p.mood === 'bored' ? '<div class="yawn-bubble">💤</div>' : '')
+        + '<span class="pet-emoji ' + delayClass + '">' + emoji + '</span>'
+        + '<div class="pet-name">' + p.name + '</div>'
+        + '<div class="pet-stage">' + (p.pet_info.emoji||'') + ' ' + (p.pet_info.name||'') + '</div>'
+        + '<div class="exp-wrap"><div class="exp-fill" style="width:' + pct + '%"></div></div>'
+        + '<div class="pet-score">⭐' + p.score + ' · 今天+' + (p.today_points||0) + '</div>'
+        + '</div>';
+    }).join('');
+
+    // ═══ TICKER ═══
+    const logs = d.today_logs || [];
+    const ti = document.getElementById('tickerInner');
+    if (logs.length > 0) {
+      const items = logs.slice(0, 20).map(l => '<span class="ticker-item">🎯 <span class="pts">' + l.student_name + ' +' + l.points + '</span><span class="why">' + (l.reason||'👍') + '</span></span>').join('');
+      ti.innerHTML = items + items;
+    } else {
+      ti.innerHTML = '<span class="ticker-item">🌙 今天还没有加分记录 — 老师快快行动吧！</span>';
+    }
+  } catch(e) { console.log(e); }
+}
+
+// Adaptive polling: 1.5s after score changes, 5s normally
+let pollTimer = null;
+function scheduleNext() {
+  clearTimeout(pollTimer);
+  pollTimer = setTimeout(async () => { await refresh(); scheduleNext(); }, pollMs);
+}
+refresh().then(() => scheduleNext());
+
+// Surprise sparkles every 15s (only in active mode)
+setInterval(() => {
+  if (CLASS_MODE === 'quiet') return;
+  const cards = document.querySelectorAll('.pet-card:not([class*="react-"])');
+  if (cards.length > 0) {
+    const card = cards[Math.floor(Math.random() * cards.length)];
+    const rect = card.getBoundingClientRect();
+    spawnSparkles(rect.left + rect.width/2, rect.top + rect.height/2, 3);
+  }
+}, 15000);
 </script>
 </body>
 </html>

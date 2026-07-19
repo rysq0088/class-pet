@@ -94,12 +94,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .empty{text-align:center;padding:60px 20px;color:#999}
 .empty .icon{font-size:64px;margin-bottom:12px}
 .empty p{font-size:14px;line-height:1.8}
+.pet-card.bump{animation:cardBump .45s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes cardBump{0%{transform:scale(1)}30%{transform:scale(1.12) translateY(-6px)}60%{transform:scale(.97)}100%{transform:scale(1)}}
+.quick-plus{position:absolute;top:4px;right:4px;background:#fff3e0;color:#e65100;font-size:11px;font-weight:800;padding:2px 8px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.detail-btn{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.05);border:none;color:#999;font-size:13px;width:22px;height:22px;border-radius:50%;cursor:pointer;line-height:1}
+.detail-btn:active{background:rgba(0,0,0,.12)}
+.float-plus{position:fixed;z-index:300;font-size:28px;font-weight:900;color:#43a047;text-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:none;animation:floatPlus 1s ease-out forwards}
+@keyframes floatPlus{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-10px) scale(1.2)}100%{opacity:0;transform:translateY(-50px) scale(1)}}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:pre-line;text-align:center}
 .toast.show{opacity:1}
 </style>
 </head>
 <body>
 <div class="top">
+  <a href="/" style="text-decoration:none;font-size:20px;color:#999;padding-right:8px" title="返回首页">←</a>
   <h1>🐾 ClassPet</h1>
   <button class="logout" onclick="doLogout()">退出</button>
 </div>
@@ -113,8 +121,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="btn-tab" onclick="switchTab('history')" id="tabHistory">📋 积分史</button>
   </div>
   <button class="btn-sm btn-green" onclick="openAddStudent()" style="margin-top:10px">+ 添加小朋友</button>
-  <button class="btn-sm btn-blue" onclick="copyInviteInfo()" style="margin-top:10px;margin-left:6px">📋 邀请信息</button>
-  <button class="btn-sm btn-orange" onclick="openScreen()" style="margin-top:10px;margin-left:6px">🖥 大屏</button>
+  <button class="btn-sm btn-blue" onclick="copyParentShare()" style="margin-top:10px;margin-left:6px">📱 分享给家长</button>
+  <button class="btn-sm btn-orange" onclick="toggleClassMode()" id="btnMode" style="margin-top:10px;margin-left:6px" title="切换大屏喧闹/安静模式">🟢 自由模式</button>
+  <button class="btn-sm btn-orange" onclick="openScreen()" style="margin-top:10px;margin-left:6px" title="在教室电视/投影上展示宠物花园">🖥 教室大屏</button>
+  <button class="btn-sm btn-green" onclick="toggleQuickMode()" id="btnQuick" style="margin-top:10px;margin-left:6px" title="快加模式：点一下就+1">⚡ 快加模式</button>
 </div>
 
 <div class="score-panel" id="scorePanel" style="display:none">
@@ -180,7 +190,7 @@ const PETS={cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle
 const PET_KEYS=Object.keys(PETS);
 const REASONS=['举手回答','坐姿端正','帮助同学','午睡乖乖','排队整齐','认真听讲','按时完成','礼貌问好'];
 
-let state={currentClass:null,students:[],selected:new Set(),selectedPet:'cat',selectedReason:'',tab:'students',history:[]};
+let state={currentClass:null,students:[],selected:new Set(),selectedPet:'cat',selectedReason:'',tab:'students',history:[],quickMode:true};
 
 function petLvl(exp){if(exp>=250)return{name:'传说',emoji:'⭐',next:999,level:5};if(exp>=100)return{name:'成年',emoji:'🌳',next:250,level:4};if(exp>=40)return{name:'成长',emoji:'🌿',next:100,level:3};if(exp>=10)return{name:'幼年',emoji:'🌱',next:40,level:2};return{name:'宝宝',emoji:'🥚',next:10,level:1}}
 function lvlNext(pl){let lvls=[0,10,40,100,250];return lvls[pl.level]||0}
@@ -190,7 +200,20 @@ function lvlNext(pl){let lvls=[0,10,40,100,250];return lvls[pl.level]||0}
     const r=await fetch('/api/me');
     const d=await r.json();
     if(!d.teacher){location.href='/login';return}
-    document.querySelector('.top h1').textContent='🐾 '+d.teacher.name;
+    const top = document.querySelector('.top h1');
+    top.textContent='🐾 '+d.teacher.name;
+    // Show school context
+    if(d.teacher.institution_name){
+      top.innerHTML = '🐾 ' + d.teacher.name + '<br><span style="font-size:12px;color:#999;font-weight:400">🏫 ' + d.teacher.institution_name + '</span>';
+      // Show school link for admin
+      if(d.teacher.role==='school_admin'){
+        const btn = document.createElement('button');
+        btn.className='btn-sm';btn.textContent='🔧管理';
+        btn.onclick=()=>location.href='/school';
+        btn.style.cssText='font-size:11px;padding:4px 10px;background:#e3f2fd;color:#1565c0;border-radius:10px;border:none;cursor:pointer;margin-top:4px';
+        top.parentElement.appendChild(btn);
+      }
+    }
     const ps=document.getElementById('petSelector');
     PET_KEYS.forEach(k=>{
       const b=document.createElement('button');b.className='btn-sm';b.style.fontSize='26px';
@@ -220,8 +243,10 @@ async function loadClasses(){
 async function refreshClass(){
   if(!state.currentClass)return;
   document.getElementById('className').textContent='🏫 '+state.currentClass.name;
-  document.getElementById('classCode').textContent='邀请码:'+state.currentClass.invite_code;
+  document.getElementById('classCode').textContent='班级码 '+state.currentClass.invite_code+'（家长用此码查看孩子）';
   state.selected.clear();
+  // Load class mode
+  try{const r=await fetch('/api/classes/'+state.currentClass.id+'/mode');const d=await r.json();updateModeBtn(d.mode)}catch{}
   await loadStudents();
 }
 async function loadStudents(){
@@ -244,24 +269,28 @@ function renderTab(){
 }
 function renderStudents(el){
   const panel=document.getElementById('scorePanel');
-  panel.style.display=state.selected.size>0?'block':'none';
+  panel.style.display=(!state.quickMode && state.selected.size>0)?'block':'none';
   document.getElementById('selCount').textContent=state.selected.size;
-  el.innerHTML='<div class="pets-grid">'+state.students.map(s=>{
-    const pl=petLvl(s.pet_exp);const isSel=state.selected.has(s.id);
-    return`<div class="pet-card${isSel?' selected':''}" onclick="toggleStudent(${s.id})" oncontextmenu="showDetail(${s.id});return false">
-      <div class="check-mark">✓</div>
-      <div class="pet-lvl">${pl.emoji}</div>
-      <div class="pet-emoji">${PETS[s.pet_type]||'🐱'}</div>
-      <div class="pet-name">${s.name}</div>
-      <div class="pet-score">⭐${s.score} · ${pl.name}</div>
-    </div>`;
-  }).join('')+'</div>';
-  // Extra row with manage buttons
-  if(state.students.length>0){
-    el.innerHTML+='<div style="text-align:center;padding:12px 0;color:#999;font-size:11px">💡 点击卡片选中加分 · 长按/右键查看详情</div>';
-  }else{
+  if(state.students.length===0){
     el.innerHTML='<div class="empty"><div class="icon">🐣</div><p>还没有小朋友<br>点击上方按钮添加吧</p></div>';
+    return;
   }
+  el.innerHTML='<div class="pets-grid">'+
+    state.students.map((s,idx)=>{
+      const pl=petLvl(s.pet_exp);const isSel=state.selected.has(s.id);
+      const clickFn=state.quickMode?'quickScore('+s.id+')':'toggleStudent('+s.id+')';
+      return'<div class="pet-card'+(isSel?' selected':'')+'" id="stu'+s.id+'" onclick="'+clickFn+'" oncontextmenu="showDetail('+s.id+');return false">'
+        +'<div class="check-mark">✓</div>'
+        +'<div class="pet-lvl">'+pl.emoji+'</div>'
+        +(state.quickMode?'<div class="quick-plus">+1</div>':'')+
+        '<div class="pet-emoji">'+(PETS[s.pet_type]||'🐱')+'</div>'
+        +'<div class="pet-name">'+s.name+'</div>'
+        +'<div class="pet-score">⭐'+s.score+' · '+pl.name+'</div>'
+        +'<button class="detail-btn" onclick="event.stopPropagation();showDetail('+s.id+')">⋯</button>'
+      +'</div>';
+    }).join('')+'</div>';
+  const tip=state.quickMode?'💡 点一下就+1分 · 点 ⋯ 看详情':'💡 点击卡片选中 · 选好后点下方分值';
+  el.innerHTML+='<div style="text-align:center;padding:12px 0;color:#999;font-size:11px">'+tip+'</div>';
 }
 
 function renderHistory(el){
@@ -290,6 +319,32 @@ async function doScore(pts){
     state.selectedReason='';document.querySelectorAll('.reason-tag').forEach(b=>b.classList.remove('on'));
     await refreshClass();
   }else toast('❌ '+d.error);
+}
+
+// ─── Quick 1-tap scoring ───
+async function quickScore(id){
+  const card=document.getElementById('stu'+id);
+  if(card){card.classList.add('bump');setTimeout(()=>card.classList.remove('bump'),450);}
+  const s=state.students.find(x=>x.id===id);
+  spawnFloatPlus(s?s.name:'',card);
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scores:[{student_id:id,points:1,reason:state.selectedReason||'表现优秀'}]})});
+  const d=await r.json();
+  if(d.ok){toast('✅ '+(s?s.name:'')+' +1');await loadStudents();}
+  else toast('❌ '+d.error);
+}
+function spawnFloatPlus(name,card){
+  const p=document.createElement('div');p.className='float-plus';p.textContent='+1';
+  if(card){const r=card.getBoundingClientRect();p.style.left=(r.left+r.width/2-10)+'px';p.style.top=(r.top+10)+'px';}
+  else{p.style.left='50%';p.style.top='40%';}
+  document.body.appendChild(p);setTimeout(()=>p.remove(),1000);
+}
+function toggleQuickMode(){
+  state.quickMode=!state.quickMode;
+  const btn=document.getElementById('btnQuick');
+  btn.textContent=state.quickMode?'⚡ 快加模式':'☑ 批量模式';
+  btn.className='btn-sm '+(state.quickMode?'btn-green':'btn-orange');
+  state.selected.clear();
+  renderTab();
 }
 
 // ─── Student Detail ───
@@ -407,15 +462,27 @@ async function doAddStudent(){
   const d=await r.json();
   if(d.ok){closeModal('addStudentModal');await refreshClass()}else toast('❌ '+d.error);
 }
-function copyInviteInfo(){
+function copyParentShare(){
   const code=state.currentClass.invite_code;
-  const url=location.origin+'/screen/'+code;
-  copyText('邀请码：'+code+'\n大屏：'+url);
+  copyText('班级码：'+code+'\n发给家长，家长打开\n'+location.origin+'/parent/'+code+'/孩子ID\n即可查看孩子宠物成长');
 }
 function openScreen(){window.open('/screen/'+state.currentClass.invite_code,'_blank')}
-function doLogout(){fetch('/api/logout',{method:'POST'}).then(()=>location.href='/login')}
+async function toggleClassMode(){
+  const cur=document.getElementById('btnMode').textContent.includes('自由')?'active':'quiet';
+  const next=cur==='active'?'quiet':'active';
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/mode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:next})});
+  const d=await r.json();
+  if(d.ok) updateModeBtn(d.mode);
+}
+function updateModeBtn(mode){
+  const btn=document.getElementById('btnMode');
+  btn.textContent=mode==='quiet'?'🔵 课堂安静中':'🟢 自由模式';
+  btn.className='btn-sm '+(mode==='quiet'?'btn-green':'btn-orange');
+}
+function doLogout(){fetch('/api/logout',{method:'POST'}).finally(()=>{document.cookie='cp_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';setTimeout(()=>{location.replace('/login?t='+Date.now())},300)})}
 function copyText(t){navigator.clipboard?.writeText(t).then(()=>toast('📋 已复制\n'+t.substring(0,80))).catch(()=>prompt('复制：',t))}
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2500)}
 </script>
+
 </body>
 </html>

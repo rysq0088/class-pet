@@ -15,7 +15,7 @@ const PUBLIC = path.join(__dirname, 'public');
 fs.existsSync(PUBLIC) || fs.mkdirSync(PUBLIC, { recursive: true });
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(PUBLIC));
@@ -117,8 +117,8 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
-    const token = setToken(res, t);
-    res.json({ token,
+    setToken(res, t);
+    res.json({
       ok: true,
       teacher: { id: t.id, phone, name: t.name, role: 'teacher' },
       demo_class: { id: demoClass.id, name: demoClass.name, invite_code: demoClass.invite_code },
@@ -136,9 +136,9 @@ app.post('/api/login', async (req, res) => {
     const t = db.getTeacherByPhone(phone);
     if (!t) return res.status(401).json({ error: '手机号未注册' });
     if (!await bcrypt.compare(password, t.password)) return res.status(401).json({ error: '密码错误' });
-    const token = setToken(res, t);
+    setToken(res, t);
     const inst = t.institution_id ? db.getInstitutionById(t.institution_id) : null;
-    res.json({ ok: true, token, teacher: { id: t.id, phone: t.phone, name: t.name, role: t.role }, institution: inst });
+    res.json({ ok: true, teacher: { id: t.id, phone: t.phone, name: t.name, role: t.role }, institution: inst });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -153,7 +153,7 @@ app.put('/api/me', needAuth, (req, res) => {
   if (!name?.trim()) return res.status(400).json({ error: '名称必填' });
   db.updateTeacher(req.user.id, { name: name.trim() });
   req.user.name = name.trim();
-  res.json({ ok: true, token, teacher: req.user });
+  res.json({ ok: true, teacher: req.user });
 });
 
 // ─── 学校/机构 ───
@@ -192,7 +192,7 @@ app.post('/api/institution/teachers', needAuth, needSchoolAdmin, (req, res) => {
   if (!t) return res.status(404).json({ error: '该手机号未注册，请先让老师注册' });
   if (t.institution_id) return res.status(400).json({ error: '该老师已有所属学校' + (t.institution_id === req.user.institution_id ? '' : '') });
   db.setTeacherInstitution(t.id, req.user.institution_id, 'teacher');
-  res.json({ ok: true, token, teacher: { id: t.id, name: t.name, phone: t.phone } });
+  res.json({ ok: true, teacher: { id: t.id, name: t.name, phone: t.phone } });
 });
 
 // 校长移除老师
@@ -439,7 +439,7 @@ app.get('/api/status', (req, res) => {
   const teacherCount = db.db.prepare('SELECT COUNT(*) as cnt FROM teachers').get().cnt;
   const classCount = db.db.prepare('SELECT COUNT(*) as cnt FROM classes').get().cnt;
   const studentCount = db.db.prepare('SELECT COUNT(*) as cnt FROM students').get().cnt;
-  res.json({ token,
+  res.json({
     ok: true,
     uptime: process.uptime(),
     tunnel: tunnelUrl,

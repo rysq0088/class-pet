@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>积分商城 — ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:#f9fafb;min-height:100vh;color:#1f2937}
+header{text-align:center;padding:28px 20px 16px;background:linear-gradient(135deg,#ecfdf5,#f0fdf4)}
+header h1{font-size:22px;font-weight:800;color:#111827}
+header .my-score{font-size:15px;color:#16a34a;font-weight:700;margin-top:6px}
+.shop{max-width:600px;margin:0 auto;padding:20px 16px 40px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{background:#fff;border-radius:14px;padding:18px 14px;text-align:center;border:1px solid #e5e7eb;transition:.2s;cursor:pointer}
+.item:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.item .icon{font-size:36px;margin-bottom:6px}
+.item .iname{font-size:14px;font-weight:700;color:#111827;margin-bottom:4px}
+.item .price{font-size:13px;color:#f59e0b;font-weight:600}
+.item .owned{font-size:11px;color:#16a34a;font-weight:600}
+.item.locked{opacity:.5;cursor:not-allowed}
+.item.locked:hover{transform:none;box-shadow:none}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-weight:600;font-size:14px;z-index:999;animation:fadeIn .3s}
+.toast.ok{background:#dcfce7;color:#16a34a}
+.toast.err{background:#fef2f2;color:#ef4444}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+footer{text-align:center;padding:24px;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb}
+footer a{color:#16a34a;text-decoration:none}
+.spinner{text-align:center;padding:60px;color:#9ca3af}
+</style>
+</head>
+<body>
+<div id="app"><div class="spinner">加载中...</div></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const code = params.get('code');
+const sid = params.get('sid');
+
+const items = [
+  { id:'hat_crown', name:'皇冠', icon:'👑', price:50, desc:'戴上皇冠，全班最靓' },
+  { id:'hat_witch', name:'巫师帽', icon:'🧙‍♀️', price:40, desc:'魔法力量加持' },
+  { id:'hat_party', name:'派对帽', icon:'🎉', price:30, desc:'今天你最大' },
+  { id:'bow', name:'蝴蝶结', icon:'🎀', price:20, desc:'可爱加倍' },
+  { id:'glasses_cool', name:'墨镜', icon:'😎', price:35, desc:'酷就一个字' },
+  { id:'necklace', name:'宝石项链', icon:'💎', price:60, desc:'闪闪发光' },
+  { id:'cape', name:'披风', icon:'🦸', price:80, desc:'超级英雄降临' },
+  { id:'wings', name:'天使翅膀', icon:'👼', price:100, desc:'展翅高飞' },
+];
+
+let studentData = null;
+
+function toast(msg, type='ok') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+async function buy(itemId) {
+  const s = studentData;
+  const item = items.find(i => i.id === itemId);
+  if (!s || s.score < item.price) return toast('积分不足','err');
+  try {
+    const r = await fetch(`/api/student/${code}/${sid}/buy`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({item_id: itemId})
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast(`购买成功：${item.name} (-${item.price}分)`);
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      toast(d.error || '购买失败','err');
+    }
+  } catch(e) {
+    toast('网络错误','err');
+  }
+}
+
+(async () => {
+  if (!code || !sid) {
+    document.getElementById('app').innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">请从花园页面进入商城</div>';
+    return;
+  }
+  try {
+    const r = await fetch(`/api/student/${code}/${sid}`);
+    const d = await r.json();
+    if (!d.student) {
+      document.getElementById('app').innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">学生不存在</div>';
+      return;
+    }
+    studentData = d.student;
+    const owned = (studentData.items || '').split(',').filter(Boolean);
+    
+    let html = `<header><h1>🛍️ ${studentData.name} 的商城</h1><div class="my-score">💰 当前积分：${studentData.score || 0}</div></header><div class="shop">`;
+    
+    items.forEach(item => {
+      const isOwned = owned.includes(item.id);
+      const canBuy = studentData.score >= item.price && !isOwned;
+      html += `<div class="item${canBuy ? '' : ' locked'}" onclick="${canBuy ? `buy('${item.id}')` : ''}">
+        <div class="icon">${item.icon}</div>
+        <div class="iname">${item.name}</div>
+        ${isOwned ? '<div class="owned">已拥有</div>' : `<div class="price">${item.price} 分</div>`}
+      </div>`;
+    });
+    
+    html += '</div>';
+    document.getElementById('app').innerHTML = html;
+  } catch(e) {
+    document.getElementById('app').innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">加载失败</div>';
+  }
+})();
+</script>
+<footer>
+  <a href="/">ClassPet</a> · 积分商城
+</footer>
+</body>
+</html>

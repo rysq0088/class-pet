@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClassPet 定价 — 班级宠物积分管理系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f9fafb;color:#1f2937;min-height:100vh}
+nav{display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:20px 24px}
+.logo{font-size:20px;font-weight:800;color:#16a34a;text-decoration:none;display:flex;align-items:center;gap:6px}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:#6b7280;text-decoration:none;font-size:14px;font-weight:500;transition:.2s}
+.nav-links a:hover{color:#16a34a}
+.nav-links .btn-nav{background:#16a34a;color:#fff;padding:8px 20px;border-radius:10px;font-weight:600}
+.nav-links .btn-nav:hover{background:#15803d;color:#fff}
+
+.hero{text-align:center;padding:48px 20px 32px}
+.hero h1{font-size:34px;font-weight:800;color:#111827;margin-bottom:8px}
+.hero p{font-size:16px;color:#6b7280;max-width:480px;margin:0 auto;line-height:1.6}
+.hero .badge-hero{display:inline-block;background:#dcfce7;color:#16a34a;font-size:13px;font-weight:600;padding:4px 14px;border-radius:20px;margin-bottom:12px}
+
+.plans{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:0 24px 60px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:20px;padding:36px 28px;flex:1;min-width:280px;max-width:340px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);text-align:center;position:relative;border:1px solid #e5e7eb;transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.card.popular{border:2px solid #16a34a;box-shadow:0 4px 24px rgba(22,163,74,.12)}
+.card.popular:hover{box-shadow:0 16px 48px rgba(22,163,74,.15)}
+.badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:12px;font-weight:700;padding:5px 20px;border-radius:20px;letter-spacing:.5px}
+.card .icon{font-size:36px;margin-bottom:12px}
+.card h3{font-size:22px;font-weight:700;margin-bottom:4px}
+.card .desc{font-size:13px;color:#9ca3af;margin-bottom:16px}
+.card .price{font-size:40px;font-weight:800;color:#111827;margin:8px 0 0}
+.card .price small{font-size:14px;font-weight:400;color:#9ca3af}
+.card .price-unit{font-size:14px;color:#6b7280;margin-bottom:20px}
+.card ul{list-style:none;text-align:left;font-size:14px;line-height:2.2;margin-bottom:28px;padding:0 4px}
+.card ul li{color:#4b5563}
+.card ul li::before{content:'✓ ';color:#16a34a;font-weight:700;margin-right:4px}
+.card ul li.no{color:#d1d5db}
+.card ul li.no::before{content:'— ';color:#d1d5db}
+.btn{display:inline-block;width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff}
+.btn-primary:hover{background:linear-gradient(135deg,#15803d,#166534);transform:scale(1.02)}
+.btn-outline{border:2px solid #d1d5db;color:#374151;background:#fff}
+.btn-outline:hover{border-color:#16a34a;color:#16a34a;background:#f0fdf4}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(2px)}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:24px;padding:36px 32px 28px;max-width:380px;width:92%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.2);animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal .close-btn{position:absolute;top:16px;right:20px;background:none;border:none;font-size:22px;color:#9ca3af;cursor:pointer}
+.modal h2{font-size:20px;font-weight:700;margin-bottom:4px;color:#111827}
+.modal .modal-sub{font-size:13px;color:#9ca3af;margin-bottom:20px}
+.modal .qr-wrap{background:#f9fafb;border-radius:16px;padding:20px;margin-bottom:16px;display:inline-block}
+.modal .qr-wrap img{width:200px;height:200px;border-radius:12px;display:block}
+.modal .amount{font-size:28px;font-weight:800;color:#111827;margin:4px 0}
+.modal .order-no{font-size:12px;color:#d1d5db;margin-bottom:12px;font-family:monospace}
+.modal .status{font-size:14px;color:#16a34a;font-weight:600;margin-bottom:16px;min-height:22px;display:flex;align-items:center;justify-content:center;gap:6px}
+.modal .status .dot{width:8px;height:8px;border-radius:50%;background:#f59e0b;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.modal .status.success .dot{background:#16a34a;animation:none}
+.modal .tips{font-size:12px;color:#9ca3af;margin-bottom:12px;line-height:1.6}
+.modal .btn-cancel{width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #e5e7eb;background:#fff;color:#6b7280;transition:.2s}
+.modal .btn-cancel:hover{background:#f3f4f6}
+
+/* Customer service bar */
+.cs-bar{max-width:1100px;margin:0 auto 60px;padding:0 24px;text-align:center}
+.cs-bar .cs-card{display:inline-flex;align-items:center;gap:16px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 28px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.cs-bar img{width:52px;height:52px;border-radius:10px}
+.cs-bar .cs-text{text-align:left;line-height:1.5}
+.cs-bar .cs-text strong{font-size:15px;color:#111827}
+.cs-bar .cs-text span{display:block;font-size:13px;color:#9ca3af}
+
+footer{text-align:center;padding:32px 24px;border-top:1px solid #e5e7eb;color:#9ca3af;font-size:13px}
+footer a{color:#16a34a;text-decoration:none}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">🐾 ClassPet</a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/pricing" style="color:#16a34a;font-weight:700">定价</a>
+    <a href="/login" class="btn-nav">登录</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge-hero">🎉 全新上线 · 限时优惠</div>
+  <h1>简单透明的定价</h1>
+  <p>免费开始，按需升级。用宠物成长激励好习惯，每天2分钟，让小朋友的好习惯看得见。</p>
+</div>
+
+<div class="plans">
+  <div class="card">
+    <div class="icon">🌱</div>
+    <h3>基础版</h3>
+    <div class="desc">适合个人体验</div>
+    <div class="price">免费</div>
+    <div class="price-unit">永久免费</div>
+    <ul>
+      <li>1 个班级</li>
+      <li>10 种基础宠物</li>
+      <li>积分系统 + 排行榜</li>
+      <li>8 级进化特效</li>
+      <li class="no">小组管理</li>
+      <li class="no">随机点名</li>
+      <li class="no">学情报告</li>
+    </ul>
+    <a href="/login" class="btn btn-outline">免费开始</a>
+  </div>
+
+  <div class="card popular">
+    <div class="badge">最受欢迎</div>
+    <div class="icon">🌟</div>
+    <h3>老师版</h3>
+    <div class="desc">解锁全部功能</div>
+    <div class="price">¥19<small>/年</small></div>
+    <div class="price-unit">每天不到 6 分钱</div>
+    <ul>
+      <li>不限班级数量</li>
+      <li>全部宠物解锁</li>
+      <li>积分系统 + 排行榜</li>
+      <li>8 级进化特效</li>
+      <li>小组管理 + 排行</li>
+      <li>随机点名转盘</li>
+      <li>学情报告导出</li>
+    </ul>
+    <button class="btn btn-primary" onclick="startPay()">¥19 立即开通</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🏫</div>
+    <h3>学校版</h3>
+    <div class="desc">适合全校部署</div>
+    <div class="price">联系我们</div>
+    <div class="price-unit">批量采购优惠</div>
+    <ul>
+      <li>老师版全部功能</li>
+      <li>全校数据看板</li>
+      <li>多教师协作</li>
+      <li>家校互通</li>
+      <li>批量导入导出</li>
+      <li>激活码批量分发</li>
+      <li>优先技术支持</li>
+    </ul>
+    <button class="btn btn-outline" onclick="document.getElementById('csBar').scrollIntoView({behavior:'smooth'})">联系客服</button>
+  </div>
+</div>
+
+<div class="cs-bar" id="csBar">
+  <div class="cs-card">
+    <img src="/images/cs-qr.png" alt="客服微信">
+    <div class="cs-text">
+      <strong>有问题？加我微信</strong>
+      <span>扫码添加客服 · 工作日 9:00-21:00</span>
+    </div>
+  </div>
+</div>
+
+<div class="refund-section" style="max-width:1100px;margin:0 auto 40px;padding:0 24px">
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:20px 28px;text-align:center">
+    <span style="font-size:24px">🛡️</span>
+    <span style="font-size:16px;font-weight:700;color:#16a34a;margin-left:8px">7 天无理由退款</span>
+    <p style="font-size:13px;color:#4ade80;margin-top:6px">支付后 7 天内联系客服即可全额退款，无任何门槛</p>
+    <p style="font-size:12px;color:#9ca3af;margin-top:4px">每30天限退1次 · 退款后账号恢复免费版</p>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 <a href="/">ClassPet</a> · 用宠物成长激励好习惯 · 
+  <a href="mailto:support@classpet.site">support@classpet.site</a><br>
+  <span style="font-size:12px;color:#c0c0c4">
+    <a href="/terms" style="color:#c0c0c4">用户协议</a> · 
+    <a href="/privacy" style="color:#c0c0c4">隐私政策</a> · 
+    <a href="/pricing" style="color:#c0c0c4">定价</a> · 
+    <a href="/school" style="color:#c0c0c4">学校版</a> · 
+    <a href="/help" style="color:#c0c0c4">帮助</a>
+  </span>
+</footer>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="payOverlay">
+  <div class="modal" style="position:relative">
+    <button class="close-btn" onclick="closePay()">&times;</button>
+    <h2>微信扫码支付</h2>
+    <p class="modal-sub">开通老师版 · 全年畅享</p>
+    <div class="qr-wrap">
+      <img src="/images/pay-qr.png" alt="微信收款码" id="payQrImg">
+    </div>
+    <div class="amount">¥19.00</div>
+    <div class="order-no" id="orderNoLine"></div>
+    <div class="status" id="payStatus">
+      <span class="dot"></span> 等待支付
+    </div>
+    <p class="tips">支付成功后自动激活，无需手动操作<br>如遇问题请联系客服</p>
+    <button class="btn-cancel" onclick="closePay()">取消支付</button>
+  </div>
+</div>
+
+<script>
+let pollTimer = null;
+
+async function startPay() {
+  const token = getCookie('cp_token');
+  if (!token) { location.href = '/login?redirect=/pricing'; return; }
+  try {
+    const r = await fetch('/api/v1/orders', {
+      method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({payment_method:'wechat'})
+    });
+    const d = await r.json();
+    if (!d.ok) return alert('创建订单失败，请重试');
+    document.getElementById('orderNoLine').textContent = '订单号 ' + d.order_no;
+    document.getElementById('payStatus').innerHTML = '<span class="dot"></span> 等待支付';
+    document.getElementById('payStatus').className = 'status';
+    document.getElementById('payOverlay').classList.add('show');
+    pollTimer = setInterval(() => checkOrder(d.order_no), 3000);
+  } catch(e) { alert('网络错误: ' + e.message); }
+}
+
+async function checkOrder(orderNo) {
+  const token = getCookie('cp_token');
+  try {
+    const r = await fetch('/api/v1/orders/' + orderNo, {
+      headers: {'Authorization':'Bearer '+token}
+    });
+    const d = await r.json();
+    if (d.status === 'paid') {
+      clearInterval(pollTimer);
+      const el = document.getElementById('payStatus');
+      el.innerHTML = '✓ 支付成功！已开通老师版';
+      el.className = 'status success';
+      setTimeout(() => { closePay(); location.href = '/teacher'; }, 1500);
+    }
+  } catch(e) {}
+}
+
+function closePay() {
+  clearInterval(pollTimer);
+  document.getElementById('payOverlay').classList.remove('show');
+}
+
+function getCookie(n){const m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}
+</script>
+</body>
+</html>

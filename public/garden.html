@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>宠物花园 — ClassPet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(180deg,#ecfdf5 0%,#f9fafb 100%);min-height:100vh;color:#1f2937}
+header{text-align:center;padding:28px 20px 16px}
+header h1{font-size:24px;font-weight:800;color:#111827}
+header .class-name{font-size:14px;color:#6b7280;margin-top:4px}
+.garden{max-width:800px;margin:0 auto;padding:12px 16px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.pet-card{background:#fff;border-radius:16px;padding:20px 14px 16px;text-align:center;border:1px solid #e5e7eb;transition:.2s;position:relative}
+.pet-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.pet-card .emoji{font-size:48px;margin-bottom:8px}
+.pet-card .name{font-size:15px;font-weight:700;color:#111827}
+.pet-card .score{font-size:13px;color:#16a34a;font-weight:600;margin-top:4px}
+.pet-card .level{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;margin-top:6px;background:#f3f4f6;color:#6b7280}
+.pet-card .level.gold{background:#fef3c7;color:#d97706}
+.pet-card .level.purple{background:#ede9fe;color:#7c3aed}
+.pet-card.me{border:2px solid #16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.08)}
+.pet-card.me::after{content:'⭐';position:absolute;top:-10px;right:-8px;font-size:20px}
+.empty{text-align:center;padding:60px 20px;color:#9ca3af;font-size:15px}
+.mode-bar{text-align:center;padding:8px 20px;font-size:13px;color:#9ca3af}
+.mode-bar .badge{display:inline-block;background:#dcfce7;color:#16a34a;padding:4px 14px;border-radius:20px;font-weight:600}
+footer{text-align:center;padding:24px;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;margin-top:20px}
+footer a{color:#16a34a;text-decoration:none}
+.spinner{text-align:center;padding:60px;color:#9ca3af}
+</style>
+</head>
+<body>
+<div id="app"><div class="spinner">加载中...</div></div>
+
+<footer>
+  &copy; 2026 <a href="/">ClassPet</a> · 用宠物成长激励好习惯
+</footer>
+
+<script>
+const params = new URLSearchParams(location.search);
+const code = params.get('code') || location.pathname.split('/').pop();
+const me = params.get('me');
+
+(async () => {
+  if (!code) {
+    document.getElementById('app').innerHTML = '<div class="empty">缺少班级邀请码</div>';
+    return;
+  }
+  try {
+    const r = await fetch(`/api/garden/${code}`);
+    const d = await r.json();
+    if (!d.class) {
+      document.getElementById('app').innerHTML = '<div class="empty">班级不存在或邀请码无效</div>';
+      return;
+    }
+    const { garden, class: cls, mode } = d;
+    const modeLabel = mode === 'exam' ? '考试模式' : mode === 'rest' ? '自习模式' : '上课中';
+    const pets = (garden || []).sort((a,b) => b.total_score - a.total_score);
+    
+    // Pet emoji mapping
+    const emojis = { cat:'🐱', dog:'🐶', rabbit:'🐰', panda:'🐼', hamster:'🐹', turtle:'🐢', fox:'🦊', chick:'🐤', bear:'🐻', frog:'🐸' };
+    const getLevel = (score) => score >= 200 ? {label:'传说',cls:'purple'} : score >= 100 ? {label:'史诗',cls:'gold'} : score >= 50 ? {label:'稀有',cls:''} : score >= 20 ? {label:'进阶',cls:''} : {label:'萌新',cls:''};
+    
+    let html = `<header><h1>🐾 ${cls.name}</h1><div class="class-name">${modeLabel}</div></header><div class="garden">`;
+    if (pets.length === 0) {
+      html += '<div class="empty">还没有学生加入班级</div>';
+    } else {
+      pets.forEach(p => {
+        const lv = getLevel(p.total_score);
+        html += `<div class="pet-card${me && me == p.id ? ' me' : ''}">
+          <div class="emoji">${emojis[p.pet_type] || '🐱'}</div>
+          <div class="name">${p.name}</div>
+          <div class="score">${p.total_score} 分</div>
+          <span class="level ${lv.cls}">${lv.label}</span>
+        </div>`;
+      });
+    }
+    html += '</div>';
+    document.getElementById('app').innerHTML = html;
+  } catch(e) {
+    document.getElementById('app').innerHTML = '<div class="empty">加载失败，请检查网络</div>';
+  }
+})();
+</script>
+</body>
+</html>

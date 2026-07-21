@@ -1,0 +1,146 @@
+/* ============================================================
+   ClassPet.site — 统一设计系统 (Design System)
+   暖色调主色 + 辅助色 + 圆角/阴影/字体层级 + 暗色模式
+   ============================================================ */
+
+/* ---------- 1. 浅色模式 (默认) ---------- */
+:root {
+  /* 主色：暖金 / 阳光感 */
+  --color-primary: #f59e0b;
+  --color-primary-light: #fbbf24;
+  --color-primary-dark: #d97706;
+  --color-primary-soft: #fef3c7;   /* 极浅金，用于背景 */
+  --color-primary-glow: rgba(245, 158, 11, 0.35);
+
+  /* 辅助色 */
+  --color-success: #10b981;        /* 成功绿 */
+  --color-success-soft: #d1fae5;
+  --color-danger: #ef4444;         /* 危险红 */
+  --color-danger-soft: #fee2e2;
+  --color-info: #3b82f6;           /* 信息蓝 */
+  --color-info-soft: #dbeafe;
+
+  /* 中性色 */
+  --color-bg: #fffaf2;             /* 暖白背景 */
+  --color-surface: #ffffff;        /* 卡片表面 */
+  --color-surface-2: #fff7ec;      /* 次级表面 */
+  --color-border: #f1e3c8;         /* 暖灰边框 */
+  --color-text: #2b2118;           /* 主文字（暖黑） */
+  --color-text-2: #6b5d4d;         /* 次级文字 */
+  --color-text-3: #a89a86;         /* 占位/弱文字 */
+  --color-overlay: rgba(43, 33, 24, 0.45); /* 遮罩 */
+
+  /* 圆角系统 */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* 阴影系统 */
+  --shadow-xs: 0 1px 2px rgba(43, 33, 24, 0.06);
+  --shadow-sm: 0 2px 8px rgba(43, 33, 24, 0.08);
+  --shadow-md: 0 6px 18px rgba(43, 33, 24, 0.10);
+  --shadow-lg: 0 14px 40px rgba(43, 33, 24, 0.14);
+  --shadow-glow: 0 0 0 4px var(--color-primary-glow);
+  --shadow-card-hover: 0 10px 28px rgba(245, 158, 11, 0.22);
+
+  /* 字体层级 */
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 26px;
+  --fs-2xl: 34px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* 间距 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* 动效 */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.15s;
+  --dur-base: 0.28s;
+  --dur-slow: 0.5s;
+
+  /* 布局 */
+  --topbar-h: 64px;
+  --tabbar-h: 72px;
+  --maxw: 1180px;
+}
+
+/* ---------- 2. 暗色模式 (大屏投屏) ---------- */
+[data-theme="dark"] {
+  --color-primary: #fbbf24;
+  --color-primary-light: #fcd34d;
+  --color-primary-dark: #f59e0b;
+  --color-primary-soft: #3a2e16;
+  --color-primary-glow: rgba(251, 191, 36, 0.40);
+
+  --color-success: #34d399;
+  --color-success-soft: #0f3a2e;
+  --color-danger: #f87171;
+  --color-danger-soft: #3a1c1c;
+  --color-info: #60a5fa;
+  --color-info-soft: #16294a;
+
+  --color-bg: #14110c;             /* 深暖黑 */
+  --color-surface: #211b13;        /* 卡片表面 */
+  --color-surface-2: #2a2218;      /* 次级表面 */
+  --color-border: #3a2f20;
+  --color-text: #f7efe2;
+  --color-text-2: #c4b59c;
+  --color-text-3: #8a7a63;
+  --color-overlay: rgba(0, 0, 0, 0.62);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 0 4px var(--color-primary-glow);
+  --shadow-card-hover: 0 10px 28px rgba(251, 191, 36, 0.28);
+}
+
+/* ---------- 3. 通用基础 ---------- */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--dur-base) var(--ease-smooth),
+              color var(--dur-base) var(--ease-smooth);
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+input, select {
+  font-family: inherit;
+  font-size: var(--fs-base);
+  color: var(--color-text);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-track { background: transparent; }

@@ -23,6 +23,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-blue{background:#e3f2fd;color:#1565c0}
 .btn-orange{background:#fff3e0;color:#e65100}
 .btn-red{background:#ffebee;color:#c62828}
+.btn-purple{background:#f3e5f5;color:#7b1fa2}
 .btn-primary{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;font-size:14px;padding:10px 20px;border-radius:18px;border:none;font-weight:700;cursor:pointer}
 .btn-primary:active{transform:scale(.97)}
 .btn-full{width:100%;margin-top:8px}
@@ -115,12 +116,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 @keyframes floatPlus{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-10px) scale(1.2)}100%{opacity:0;transform:translateY(-50px) scale(1)}}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:pre-line;text-align:center}
 .toast.show{opacity:1}
+
+/* Groups */
+.group-list{display:flex;flex-direction:column;gap:10px}
+.group-card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.04);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:space-between}
+.group-card:active{transform:scale(.98)}
+.group-card .g-name{font-size:16px;font-weight:700;color:#333;display:flex;align-items:center;gap:6px}
+.group-card .g-count{font-size:12px;color:#999;background:#f5f5f5;padding:3px 10px;border-radius:10px}
+.group-card .g-del{background:none;border:none;color:#c62828;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:8px}
+.group-card .g-del:hover{background:#ffebee}
+.group-members{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+.member-tag{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;padding:5px 10px;border-radius:12px;font-size:13px;font-weight:600;color:#2e7d32}
+.member-tag .rm-btn{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:0 2px;line-height:1}
+.member-tag .rm-btn:hover{color:#c62828}
+.group-detail{padding:12px 0}
+.group-detail h4{font-size:14px;color:#555;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.drop-zone{background:#f1f8e9;border:2px dashed #a5d6a7;border-radius:14px;padding:16px;text-align:center;color:#66bb6a;font-size:13px;font-weight:600;margin-top:8px;transition:.2s}
+.drop-zone.over{background:#c8e6c9;border-color:#43a047;color:#2e7d32}
+.drag-hint{font-size:11px;color:#999;text-align:center;padding:8px 0}
+.student-pool{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.student-chip{padding:5px 10px;background:#f5f5f5;border-radius:12px;font-size:12px;cursor:grab;user-select:none;font-weight:600;display:flex;align-items:center;gap:4px;transition:.2s}
+.student-chip:active{cursor:grabbing;transform:scale(.95)}
+.student-chip.dragging{opacity:.4}
+.student-chip.in-group{background:#c8e6c9;color:#2e7d32;cursor:default}
+
+
+/* Premium & Activate */
+.premium-badge{display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.premium-free{display:inline-block;background:#f3f4f6;color:#9ca3af;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-left:6px;vertical-align:middle;cursor:pointer}
+.premium-free:hover{background:#e5e7eb}
+.activate-bar{background:#fff;margin:0 16px 12px;border-radius:14px;padding:10px 14px;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;align-items:center;gap:8px}
+.activate-bar .act-input{flex:1;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:13px;outline:none;font-family:monospace}
+.activate-bar .act-input:focus{border-color:#43a047}
+.activate-bar .act-btn{padding:8px 16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.activate-bar .act-btn:active{transform:scale(.96)}
+.free-limit-tip{background:#fff3e0;border:1px solid #ffe0b2;border-radius:12px;margin:0 16px 12px;padding:10px 14px;font-size:12px;color:#e65100;text-align:center}
+.free-limit-tip a{color:#d97706;font-weight:700;text-decoration:underline}
+
 </style>
 </head>
 <body>
 <div class="top">
   <a href="/" style="text-decoration:none;font-size:20px;color:#999;padding-right:8px" title="返回首页">←</a>
-  <h1>🐾 ClassPet</h1>
+  <h1>🐾 ClassPet <span id="premiumBadge" style="display:none"></span></h1>
   <button class="logout" onclick="doLogout()">退出</button>
 </div>
 <div class="class-bar" id="classBar" style="display:none">
@@ -131,12 +169,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="c-actions">
     <button class="btn-tab active" onclick="switchTab('students')" id="tabStudents">👶 小朋友</button>
     <button class="btn-tab" onclick="switchTab('history')" id="tabHistory">📋 积分史</button>
+    <button class="btn-tab" onclick="switchTab('ranking')" id="tabRanking">🏆 排行榜</button>
+    <button class="btn-tab" onclick="switchTab('groups')" id="tabGroups">👥 小组</button>
   </div>
   <button class="btn-sm btn-green" onclick="openAddStudent()" style="margin-top:10px">+ 添加小朋友</button>
   <button class="btn-sm btn-blue" onclick="copyParentShare()" style="margin-top:10px;margin-left:6px">📱 分享给家长</button>
   <button class="btn-sm btn-orange" onclick="toggleClassMode()" id="btnMode" style="margin-top:10px;margin-left:6px" title="切换大屏喧闹/安静模式">🟢 自由模式</button>
   <button class="btn-sm btn-orange" onclick="openScreen()" style="margin-top:10px;margin-left:6px" title="在教室电视/投影上展示宠物花园">🖥 教室大屏</button>
   <button class="btn-sm btn-green" onclick="toggleQuickMode()" id="btnQuick" style="margin-top:10px;margin-left:6px" title="快加模式：点一下就+1">⚡ 快加模式</button>
+</div>
+
+<div class="activate-bar" id="activateBar" style="display:none">
+  <span style="font-size:13px;white-space:nowrap;color:#6b7280;font-weight:600">🔑 激活码</span>
+  <input class="act-input" id="activateCode" placeholder="输入激活码，如 CP-XXXXXX">
+  <button class="act-btn" onclick="doActivate()">兑换</button>
+</div>
+<div class="free-limit-tip" id="freeLimitTip" style="display:none">
+  ⚠️ 免费版仅限 1 个班级 · <a href="/pricing">¥19/年 升级不限班级</a>
 </div>
 
 <div class="score-panel" id="scorePanel" style="display:none">
@@ -200,17 +249,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+
+<!-- Create Group Modal -->
+<div class="modal-bg" id="createGroupModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('createGroupModal')">✕</button>
+    <h3>👥 创建小组</h3>
+    <input class="input" id="newGroupName" placeholder="小组名称，如：红队、蓝队">
+    <button class="btn-primary btn-full" onclick="doCreateGroup()">创建</button>
+  </div>
+</div>
+
+<!-- Group Detail Modal -->
+<div class="modal-bg" id="groupDetailModal">
+  <div class="modal" id="groupDetailContent"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const PETS={cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊'};
 const PET_KEYS=Object.keys(PETS);
-const REASONS=['举手回答','坐姿端正','帮助同学','午睡乖乖','排队整齐','认真听讲','按时完成','礼貌问好'];
+const REASONS=['举手回答','坐姿端正','帮助同学','午睡乖乖','排队整齐','认真听讲','按时完成','礼貌问好','吃饭光盘','整理书包','主动打扫','安静阅读','积极发言','字写得棒','画画出色','合作分享','勇敢表达','不挑食','自己的事自己做','乐于助人'];
 
-let state={currentClass:null,students:[],selected:new Set(),selectedPet:'cat',selectedReason:'',tab:'students',history:[],quickMode:true};
+let state={currentClass:null,students:[],selected:new Set(),selectedPet:'cat',selectedReason:'',tab:'students',history:[],quickMode:true,isPremium:false};
 
-function petLvl(exp){if(exp>=250)return{name:'传说',emoji:'⭐',next:999,level:5};if(exp>=100)return{name:'成年',emoji:'🌳',next:250,level:4};if(exp>=40)return{name:'成长',emoji:'🌿',next:100,level:3};if(exp>=10)return{name:'幼年',emoji:'🌱',next:40,level:2};return{name:'宝宝',emoji:'🥚',next:10,level:1}}
-function lvlNext(pl){let lvls=[0,10,40,100,250];return lvls[pl.level]||0}
+function petLvl(exp){if(exp>=500)return{name:'神话',emoji:'👑',next:999,level:8};if(exp>=300)return{name:'史诗',emoji:'💎',next:500,level:7};if(exp>=180)return{name:'精英',emoji:'🏆',next:300,level:6};if(exp>=100)return{name:'传说',emoji:'⭐',next:180,level:5};if(exp>=50)return{name:'成年',emoji:'🌳',next:100,level:4};if(exp>=20)return{name:'成长',emoji:'🌿',next:50,level:3};if(exp>=5)return{name:'幼年',emoji:'🌱',next:20,level:2};return{name:'宝宝',emoji:'🥚',next:5,level:1}}
+function lvlNext(pl){let lvls=[0,5,20,50,100,180,300,500];return lvls[pl.level-1]||0}
 
 (async function init(){
   try{
@@ -223,7 +288,10 @@ function lvlNext(pl){let lvls=[0,10,40,100,250];return lvls[pl.level]||0}
     if(d.teacher.institution_name){
       top.innerHTML = '🐾 ' + d.teacher.name + '<br><span style="font-size:12px;color:#999;font-weight:400">🏫 ' + d.teacher.institution_name + '</span>';
       // Show school link for admin
-      if(d.teacher.role==='school_admin'){
+      // Premium check
+  checkPremium();
+  document.getElementById('activateBar').style.display='flex';
+if(d.teacher.role==='school_admin'){
         const btn = document.createElement('button');
         btn.className='btn-sm';btn.textContent='🔧管理';
         btn.onclick=()=>location.href='/school';
@@ -278,11 +346,16 @@ async function loadHistory(){
 function switchTab(tab){
   state.tab=tab;document.getElementById('tabStudents').classList.toggle('active',tab==='students');
   document.getElementById('tabHistory').classList.toggle('active',tab==='history');
-  if(tab==='students')loadStudents();else loadHistory();
+  document.getElementById('tabRanking').classList.toggle('active',tab==='ranking');
+  document.getElementById('tabGroups').classList.toggle('active',tab==='groups');
+  if(tab==='students')loadStudents();else if(tab==='ranking')loadRanking();else if(tab==='groups')loadGroups();else loadHistory();
 }
 function renderTab(){
   const el=document.getElementById('tabContent');
-  if(state.tab==='history')renderHistory(el);else renderStudents(el);
+  if(state.tab==='history')renderHistory(el);
+  else if(state.tab==='ranking')renderRanking(el);
+  else if(state.tab==='groups')renderGroups(el);
+  else renderStudents(el);
 }
 function renderStudents(el){
   const panel=document.getElementById('scorePanel');
@@ -299,15 +372,15 @@ function renderStudents(el){
       return'<div class="pet-card'+(isSel?' selected':'')+'" id="stu'+s.id+'" onclick="'+clickFn+'" oncontextmenu="showDetail('+s.id+');return false">'
         +'<div class="check-mark">✓</div>'
         +'<div class="pet-lvl">'+pl.emoji+'</div>'
-        +(state.quickMode?'<div class="quick-plus">+1</div>':'')+
+        +(state.quickMode?(state.penaltyMode?'<div class="quick-minus">-1</div>':'<div class="quick-plus">+1</div>'):'')+
         '<div class="pet-emoji">'+(PETS[s.pet_type]||'🐱')+'</div>'
         +'<div class="pet-name">'+s.name+'</div>'
-        +'<div class="pet-score">⭐'+s.score+' · '+pl.name+'</div>'
+        +'<div class="pet-score">⭐'+s.score+' · '+pl.name+' · Lv.'+pl.level+'</div>'
         +'<button class="detail-btn" onclick="event.stopPropagation();showDetail('+s.id+')">⋯</button>'
         +'<button class="share-btn" onclick="event.stopPropagation();openShare('+s.id+')" title="分享给家长">📤</button>'
       +'</div>';
     }).join('')+'</div>';
-  const tip=state.quickMode?'💡 点一下就+1分 · 点 ⋯ 看详情':'💡 点击卡片选中 · 选好后点下方分值';
+  const tip=state.quickMode?(state.penaltyMode?'💡 点一下就-1分 · 点 ⋯ 看详情':'💡 点一下就+1分 · 点 ⋯ 看详情'):'💡 点击卡片选中 · 选好后点下方分值';
   el.innerHTML+='<div style="text-align:center;padding:12px 0;color:#999;font-size:11px">'+tip+'</div>';
 }
 
@@ -328,12 +401,14 @@ function renderHistory(el){
 function toggleStudent(id){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);renderTab()}
 async function doScore(pts){
   if(state.selected.size===0)return toast('请先选择小朋友');
-  const scores=[...state.selected].map(id=>({student_id:id,points:pts,reason:state.selectedReason||'表现优秀'}));
+  const sign=state.penaltyMode?'-':'+';
+  const finalPts=state.penaltyMode?-Math.abs(pts):Math.abs(pts);
+  const scores=[...state.selected].map(id=>({student_id:id,points:finalPts,reason:state.selectedReason||(state.penaltyMode?'需要改进':'表现优秀')}));
   const r=await fetch('/api/classes/'+state.currentClass.id+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scores})});
   const d=await r.json();
   if(d.ok){
     const names=[...state.selected].map(id=>state.students.find(s=>s.id===id)?.name).join('、');
-    toast('✅ '+names+' 各+'+pts+'分');
+    toast('✅ '+names+' 各'+sign+Math.abs(pts)+'分');
     state.selectedReason='';document.querySelectorAll('.reason-tag').forEach(b=>b.classList.remove('on'));
     await refreshClass();
   }else toast('❌ '+d.error);
@@ -344,14 +419,19 @@ async function quickScore(id){
   const card=document.getElementById('stu'+id);
   if(card){card.classList.add('bump');setTimeout(()=>card.classList.remove('bump'),450);}
   const s=state.students.find(x=>x.id===id);
-  spawnFloatPlus(s?s.name:'',card);
-  const r=await fetch('/api/classes/'+state.currentClass.id+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scores:[{student_id:id,points:1,reason:state.selectedReason||'表现优秀'}]})});
+  const pts = state.penaltyMode ? -1 : 1;
+  const sign = state.penaltyMode ? '-' : '+';
+  const reason = state.selectedReason || (state.penaltyMode ? '需要改进' : '表现优秀');
+  spawnFloat(s?s.name:'',card,pts);
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scores:[{student_id:id,points:pts,reason:reason}]})});
   const d=await r.json();
-  if(d.ok){toast('✅ '+(s?s.name:'')+' +1');await loadStudents();}
+  if(d.ok){toast('✅ '+(s?s.name:'')+' '+sign+'1');await loadStudents();}
   else toast('❌ '+d.error);
 }
-function spawnFloatPlus(name,card){
-  const p=document.createElement('div');p.className='float-plus';p.textContent='+1';
+function spawnFloat(name,card,pts){
+  const sign=pts>=0?'+':'';
+  const color=pts>=0?'#43a047':'#c62828';
+  const p=document.createElement('div');p.className='float-plus';p.textContent=sign+pts;p.style.color=color;
   if(card){const r=card.getBoundingClientRect();p.style.left=(r.left+r.width/2-10)+'px';p.style.top=(r.top+10)+'px';}
   else{p.style.left='50%';p.style.top='40%';}
   document.body.appendChild(p);setTimeout(()=>p.remove(),1000);
@@ -396,7 +476,7 @@ function renderDetail(d,sid){
       <div class="d-stat"><div class="num">${d.pet_exp}</div><div class="label">宠物经验</div></div>
     </div>
     <div class="exp-bar"><div class="fill" style="width:${pct}%"></div></div>
-    <div style="font-size:10px;color:#999;text-align:right;margin-bottom:12px">距 ${pl.next===999?'满级':pl.name+'→传说'} 还需 ${pl.next-d.pet_exp} 经验</div>
+    <div style="font-size:10px;color:#999;text-align:right;margin-bottom:12px">距 ${pl.next===999?'满级':pl.name+'→冠军'} 还需 ${pl.next-d.pet_exp} 经验</div>
 
     <div class="detail-section">
       <h4>✏️ 编辑信息</h4>
@@ -457,9 +537,64 @@ async function doRemoveStudent(sid){
 // ─── Class ───
 function openCreateClass(){document.getElementById('createClassModal').classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
+// Premium & Activate
+async function checkPremium(){
+  try{
+    const r=await fetch('/api/v1/user/premium');
+    const d=await r.json();
+    state.isPremium=!!d.premium;
+    const badge=document.getElementById('premiumBadge');
+    if(state.isPremium){
+      badge.style.display='inline-block';
+      badge.className='premium-badge';
+      badge.textContent='⭐ 老师版';
+      if(d.expires) badge.title='有效期至 '+d.expires;
+      document.getElementById('activateBar').style.display='none';
+      document.getElementById('freeLimitTip').style.display='none';
+    }else{
+      badge.style.display='inline-block';
+      badge.className='premium-free';
+      badge.textContent='免费版 ▸ 升级';
+      badge.onclick=()=>location.href='/pricing';
+    }
+  }catch(e){}
+}
+
+async function doActivate(){
+  const code=document.getElementById('activateCode').value.trim().toUpperCase();
+  if(!code)return toast('请输入激活码');
+  try{
+    const r=await fetch('/api/v1/activation-codes/redeem',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code})
+    });
+    const d=await r.json();
+    if(d.ok){
+      toast('✅ 激活成功！已升级为老师版');
+      document.getElementById('activateCode').value='';
+      checkPremium();
+      loadClasses();
+    }else{
+      toast('❌ '+(d.error||'无效激活码'));
+    }
+  }catch(e){toast('网络错误');}
+}
+
+async function doCreateClassOldBackup(){}
+
 async function doCreateClass(){
   const n=document.getElementById('newClassName').value.trim();
   if(!n)return toast('请输入班级名称');
+  if(!state.isPremium){
+    const clsResp=await fetch('/api/classes');
+    const clsList=await clsResp.json();
+    const clsCount=(clsList.classes||[]).length;
+    if(clsCount>=1){
+      toast('⚠️ 免费版仅限1个班级，请升级到老师版');
+      closeModal('createClassModal');
+      return;
+    }
+  }
   const r=await fetch('/api/classes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
   const d=await r.json();
   if(d.ok){closeModal('createClassModal');document.getElementById('emptyState').style.display='none';await loadClasses()}else toast('❌ '+d.error);
@@ -524,12 +659,155 @@ async function toggleClassMode(){
 }
 function updateModeBtn(mode){
   const btn=document.getElementById('btnMode');
-  btn.textContent=mode==='quiet'?'🔵 课堂安静中':'🟢 自由模式';
-  btn.className='btn-sm '+(mode==='quiet'?'btn-green':'btn-orange');
+  const map={active:'🟢 大屏上课模式',quiet:'🔵 大屏自习模式',exam:'🔴 大屏考试模式'};
+  const colors={active:'btn-orange',quiet:'btn-green',exam:'btn-red'};
+  btn.textContent=map[mode]||map.active;
+  btn.className='btn-sm '+(colors[mode]||colors.active);
 }
 function doLogout(){fetch('/api/logout',{method:'POST'}).finally(()=>{document.cookie='cp_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';setTimeout(()=>{location.replace('/login?t='+Date.now())},300)})}
 function copyText(t){navigator.clipboard?.writeText(t).then(()=>toast('📋 已复制\n'+t.substring(0,80))).catch(()=>prompt('复制：',t))}
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2500)}
+
+
+// ─── Penalty Mode ───
+function togglePenalty(){
+  state.penaltyMode=!state.penaltyMode;
+  const btn=document.getElementById('btnPenalty');
+  const qBtn=document.getElementById('btnQuick');
+  const reasonDiv=document.getElementById('reasonTags');
+  const penaltyDiv=document.getElementById('penaltyReasons');
+  if(state.penaltyMode){
+    btn.textContent='✅ 加分';
+    btn.className='btn-sm btn-green';
+    reasonDiv.style.display='none';
+    penaltyDiv.style.display='flex';
+  }else{
+    btn.textContent='⚠ 扣分';
+    btn.className='btn-sm btn-red';
+    reasonDiv.style.display='flex';
+    penaltyDiv.style.display='none';
+  }
+  state.selectedReason='';
+  state.selected.clear();
+  renderTab();
+}
+function toggleQuickMode(){
+  state.quickMode=!state.quickMode;
+  const btn=document.getElementById('btnQuick');
+  const pBtn=document.getElementById('btnPenalty');
+  btn.textContent=state.quickMode?'⚡ 快加模式':'☑ 批量模式';
+  btn.className='btn-sm '+(state.quickMode?'btn-green':'btn-orange');
+  pBtn.style.display=state.quickMode?'inline-block':'none';
+  if(!state.quickMode)state.penaltyMode=false;
+  state.selected.clear();
+  renderTab();
+}
+
+// ─── Ranking ───
+let rankPeriod='total';
+function loadRanking(){fetch('/api/classes/'+state.currentClass.id+'/ranking?period='+rankPeriod).then(r=>r.json()).then(d=>{state.ranking=d.ranking||[];renderTab();})}
+function renderRanking(el){
+  el.innerHTML='<div class="period-tabs">'
+    +'<button class="period-btn'+(rankPeriod==='total'?' active':'')+'" onclick="rankPeriod=\'total\';loadRanking()">总榜</button>'
+    +'<button class="period-btn'+(rankPeriod==='week'?' active':'')+'" onclick="rankPeriod=\'week\';loadRanking()">周榜</button>'
+    +'<button class="period-btn'+(rankPeriod==='today'?' active':'')+'" onclick="rankPeriod=\'today\';loadRanking()">日榜</button>'
+    +'</div>';
+  if(!(state.ranking||[]).length){el.innerHTML+='<div class="empty"><div class="icon">🏆</div><p>暂无排行数据</p></div>';return;}
+  el.innerHTML+='<table class="rank-table"><thead><tr><th>排名</th><th>宠物</th><th>姓名</th><th>积分</th><th>等级</th></tr></thead><tbody>'
+    +state.ranking.map((s,i)=>{
+      const pl=petLvl(s.total_score);
+      const rankCls=i<3?('rk-'+(i+1)):'';
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+      return'<tr><td class="'+rankCls+'">'+medal+'</td><td>'+(PETS[s.pet_type]||'🐱')+'</td><td><b>'+s.name+'</b></td>'
+        +'<td class="'+(s.period_score>=0?'rank-positive':'rank-negative')+'">⭐'+s.period_score+'</td>'
+        +'<td>'+pl.emoji+' Lv.'+pl.level+'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+
+// ─── History: show negative scores in red ───
+function renderHistory(el){
+  if(!state.history.length){el.innerHTML='<div class="empty"><div class="icon">📋</div><p>还没有积分记录</p></div>';return}
+  el.innerHTML='<div class="h-list">'+state.history.map(h=>{
+    const d=new Date(h.created_at+'Z');
+    const t=d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'});
+    const sign=h.points>=0?'+':'';
+    const color=h.points>=0?'#2e7d32':'#c62828';
+    return'<div class="h-item">'
+      +'<span class="h-time">'+t+'</span>'
+      +'<span class="h-student">'+(PETS[h.pet_type]||'')+' '+h.student_name+'</span>'
+      +'<span class="h-reason">'+h.reason+'</span>'
+      +'<span class="h-pts" style="color:'+color+'">'+sign+h.points+'</span>'
+    +'</div>';
+  }).join('')+'</div>';
+}
+
+
+// ─── Groups ───
+async function loadGroups(){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups');
+  const d=await r.json();state.groups=d.groups||[];renderTab();
+}
+function renderGroups(el){
+  el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:16px;color:#333">👥 小组管理</h3><button class="btn-sm btn-green" onclick="openCreateGroup()">+ 创建小组</button></div>';
+  if(!state.groups.length){
+    el.innerHTML+='<div class="empty"><div class="icon">👥</div><p>还没有小组<br>点击上方按钮创建吧</p></div>';
+    return;
+  }
+  el.innerHTML+='<div class="group-list">'+state.groups.map(g=>{
+    const mCount=g.member_count||0;
+    return'<div class="group-card" onclick="showGroupDetail('+g.id+',''+g.name.replace(/'/g,"\\'")+'')"><div class="g-name">👥 '+g.name+'</div><div class="g-count">'+mCount+' 人</div><button class="g-del" onclick="event.stopPropagation();deleteGroup('+g.id+')" title="删除小组">🗑</button></div>';
+  }).join('')+'</div>';
+}
+function openCreateGroup(){document.getElementById('newGroupName').value='';document.getElementById('createGroupModal').classList.add('show')}
+async function doCreateGroup(){
+  const n=document.getElementById('newGroupName').value.trim();
+  if(!n)return toast('请输入小组名称');
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})});
+  const d=await r.json();
+  if(d.id||d.ok){closeModal('createGroupModal');toast('✅ 小组已创建');loadGroups()}else toast('❌ '+(d.error||'创建失败'));
+}
+async function deleteGroup(gid){
+  if(!confirm('确定删除这个小组吗？'))return;
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups/'+gid,{method:'DELETE'});
+  const d=await r.json();
+  if(d.ok||!d.error){toast('✅ 已删除');loadGroups()}else toast('❌ '+d.error);
+}
+async function showGroupDetail(gid,gname){
+  const modal=document.getElementById('groupDetailModal');
+  const content=document.getElementById('groupDetailContent');
+  content.innerHTML='<div style="text-align:center;padding:30px">加载中...</div>';
+  modal.classList.add('show');
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups/'+gid+'/members');
+  const d=await r.json();
+  const members=d.members||[];
+  const memberIds=new Set(members.map(m=>m.id));
+  const available=state.students.filter(s=>!memberIds.has(s.id));
+  content.innerHTML='<button class="close" onclick="closeModal(\'groupDetailModal\')">✕</button>'
+    +'<h3>👥 '+gname+'</h3>'
+    +'<div class="group-detail">'
+    +'<h4>小组成员 ('+members.length+'人)</h4>'
+    +(members.length?'<div class="group-members">'+members.map(m=>'<span class="member-tag">'+(PETS[m.pet_type]||'🐱')+' '+m.name+' <button class="rm-btn" onclick="doRemoveFromGroup('+gid+','+m.id+')">✕</button></span>').join('')+'</div>':'<div style="color:#999;font-size:13px">暂无成员</div>')
+    +'<h4 style="margin-top:16px">添加学生 ('+available.length+'人可选) <span class="drag-hint">💡 可拖拽下方标签到此处</span></h4>'
+    +'<div class="student-pool">'+available.map(s=>'<div class="student-chip" draggable="true" data-sid="'+s.id+'" id="chip'+s.id+'" ondragstart="dragStart(event,'+s.id+')" ondragend="dragEnd(event,'+s.id+')" onclick="doAddToGroup('+gid+','+s.id+')">'+(PETS[s.pet_type]||'🐱')+' '+s.name+'</div>').join('')+'</div>'
+    +'<div class="drop-zone" id="dropZone'+gid+'" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropOnGroup(event,'+gid+')">📥 拖拽学生到这里加入小组</div>'
+    +'</div>';
+}
+async function doAddToGroup(gid,sid){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups/'+gid+'/members',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid})});
+  const d=await r.json();
+  if(d.ok||!d.error){toast('✅ 已加入小组');const gname=state.groups.find(g=>g.id===gid)?.name||'';showGroupDetail(gid,gname)}else toast('❌ '+(d.error||'操作失败'));
+}
+async function doRemoveFromGroup(gid,sid){
+  const r=await fetch('/api/classes/'+state.currentClass.id+'/groups/'+gid+'/members',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid})});
+  const d=await r.json();
+  if(d.ok||!d.error){toast('✅ 已移除');const gname=state.groups.find(g=>g.id===gid)?.name||'';showGroupDetail(gid,gname)}else toast('❌ '+(d.error||'操作失败'));
+}
+function dragStart(e,sid){e.dataTransfer.setData('text/plain',sid);document.getElementById('chip'+sid)?.classList.add('dragging')}
+function dragEnd(e,sid){document.getElementById('chip'+sid)?.classList.remove('dragging')}
+function dragOver(e){e.preventDefault();e.currentTarget.classList.add('over')}
+function dragLeave(e){e.currentTarget.classList.remove('over')}
+function dropOnGroup(e,gid){e.preventDefault();e.currentTarget.classList.remove('over');const sid=parseInt(e.dataTransfer.getData('text/plain'));if(sid)doAddToGroup(gid,sid)}
+
 </script>
 
 </body>

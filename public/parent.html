@@ -204,7 +204,7 @@ const SHOP = {
     {k:'crown',n:'皇冠',e:'👑',c:50,d:'宠物之王'},
     {k:'house',n:'小木屋',e:'🏠',c:80,d:'温暖的家'},
     {k:'rainbow',n:'彩虹光环',e:'🌈',c:150,d:'绚丽特效'},
-    {k:'star',n:'闪耀之星',e:'💫',c:300,d:'传说级别'},
+    {k:'star',n:'闪耀之星',e:'💫',c:300,d:'冠军级别'},
   ]
 };
 const CATS = {food:'🍎 食物',toy:'🎾 玩具',dress:'👗 装扮',special:'🌟 珍品'};
@@ -212,11 +212,12 @@ const CATS = {food:'🍎 食物',toy:'🎾 玩具',dress:'👗 装扮',special:'
 let tab='food', data=null;
 
 function pLvl(exp){
-  if(exp>=250)return{n:'传说',e:'⭐',lv:5,nx:9999};
-  if(exp>=100)return{n:'成年',e:'🌳',lv:4,nx:250};
-  if(exp>=40)return{n:'成长',e:'🌿',lv:3,nx:100};
-  if(exp>=10)return{n:'幼年',e:'🌱',lv:2,nx:40};
-  return{n:'宝宝',e:'🥚',lv:1,nx:10};
+  if(exp>=350)return{n:'冠军',e:'👑',lv:6,nx:9999};
+  if(exp>=200)return{n:'精英',e:'💎',lv:5,nx:350};
+  if(exp>=100)return{n:'成年',e:'🌳',lv:4,nx:200};
+  if(exp>=40)return{n:'少年',e:'🌿',lv:3,nx:100};
+  if(exp>=10)return{n:'成长',e:'🌱',lv:2,nx:40};
+  return{n:'幼崽',e:'🥚',lv:1,nx:10};
 }
 const BASE=[0,0,10,40,100,250];
 

@@ -282,13 +282,16 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
 .pet-card.lv3{border-color:rgba(102,187,106,.7);box-shadow:0 6px 20px rgba(102,187,106,.15)}
 .pet-card.lv4{border-color:rgba(255,183,77,.8);box-shadow:0 0 20px rgba(255,152,0,.2),0 6px 20px rgba(0,0,0,.06)}
 .pet-card.lv5{border-color:#FFD700;box-shadow:0 0 28px rgba(255,215,0,.35),0 6px 24px rgba(0,0,0,.08)}
+.pet-card.lv6{border-color:#B388FF;box-shadow:0 0 36px rgba(179,136,255,.5),0 0 60px rgba(179,136,255,.2),0 6px 24px rgba(0,0,0,.08)}
+.pet-card.lv7{border-color:transparent;background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(255,215,0,.15),rgba(179,136,255,.2),rgba(255,255,255,.25));box-shadow:0 0 40px rgba(255,215,0,.3),0 0 80px rgba(179,136,255,.2),0 0 12px rgba(255,100,100,.15),0 0 12px rgba(100,255,100,.15),0 0 12px rgba(100,100,255,.15),0 6px 24px rgba(0,0,0,.08)}
+.pet-card.lv8{animation:mythicPulse 2s ease-in-out infinite;border-color:#FFD700;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,215,0,.2),rgba(255,255,255,.3));box-shadow:0 0 50px rgba(255,215,0,.6),0 0 100px rgba(255,180,0,.3),0 0 20px rgba(255,100,255,.2),0 6px 24px rgba(0,0,0,.1)}
 
 /* Reaction state — golden pulse + themed animation override */
-.pet-card.react-eat .pet-emoji{animation:petEat 1.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
-.pet-card.react-play .pet-emoji{animation:petPlay 1.8s cubic-bezier(0.4,0,0.6,1) forwards}
-.pet-card.react-happy .pet-emoji{animation:petHappy 2s cubic-bezier(0.34,1.56,0.64,1) forwards}
-.pet-card.react-sleep .pet-emoji{animation:petSleep 2.2s cubic-bezier(0.4,0,0.6,1) forwards}
-.pet-card.react-dress .pet-emoji{animation:petDress 2s cubic-bezier(0.4,0,0.6,1) forwards}
+.pet-card.react-eat .pet-emoji{animation:petEat 1.5s cubic-bezier(0.34,1.56,0.64,1) forwards !important}
+.pet-card.react-play .pet-emoji{animation:petPlay 1.8s cubic-bezier(0.4,0,0.6,1) forwards !important}
+.pet-card.react-happy .pet-emoji{animation:petHappy 2s cubic-bezier(0.34,1.56,0.64,1) forwards !important}
+.pet-card.react-sleep .pet-emoji{animation:petSleep 2.2s cubic-bezier(0.4,0,0.6,1) forwards !important}
+.pet-card.react-dress .pet-emoji{animation:petDress 2s cubic-bezier(0.4,0,0.6,1) forwards !important}
 .pet-card.react-eat,.pet-card.react-play,.pet-card.react-happy,.pet-card.react-sleep,.pet-card.react-dress{
   animation:reactPulse 1.5s ease-out forwards}
 
@@ -337,11 +340,61 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
 .pet-emoji.d4{animation-delay:1.2s}.pet-emoji.d5{animation-delay:1.6s}
 .pet-emoji.d6{animation-delay:2s}.pet-emoji.d7{animation-delay:2.4s}
 
+
+/* ═══ LV.6-8 EVOLUTION EFFECTS ═══ */
+
+/* LV.6 Elite - Diamond rotating particles */
+@keyframes diamondSpin{
+  0%{transform:translate(-50%,-50%) rotate(0deg) translateX(60px) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(360deg) translateX(60px) rotate(-360deg)}
+}
+@keyframes diamondSpin2{
+  0%{transform:translate(-50%,-50%) rotate(120deg) translateX(50px) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(480deg) translateX(50px) rotate(-360deg)}
+}
+@keyframes diamondSpin3{
+  0%{transform:translate(-50%,-50%) rotate(240deg) translateX(55px) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(600deg) translateX(55px) rotate(-360deg)}
+}
+.diamond-orbit{position:absolute;inset:-20px;pointer-events:none;z-index:0}
+.diamond-orbit .d{position:absolute;top:50%;left:50%;font-size:16px;filter:drop-shadow(0 0 6px rgba(179,136,255,.8))}
+.d1{animation:diamondSpin 4s linear infinite}
+.d2{animation:diamondSpin2 5s linear infinite}
+.d3{animation:diamondSpin3 3.5s linear infinite}
+
+/* LV.7 Epic - Rainbow halo */
+@keyframes rainbowHalo{
+  0%{filter:hue-rotate(0deg);opacity:.6}
+  50%{filter:hue-rotate(180deg);opacity:.9}
+  100%{filter:hue-rotate(360deg);opacity:.6}
+}
+.rainbow-halo{position:absolute;inset:-8px;border-radius:26px;pointer-events:none;z-index:0;
+  background:conic-gradient(from 0deg,#ff0000,#ff8800,#ffff00,#00ff00,#0088ff,#8800ff,#ff0000);
+  animation:rainbowHalo 3s linear infinite;opacity:.5}
+
+/* LV.8 Mythic - Full screen lightning + magnify pulse */
+@keyframes mythicPulse{
+  0%{transform:scale(1);box-shadow:0 0 50px rgba(255,215,0,.6),0 0 100px rgba(255,180,0,.3),0 0 20px rgba(255,100,255,.2),0 6px 24px rgba(0,0,0,.1)}
+  50%{transform:scale(1.06);box-shadow:0 0 80px rgba(255,215,0,.8),0 0 140px rgba(255,180,0,.5),0 0 30px rgba(255,100,255,.4),0 6px 24px rgba(0,0,0,.1)}
+  100%{transform:scale(1);box-shadow:0 0 50px rgba(255,215,0,.6),0 0 100px rgba(255,180,0,.3),0 0 20px rgba(255,100,255,.2),0 6px 24px rgba(0,0,0,.1)}
+}
+@keyframes lightningFlash{
+  0%{opacity:0}10%{opacity:.7}12%{opacity:.1}14%{opacity:.8}16%{opacity:0}18%{opacity:.5}20%{opacity:0}100%{opacity:0}
+}
+.lightning-overlay{position:fixed;inset:0;z-index:400;pointer-events:none;background:rgba(255,255,255,.3);animation:lightningFlash 4s ease-in-out infinite;display:none}
+.mythic-crown{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:34px;z-index:5;
+  filter:drop-shadow(0 0 10px rgba(255,215,0,.9));pointer-events:none}
+
 /* King */
 .pet-card.lv5 .pet-emoji{animation:petKing 3s cubic-bezier(0.4,0,0.6,1) infinite;font-size:68px}
-.pet-card.lv5 .crown-badge{position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+.pet-card.lv6 .pet-emoji{animation:petKing 3.5s cubic-bezier(0.4,0,0.6,1) infinite;font-size:64px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12)) drop-shadow(0 0 10px rgba(179,136,255,.5))}
+.pet-card.lv7 .pet-emoji{animation:petKing 3s cubic-bezier(0.4,0,0.6,1) infinite;font-size:66px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12)) drop-shadow(0 0 14px rgba(255,215,0,.6))}
+.pet-card.lv8 .pet-emoji{animation:petKing 2.5s cubic-bezier(0.4,0,0.6,1) infinite;font-size:72px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12)) drop-shadow(0 0 20px rgba(255,215,0,.8)) drop-shadow(0 0 40px rgba(255,100,255,.4))}
+.pet-card.lv5 .crown-badge,.pet-card.lv8 .crown-badge{position:absolute;top:-22px;left:50%;transform:translateX(-50%);
   font-size:26px;animation:crownFloat 4s cubic-bezier(0.4,0,0.6,1) infinite;
   filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))}
+.pet-card.lv8 .crown-badge{font-size:34px;top:-28px;animation:crownFloat 3s cubic-bezier(0.4,0,0.6,1) infinite;
+  filter:drop-shadow(0 0 10px rgba(255,215,0,.9))}
 
 /* Star orbit for lv4+ */
 .star-orbit{position:absolute;inset:-15px;pointer-events:none;z-index:0}
@@ -399,6 +452,17 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
 .empty p{margin-top:14px;font-size:18px;font-weight:700;line-height:1.6}
 .empty .hint{font-size:13px;opacity:.65;margin-top:4px}
 
+/* ═══ IDLE "ALIVE" + SCORE POP + CONFETTI ═══ */
+.pet-deco{position:absolute;inset:0;pointer-events:none;z-index:1}
+@keyframes cardHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes cardWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.pet-card.alive-hop{animation:cardHop .6s cubic-bezier(0.34,1.56,0.64,1)}
+.pet-card.alive-wiggle{animation:cardWiggle .7s ease-in-out}
+@keyframes petScorePop{0%{opacity:0;transform:translate(-50%,0) scale(.6)}20%{opacity:1;transform:translate(-50%,-12px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-72px) scale(1)}}
+.pet-score-pop{position:fixed;z-index:320;font-size:30px;font-weight:900;color:#FFD600;text-shadow:0 0 16px rgba(255,183,0,.7),0 2px 8px rgba(0,0,0,.3);pointer-events:none;animation:petScorePop 1.4s cubic-bezier(0.4,0,0.6,1) forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(106vh) rotate(720deg);opacity:.85}}
+.confetti{position:fixed;top:-20px;z-index:505;pointer-events:none;animation:confettiFall var(--cdur,3s) linear forwards}
+
 /* ═══ EVOLUTION CELEBRATION ═══ */
 /* Full-screen overlay when a pet levels up */
 @keyframes evolveFlash{
@@ -438,6 +502,33 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
   border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;
   align-items:center;justify-content:center;transition:.2s;text-decoration:none}
 .back-btn:hover{background:rgba(0,0,0,.4)}
+.sound-btn{position:fixed;top:16px;right:64px;z-index:200;background:rgba(0,0,0,.25);border:none;color:#fff;font-size:13px;padding:8px 14px;border-radius:18px;cursor:pointer;transition:.2s}
+.sound-btn:hover{background:rgba(0,0,0,.4)}
+.teacher-btn{position:fixed;top:16px;left:64px;z-index:200;background:rgba(46,125,50,.8);border:none;color:#fff;font-size:13px;padding:8px 14px;border-radius:18px;cursor:pointer;transition:.2s;text-decoration:none;font-weight:600}
+.teacher-btn:hover{background:rgba(46,125,50,1)}
+
+
+/* === RANKING LEADERBOARD === */
+.rank-panel{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:20;width:210px;
+  background:rgba(0,0,0,.35);backdrop-filter:blur(16px);border-radius:18px;padding:16px 14px;
+  border:1px solid rgba(255,255,255,.12);max-height:80vh;overflow-y:auto}
+.rank-title{text-align:center;font-size:15px;font-weight:800;color:#FFD600;margin-bottom:12px;
+  text-shadow:0 0 12px rgba(255,214,0,.4);letter-spacing:2px}
+.rank-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;margin-bottom:3px}
+.rank-item:nth-child(2){background:rgba(255,215,0,.15)}
+.rank-item:nth-child(3){background:rgba(192,192,192,.1)}
+.rank-item:nth-child(4){background:rgba(205,127,50,.1)}
+.rank-pos{font-size:13px;font-weight:900;width:22px;text-align:center;flex-shrink:0}
+.rk1{color:#FFD700;font-size:18px}.rk2{color:#C0C0C0;font-size:16px}.rk3{color:#CD7F32;font-size:16px}
+.rank-pet{font-size:24px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.rank-name{font-size:12px;font-weight:700;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-score{font-size:14px;font-weight:900;color:#FFD600}
+.rank-level{font-size:10px;color:rgba(255,255,255,.55);text-align:right}
+.rank-lv-badge{display:inline-block;background:linear-gradient(135deg,#FF6D00,#FFD600);color:#fff;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700}
+@keyframes rankSlide{from{transform:translateY(-50%) translateX(30px);opacity:0}to{transform:translateY(-50%) translateX(0);opacity:1}}
+.rank-panel{animation:rankSlide .6s ease-out}
+@media(max-width:900px){.rank-panel{display:none}}
+
 </style>
 </head>
 <body>
@@ -468,11 +559,18 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI Emoji',sans-serif;
   <h1>🌳 宠物花园</h1>
   <div class="sub" id="classInfo">加载中…</div>
 </div>
+<div class="lightning-overlay" id="lightningOverlay"></div>
 <div class="garden" id="garden"></div>
+<div class="rank-panel" id="rankPanel">
+  <div class="rank-title">🏆 排行榜</div>
+  <div id="rankList"></div>
+</div>
 <div class="ticker"><div class="ticker-inner" id="tickerInner">🌙 今天还没有加分记录 — 老师快快行动吧！</div></div>
 <div>
   <div id="modeBadge" class="mode-indicator">🟢 自由模式</div>
   <a href="/" class="back-btn" title="返回首页">←</a>
+  <a href="/teacher" class="teacher-btn" title="教师端">👩‍🏫 教师端</a>
+  <button id="soundBtn" class="sound-btn" title="开启/关闭声音">🔇 声音关</button>
   <div class="footer"><div id="clock">--</div><div>自动刷新中</div></div>
 </div>
 
@@ -484,6 +582,25 @@ let CLASS_NAME = '';
 
 const PET_EMOJI = {cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',chick:'🐤',turtle:'🐢',hamster:'🐹',fox:'🦊',frog:'🐸',monkey:'🐵',bear:'🐻',penguin:'🐧'};
 const DELAYS = ['d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3','d4','d5','d6','d7','d2','d3'];
+
+// Mood → CSS class mapping (shared by render + garden)
+const MOOD_MAP = {
+  excited: { label: '🤩 开心爆了', cls: 'mood-excited' },
+  happy:    { label: '😊 今天很棒', cls: 'mood-happy' },
+  calm:     { label: '🙂 平静', cls: '' },
+  bored:    { label: '🥱 有点无聊', cls: 'mood-bored' },
+  sad:      { label: '😢 想念老师', cls: 'mood-sad' },
+};
+
+// ═══ SOUND SYSTEM ═══
+let audioCtx=null, soundOn=false;
+function initAudio(){ if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;} } if(audioCtx.state==='suspended')audioCtx.resume(); }
+function beep(freq,dur,type,vol,when){ if(!audioCtx||!soundOn)return; const t=audioCtx.currentTime+(when||0); const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type=type||'sine'; o.frequency.value=freq; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol||.2,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur); o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+dur); }
+function playScoreSound(){ beep(880,.14,'sine',.18,0); beep(1175,.14,'sine',.13,.07); }
+function playEvolveSound(){ [523,659,784,1047,1319].forEach((f,i)=>beep(f,.3,'triangle',.2,i*.1)); }
+document.addEventListener('click',initAudio,{once:true});
+const soundBtn=document.getElementById('soundBtn');
+if(soundBtn){ soundBtn.onclick=()=>{ initAudio(); soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊 声音开':'🔇 声音关'; if(soundOn)playScoreSound(); }; }
 
 // ═══ REWARD CLASSIFIER ═══
 // Maps reward reasons to animation type + reaction particles
@@ -563,7 +680,8 @@ function spawnSparkles(cx, cy, count) {
 }
 
 // ═══ TRIGGER REACTION on a specific pet ═══
-function triggerReaction(petId, reason, petName) {
+function triggerReaction(petId, reason, petName, delta) {
+  playScoreSound();
   const card = document.getElementById('pet' + petId);
   if (!card) return;
   const r = classifyReason(reason);
@@ -580,10 +698,19 @@ function triggerReaction(petId, reason, petName) {
   const cy = rect.top + 30;
   spawnParticles(cx, cy, r.emojis, 8);
 
+  // Floating "+N" on the pet itself
+  const pop = document.createElement('div');
+  pop.className = 'pet-score-pop';
+  pop.textContent = '+' + (delta > 0 ? delta : 1);
+  pop.style.left = cx + 'px';
+  pop.style.top = (cy - 10) + 'px';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 1400);
+
   // Show toast
   const toast = document.createElement('div');
   toast.className = 'react-toast';
-  toast.textContent = r.label + ' ' + petName + ' +' + (reason ? '' : '分');
+  toast.textContent = r.label + ' ' + petName;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3200);
 }
@@ -598,10 +725,12 @@ function showScorePop(text) {
 
 // ═══ EVOLUTION CELEBRATION ═══
 function showEvolution(name, oldLv, newLv, emoji) {
-  const stageNames = ['','宝宝','幼年','成长','成熟','传说'];
+  playEvolveSound();
+  const stageNames = ['','幼崽','成长','少年','成年','精英','冠军'];
   const overlay = document.createElement('div');
   overlay.className = 'evolve-overlay';
   document.body.appendChild(overlay);
+  spawnConfetti();
 
   const beam = document.createElement('div');
   beam.className = 'evolve-beam';
@@ -621,11 +750,94 @@ function showEvolution(name, oldLv, newLv, emoji) {
   setTimeout(() => { overlay.remove(); beam.remove(); e.remove(); t.remove(); }, 4000);
 }
 
+// ═══ GARDEN RENDER (in-place, preserves emoji idle animation) ═══
+function buildDeco(p, lv) {
+  let h = '';
+  if (lv >= 5) h += '<span class="crown-badge">👑</span>';
+  if (lv >= 6) h += '<div class="diamond-orbit"><span class="d d1">💎</span><span class="d d2">💎</span><span class="d d3">💎</span></div>';
+  else if (lv >= 4) h += '<div class="star-orbit"><span class="s sa">✨</span><span class="s sb">💫</span><span class="s sc">🌟</span></div>';
+  if (lv >= 7) h += '<div class="rainbow-halo"></div>';
+  if (p.feeding) h += '<div class="feed-bubble">🍖 ' + p.feeding.item_name + '</div>';
+  if (p.mood === 'excited') h += '<div class="yawn-bubble" style="top:-8px;right:6px;font-size:22px">🎉</div>';
+  else if (p.mood === 'bored') h += '<div class="yawn-bubble">💤</div>';
+  return h;
+}
+
+function renderGarden(pets) {
+  const g = document.getElementById('garden');
+  const seen = new Set();
+  pets.forEach((p) => {
+    seen.add(p.id);
+    const emoji = PET_EMOJI[p.pet_type] || '🐱';
+    const lv = p.pet_info?.level || 1;
+    const exp = p.pet_exp || 0;
+    const next = p.pet_info?.next || 10;
+    const pct = Math.min(100, Math.round(exp / Math.max(1, next) * 100));
+    const mood = MOOD_MAP[p.mood] || MOOD_MAP.calm;
+    const delayClass = DELAYS[p.id % DELAYS.length];
+    let card = document.getElementById('pet' + p.id);
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'pet' + p.id;
+      card.innerHTML = '<span class="pet-emoji"></span><div class="pet-name"></div><div class="pet-stage"></div><div class="exp-wrap"><div class="exp-fill"></div></div><div class="pet-score"></div><div class="pet-deco"></div>';
+      g.appendChild(card);
+    }
+    const emojiEl = card.querySelector('.pet-emoji');
+    if (emojiEl.textContent !== emoji) emojiEl.textContent = emoji;
+    if (emojiEl.className !== 'pet-emoji ' + delayClass) emojiEl.className = 'pet-emoji ' + delayClass;
+    card.querySelector('.pet-name').textContent = p.name;
+    card.querySelector('.pet-stage').textContent = (p.pet_info.emoji || '') + ' ' + (p.pet_info.name || '');
+    card.querySelector('.exp-fill').style.width = pct + '%';
+    card.querySelector('.pet-score').textContent = '⭐' + p.score + ' · 今天+' + (p.today_points || 0);
+    const deco = card.querySelector('.pet-deco');
+    const newDeco = buildDeco(p, lv);
+    if (deco.innerHTML !== newDeco) deco.innerHTML = newDeco;
+    // Preserve transient reaction / idle classes so animations aren't cut by polling
+    const keep = (card.className.match(/react-\w+|alive-\w+/g) || []).join(' ');
+    let cls = 'pet-card lv' + lv + (mood.cls ? (' ' + mood.cls) : '') + (p.feeding ? ' mood-feeding' : '');
+    if (keep) cls += ' ' + keep;
+    if (card.className !== cls) card.className = cls;
+  });
+  // Remove cards for students no longer in the class
+  Array.from(g.children).forEach((c) => {
+    const id = parseInt((c.id || '').replace('pet', ''), 10);
+    if (!seen.has(id)) c.remove();
+  });
+}
+
+function spawnConfetti() {
+  const emojis = ['🎉','✨','🌟','💖','🎊','🌈','⭐','💛','💚','💙','🎀','🌸'];
+  for (let i = 0; i < 70; i++) {
+    const c = document.createElement('span');
+    c.className = 'confetti';
+    c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    c.style.left = (Math.random() * 100) + 'vw';
+    c.style.fontSize = (14 + Math.random() * 18) + 'px';
+    c.style.setProperty('--cdur', (2.2 + Math.random() * 1.8) + 's');
+    c.style.animationDelay = (Math.random() * 0.6) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4200);
+  }
+}
+
 // ═══ MAIN REFRESH ═══
+
+// ─── Ranking ───
+const RANK_LVLS=[0,5,20,50,100,180,300,500];
+const RANK_NAMES=['宝宝','幼年','成长','成年','传说','精英','史诗','神话'];
+const RANK_ICONS=['🥚','🌱','🌿','🌳','⭐','🏆','💎','👑'];
+const PETS_R={cat:'🐱',dog:'🐶',rabbit:'🐰',panda:'🐼',fox:'🦊',hamster:'🐹',chick:'🐤',bear:'🐻'};
+function getRankLv(exp){let lv=1;for(let i=RANK_LVLS.length-1;i>=0;i--){if(exp>=RANK_LVLS[i]){lv=i+1;break}}return{level:lv,name:RANK_NAMES[lv-1],icon:RANK_ICONS[lv-1]}}
+function renderRanking(ranking){if(!ranking||!ranking.length)return;const el=document.getElementById('rankList');const medals=['','🥇','🥈','🥉'];el.innerHTML=ranking.slice(0,8).map((s,i)=>{const lv=getRankLv(s.pet_exp||0);const pet=PETS_R[s.pet_type]||'🐱';return'<div class="rank-item"><span class="rank-pos '+(i<3?'rk'+(i+1):'')+'">'+(medals[i]||(i+1))+'</span><span class="rank-pet">'+pet+'</span><div style="flex:1;min-width:0"><div class="rank-name">'+s.name+'</div><div class="rank-level">'+lv.icon+' '+lv.name+' <span class="rank-lv-badge">Lv.'+lv.level+'</span></div></div><span class="rank-score">⭐'+s.score+'</span></div>'}).join('')}
+
 async function refresh() {
   try {
     const r = await fetch('/api/garden/' + CODE);
     const d = await r.json();
+    if (!r.ok || d.error) {
+      document.getElementById('garden').innerHTML = '<div class="empty"><span class="egg">❓</span><p>邀请码无效</p><p class="hint">请检查大屏链接，或联系老师确认班级码。</p></div>';
+      return;
+    }
     if (!d.class) return;
 
     const tname = (d.class.teacher_name||'').endsWith('老师') ? d.class.teacher_name : d.class.teacher_name + '老师';
@@ -663,7 +875,8 @@ async function refresh() {
       if (p.id in lastScores && p.score > lastScores[p.id] && CLASS_MODE !== 'quiet') {
         hadChange = true;
         const reason = p.latest_reason || '';
-        triggerReaction(p.id, reason, p.name);
+        const delta = p.score - lastScores[p.id];
+        triggerReaction(p.id, reason, p.name, delta);
         setTimeout(() => {
           const card = document.getElementById('pet' + p.id);
           if (card) {
@@ -688,39 +901,12 @@ async function refresh() {
     }
     if (fastPolls > 0) { fastPolls--; if (fastPolls === 0) pollMs = 5000; }
 
-    // ═══ RENDER GARDEN ═══
-    const MOOD_MAP = {
-      excited: { label: '🤩 开心爆了', cls: 'mood-excited' },
-      happy:    { label: '😊 今天很棒', cls: 'mood-happy' },
-      calm:     { label: '🙂 平静', cls: '' },
-      bored:    { label: '🥱 有点无聊', cls: 'mood-bored' },
-      sad:      { label: '😢 想念老师', cls: 'mood-sad' },
-    };
-    g.innerHTML = pets.map((p, idx) => {
-      const emoji = PET_EMOJI[p.pet_type] || '🐱';
-      const lv = p.pet_info?.level || 1;
-      const exp = p.pet_exp || 0;
-      const next = p.pet_info?.next || 10;
-      const pct = Math.min(100, Math.round(exp / Math.max(1, next) * 100));
-      const delayClass = DELAYS[idx % DELAYS.length];
-      const mood = MOOD_MAP[p.mood] || MOOD_MAP.calm;
-
-      let crownHTML = '', starHTML = '';
-      if (lv >= 5) crownHTML = '<span class="crown-badge">👑</span>';
-      if (lv >= 4) starHTML = '<div class="star-orbit"><span class="s sa">✨</span><span class="s sb">💫</span><span class="s sc">🌟</span></div>';
-
-      return '<div class="pet-card lv' + lv + ' ' + mood.cls + (p.feeding?' mood-feeding':'') + '" id="pet' + p.id + '">'
-        + crownHTML + starHTML
-        + (p.feeding ? '<div class="feed-bubble">🍖 ' + p.feeding.item_name + '</div>' : '')
-        + (p.mood === 'excited' ? '<div class="yawn-bubble" style="top:-8px;right:6px;font-size:22px">🎉</div>' : '')
-        + (p.mood === 'bored' ? '<div class="yawn-bubble">💤</div>' : '')
-        + '<span class="pet-emoji ' + delayClass + '">' + emoji + '</span>'
-        + '<div class="pet-name">' + p.name + '</div>'
-        + '<div class="pet-stage">' + (p.pet_info.emoji||'') + ' ' + (p.pet_info.name||'') + '</div>'
-        + '<div class="exp-wrap"><div class="exp-fill" style="width:' + pct + '%"></div></div>'
-        + '<div class="pet-score">⭐' + p.score + ' · 今天+' + (p.today_points||0) + '</div>'
-        + '</div>';
-    }).join('');
+    // ═══ RENDER GARDEN (in-place, preserves emoji idle animation) ═══
+    renderGarden(pets);
+    // LV.8 Mythic lightning effect
+    const hasMythic = pets.some(p => (p.pet_info?.level||0) >= 8);
+    document.getElementById('lightningOverlay').style.display = hasMythic ? 'block' : 'none';
+    if(d.ranking)renderRanking(d.ranking);
 
     // ═══ TICKER ═══
     const logs = d.today_logs || [];
@@ -752,6 +938,24 @@ setInterval(() => {
     spawnSparkles(rect.left + rect.width/2, rect.top + rect.height/2, 3);
   }
 }, 15000);
+
+// Idle "alive" micro-actions — pets randomly hop/wiggle so the garden feels living
+setInterval(() => {
+  if (CLASS_MODE === 'quiet') return;
+  const cards = Array.from(document.querySelectorAll('.pet-card:not([class*="react-"]):not([class*="alive-"])'));
+  if (cards.length === 0) return;
+  const card = cards[Math.floor(Math.random() * cards.length)];
+  const act = Math.random() < 0.6 ? 'alive-hop' : 'alive-wiggle';
+  card.classList.add(act);
+  setTimeout(() => card.classList.remove(act), 700);
+}, 2500);
 </script>
+<div class="picker-overlay" id="pickerOverlay" style="display:none">
+  <div class="picker-stage">
+    <div class="picker-wheel" id="pickerWheel"></div>
+    <div class="picker-pointer">▼</div>
+    <div class="picker-result" id="pickerResult"></div>
+  </div>
+</div>
 </body>
 </html>
